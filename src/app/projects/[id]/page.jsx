@@ -184,373 +184,376 @@ export default function ProjectDetailPage({ params }) {
       </div>
 
       {/* Header Card */}
-      <div className="bg-card rounded-xl border border-border p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            {/* Status + Name */}
-            <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <span className={cn(
-                'text-xs px-2 py-0.5 rounded-md font-medium capitalize',
-                PROJECT_STATUS_COLORS[project.status] || 'bg-slate-100 text-slate-700'
-              )}>
-                {PROJECT_STATUS_LABELS[project.status] || project.status}
-              </span>
-            </div>
-            <h1 className="text-2xl font-semibold text-foreground mb-2">
-              {project.name}
-            </h1>
-            {project.description && (
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {project.description}
-              </p>
-            )}
-          </div>
-
-          {/* Action buttons */}
-          {canEdit && (
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <button
-                onClick={() => setShowEditModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground border border-border rounded-lg hover:bg-background transition-colors"
-              >
-                <Pencil className="w-3.5 h-3.5" />
-                Edit
-              </button>
-              {project.status !== 'archived' && (
-                <button
-                  onClick={handleArchive}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  <Archive className="w-3.5 h-3.5" />
-                  Archive
-                </button>
-              )}
-              {canDelete && (
-                <button
-                  onClick={handleDelete}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  Delete
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mt-5 pt-5 border-t border-slate-100">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-muted-foreground">Overall Progress</span>
-            <span className="text-xs font-semibold text-foreground">
-              {progress}%
-            </span>
-          </div>
-          <div className="relative w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div
-              className={cn(
-                'h-full rounded-full transition-all duration-700',
-                progress === 100
-                  ? 'bg-green-500'
-                  : progress > 60
-                  ? 'bg-violet-500'
-                  : progress > 30
-                  ? 'bg-amber-400'
-                  : 'bg-red-400'
-              )}
-              style={{ width: `${progress}%` }}
-            />
-            {/* Milestone ticks. 100% is the bar's own end, so only the interior
-                ones get a line; a tick on the filled side is drawn light so it
-                reads as passed rather than pending. */}
-            {MILESTONES.filter((m) => m < 100).map((m) => (
-              <span
-                key={m}
-                style={{ left: `${m}%` }}
-                title={
-                  progress >= m
-                    ? `${m}% milestone reached`
-                    : `${m}% milestone — not reached yet`
-                }
-                className={cn(
-                  'absolute top-0 h-full w-px',
-                  progress >= m ? 'bg-white/70' : 'bg-slate-300'
-                )}
-              />
-            ))}
-          </div>
-          <div className="flex items-center justify-between mt-1.5">
-            <span className="text-xs text-slate-400">
-              {completedTasksCount} of {totalTasksCount} tasks completed
-            </span>
-            {project.endDate && (
-              <span className="text-xs text-slate-400 flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                Due {formatDate(project.endDate)}
-              </span>
-            )}
-          </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Milestones at {MILESTONES.map((m) => `${m}%`).join(', ')} — the project
-            manager is notified each time one is reached.
-          </p>
-        </div>
+      <div className="bg-card rounded-xl border border-border p-5">
+  <div className="flex items-start justify-between gap-4">
+    <div className="flex-1 min-w-0">
+      {/* Status + Name */}
+      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+        <span className={cn(
+          'text-[11px] px-2 py-0.5 rounded-md font-medium capitalize',
+          PROJECT_STATUS_COLORS[project.status] || 'bg-slate-100 text-slate-700'
+        )}>
+          {PROJECT_STATUS_LABELS[project.status] || project.status}
+        </span>
       </div>
+      <h1 className="text-xl font-semibold text-foreground mb-1.5">
+        {project.name}
+      </h1>
+      {project.description && (
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          {project.description}
+        </p>
+      )}
+    </div>
+
+    {/* Action buttons */}
+    {canEdit && (
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <button
+          onClick={() => setShowEditModal(true)}
+          className="flex items-center gap-1 px-2.5 py-1 text-xs text-muted-foreground border border-border rounded-lg hover:bg-background transition-colors"
+        >
+          <Pencil className="w-3 h-3" />
+          Edit
+        </button>
+        {project.status !== 'archived' && (
+          <button
+            onClick={handleArchive}
+            className="flex items-center gap-1 px-2.5 py-1 text-xs text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+          >
+            <Archive className="w-3 h-3" />
+            Archive
+          </button>
+        )}
+        {canDelete && (
+          <button
+            onClick={handleDelete}
+            className="flex items-center gap-1 px-2.5 py-1 text-xs text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+          >
+            <Trash2 className="w-3 h-3" />
+            Delete
+          </button>
+        )}
+      </div>
+    )}
+  </div>
+
+  {/* Progress Bar */}
+  <div className="mt-4 pt-4 border-t border-slate-100">
+    <div className="flex items-center justify-between mb-1.5">
+      <span className="text-[11px] text-muted-foreground">Overall Progress</span>
+      <span className="text-[11px] font-semibold text-foreground">
+        {progress}%
+      </span>
+    </div>
+    <div className="relative w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+      <div
+        className={cn(
+          'h-full rounded-full transition-all duration-700',
+          progress === 100
+            ? 'bg-green-500'
+            : progress > 60
+            ? 'bg-violet-500'
+            : progress > 30
+            ? 'bg-amber-400'
+            : 'bg-red-400'
+        )}
+        style={{ width: `${progress}%` }}
+      />
+      {MILESTONES.filter((m) => m < 100).map((m) => (
+        <span
+          key={m}
+          style={{ left: `${m}%` }}
+          title={
+            progress >= m
+              ? `${m}% milestone reached`
+              : `${m}% milestone — not reached yet`
+          }
+          className={cn(
+            'absolute top-0 h-full w-px',
+            progress >= m ? 'bg-white/70' : 'bg-slate-300'
+          )}
+        />
+      ))}
+    </div>
+    <div className="flex items-center justify-between mt-1">
+      <span className="text-[11px] text-slate-400">
+        {completedTasksCount} of {totalTasksCount} tasks completed
+      </span>
+      {project.endDate && (
+        <span className="text-[11px] text-slate-400 flex items-center gap-1">
+          <Calendar className="w-3 h-3" />
+          Due {formatDate(project.endDate)}
+        </span>
+      )}
+    </div>
+    <p className="text-[11px] text-slate-400 mt-0.5">
+      Milestones at {MILESTONES.map((m) => `${m}%`).join(', ')} — the project
+      manager is notified each time one is reached.
+    </p>
+  </div>
+</div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          {
-            icon: ListChecks,
-            label: 'Total Tasks',
-            value: project.tasksCount,
-            color: 'bg-slate-50 text-slate-500'
-          },
-          {
-            icon: CheckCircle2,
-            label: 'Completed',
-            value: tasksByStatus.completed,
-            color: 'bg-green-50 text-green-500'
-          },
-          {
-            icon: Clock,
-            label: 'In Progress',
-            value: tasksByStatus.in_progress,
-            color: 'bg-amber-50 text-amber-500'
-          },
-          {
-            icon: Users,
-            label: 'Members',
-            value: project.members?.length || 0,
-            color: 'bg-violet-50 text-violet-500'
-          },
-        ].map((stat) => {
-          const Icon = stat.icon
-          return (
-            <div
-              key={stat.label}
-              className="bg-card rounded-xl border border-border p-4"
-            >
-              <div className={cn(
-                'w-8 h-8 rounded-lg flex items-center justify-center mb-3',
-                stat.color
-              )}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <p className="text-2xl font-semibold text-foreground leading-none mb-1">
-                {stat.value}
-              </p>
-              <p className="text-xs text-muted-foreground">{stat.label}</p>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-1 border-b border-border">
-        {['overview', 'tasks', 'members'].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={cn(
-              'px-4 py-2.5 text-sm font-medium capitalize border-b-2 -mb-px transition-colors',
-              activeTab === tab
-                ? 'border-violet-600 text-violet-600'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            )}
-          >
-            {tab}
-            {tab === 'tasks' && (
-              <span className="ml-1.5 text-xs bg-slate-100 text-muted-foreground px-1.5 py-0.5 rounded-full">
-                {tasks.length}
-              </span>
-            )}
-            {tab === 'members' && (
-              <span className="ml-1.5 text-xs bg-slate-100 text-muted-foreground px-1.5 py-0.5 rounded-full">
-                {project.members?.length || 0}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* ── Tab: Overview ── */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-          {/* Project Info */}
-          <div className="bg-card rounded-xl border border-border p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-4">
-              Project Info
-            </h3>
-            <div className="space-y-3">
-              {[
-                { label: 'Manager', value: project.manager?.name || 'Unassigned' },
-                { label: 'Status', value: PROJECT_STATUS_LABELS[project.status] || project.status },
-                { label: 'Start Date', value: project.startDate ? formatDate(project.startDate) : '—' },
-                { label: 'End Date', value: project.endDate ? formatDate(project.endDate) : '—' },
-                { label: 'Created', value: project.createdAt ? formatDate(project.createdAt) : '—' },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400">{item.label}</span>
-                  <span className="text-xs font-medium text-foreground">
-                    {item.value}
-                  </span>
-                </div>
-              ))}
-            </div>
+     <div className="grid grid-cols-12 gap-6 items-stretch">
+  
+  {/* Left Sidebar: Cards stretched to match right side height (3 Columns) */}
+  <div className="col-span-12 lg:col-span-3 flex flex-col justify-between gap-3">
+    {[
+      {
+        icon: ListChecks,
+        label: 'Total Tasks',
+        value: project.tasksCount,
+        color: 'bg-slate-50 text-slate-500'
+      },
+      {
+        icon: CheckCircle2,
+        label: 'Completed',
+        value: tasksByStatus.completed,
+        color: 'bg-green-50 text-green-500'
+      },
+      {
+        icon: Clock,
+        label: 'In Progress',
+        value: tasksByStatus.in_progress,
+        color: 'bg-amber-50 text-amber-500'
+      },
+      {
+        icon: Users,
+        label: 'Members',
+        value: project.members?.length || 0,
+        color: 'bg-violet-50 text-violet-500'
+      },
+    ].map((stat) => {
+      const Icon = stat.icon
+      return (
+        <div
+          key={stat.label}
+          className="bg-card rounded-xl border border-border p-3 shadow-xs flex items-center space-x-3 flex-1"
+        >
+          <div className={cn(
+            'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
+            stat.color
+          )}>
+            <Icon className="w-4 h-4" />
           </div>
-
-          {/* Task Status Breakdown */}
-          <div className="bg-card rounded-xl border border-border p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-4">
-              Task Status Breakdown
-            </h3>
-            <div className="space-y-3">
-              {Object.entries(tasksByStatus).map(([status, count]) => {
-                const total = totalTasksCount || 1
-                const pct = Math.round((count / total) * 100)
-                const colors = {
-                  todo: 'bg-slate-300',
-                  in_progress: 'bg-amber-400',
-                  in_review: 'bg-blue-400',
-                  completed: 'bg-green-500',
-                }
-                return (
-                  <div key={status}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-500">
-                        {TASK_STATUS_LABELS[status]}
-                      </span>
-                      <span className="text-xs font-medium text-muted-foreground">
-                        {count} ({pct}%)
-                      </span>
-                    </div>
-                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className={cn('h-full rounded-full', colors[status])}
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+          <div>
+            <p className="text-lg font-semibold text-foreground leading-none mb-0.5">
+              {stat.value}
+            </p>
+            <p className="text-[11px] text-muted-foreground">{stat.label}</p>
           </div>
         </div>
-      )}
+      )
+    })}
+  </div>
 
-      {/* ── Tab: Tasks ── */}
-      {activeTab === 'tasks' && (
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
-          {tasks.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <ListChecks className="w-5 h-5 text-slate-400" />
-              </div>
-              <p className="text-sm font-medium text-muted-foreground">No tasks yet</p>
-              <p className="text-xs text-slate-400 mt-1">
-                Create tasks from the Tasks page
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-slate-100 bg-background">
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
-                      Task
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
-                      Type
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
-                      Priority
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
-                      Status
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
-                      Assignee
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground whitespace-nowrap">
-                      Due Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {tasks.map((task) => {
-                    const overdue =
-                      task.dueDate &&
-                      task.status !== 'completed' &&
-                      isOverdue(task.dueDate)
-                    return (
-                      <tr
-                        key={task.id}
-                        className="hover:bg-background transition-colors"
-                      >
-                        <td className="px-4 py-3">
-                          <p className="text-sm font-medium text-foreground truncate max-w-xs">
-                            {task.title}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3">
-                          <TypeBadge type={task.type} />
-                        </td>
-                        <td className="px-4 py-3">
-                          <PriorityBadge priority={task.priority} />
-                        </td>
-                        <td className="px-4 py-3">
-                          <StatusBadge status={task.status} />
-                        </td>
-                        <td className="px-4 py-3">
-                          {task.assignee ? (
-                            <div className="flex items-center gap-2">
-                              <div className={cn(
-                                'w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0',
-                                getAvatarColor(task.assignee.name)
-                              )}>
-                                {getInitials(task.assignee.name)}
-                              </div>
-                              <span className="text-xs text-muted-foreground whitespace-nowrap">
-                                {task.assignee.name}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-slate-400">
-                              Unassigned
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          {task.dueDate ? (
-                            <div className={cn(
-                              'flex items-center gap-1 text-xs whitespace-nowrap',
-                              overdue ? 'text-red-500' : 'text-muted-foreground'
-                            )}>
-                              {overdue && <AlertTriangle className="w-3 h-3" />}
-                              <Calendar className="w-3 h-3" />
-                              {formatDate(task.dueDate, 'MMM dd')}
-                            </div>
-                          ) : (
-                            <span className="text-xs text-slate-400">—</span>
-                          )}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+  {/* Right Main Area: Tabs & Content (9 Columns) */}
+  <div className="col-span-12 lg:col-span-9 space-y-5">
+
+    {/* Tabs Header */}
+    <div className="flex gap-1 border-b border-border bg-card px-4 pt-2 rounded-xl border">
+      {['overview', 'tasks', 'members'].map((tab) => (
+        <button
+          key={tab}
+          onClick={() => setActiveTab(tab)}
+          className={cn(
+            'px-4 py-2.5 text-sm font-medium capitalize border-b-2 -mb-px transition-colors',
+            activeTab === tab
+              ? 'border-violet-600 text-violet-600'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
           )}
+        >
+          {tab}
+          {tab === 'tasks' && (
+            <span className="ml-1.5 text-xs bg-slate-100 text-muted-foreground px-1.5 py-0.5 rounded-full">
+              {tasks.length}
+            </span>
+          )}
+          {tab === 'members' && (
+            <span className="ml-1.5 text-xs bg-slate-100 text-muted-foreground px-1.5 py-0.5 rounded-full">
+              {project.members?.length || 0}
+            </span>
+          )}
+        </button>
+      ))}
+    </div>
+
+    {/* ── Tab: Overview ── */}
+    {activeTab === 'overview' && (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        {/* Project Info */}
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-4">
+            Project Info
+          </h3>
+          <div className="space-y-3">
+            {[
+              { label: 'Manager', value: project.manager?.name || 'Unassigned' },
+              { label: 'Status', value: PROJECT_STATUS_LABELS[project.status] || project.status },
+              { label: 'Start Date', value: project.startDate ? formatDate(project.startDate) : '—' },
+              { label: 'End Date', value: project.endDate ? formatDate(project.endDate) : '—' },
+              { label: 'Created', value: project.createdAt ? formatDate(project.createdAt) : '—' },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center justify-between">
+                <span className="text-xs text-slate-400">{item.label}</span>
+                <span className="text-xs font-medium text-foreground">
+                  {item.value}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
 
-      {/* ── Tab: Members ── */}
-      {activeTab === 'members' && (
-        <div className="space-y-4">
+        {/* Task Status Breakdown */}
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-4">
+            Task Status Breakdown
+          </h3>
+          <div className="space-y-3">
+            {Object.entries(tasksByStatus).map(([status, count]) => {
+              const total = totalTasksCount || 1
+              const pct = Math.round((count / total) * 100)
+              const colors = {
+                todo: 'bg-slate-300',
+                in_progress: 'bg-amber-400',
+                in_review: 'bg-blue-400',
+                completed: 'bg-green-500',
+              }
+              return (
+                <div key={status}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-slate-500">
+                      {TASK_STATUS_LABELS[status]}
+                    </span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {count} ({pct}%)
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className={cn('h-full rounded-full', colors[status])}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    )}
 
-        {/* Add member — the person added is notified, and so is the manager. */}
+    {/* ── Tab: Tasks ── */}
+    {activeTab === 'tasks' && (
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
+        {tasks.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <ListChecks className="w-5 h-5 text-slate-400" />
+            </div>
+            <p className="text-sm font-medium text-muted-foreground">No tasks yet</p>
+            <p className="text-xs text-slate-400 mt-1">
+              Create tasks from the Tasks page
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-100 bg-background">
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
+                    Task
+                  </th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
+                    Type
+                  </th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
+                    Priority
+                  </th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
+                    Status
+                  </th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
+                    Assignee
+                  </th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground whitespace-nowrap">
+                    Due Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {tasks.map((task) => {
+                  const overdue =
+                    task.dueDate &&
+                    task.status !== 'completed' &&
+                    isOverdue(task.dueDate)
+                  return (
+                    <tr
+                      key={task.id}
+                      className="hover:bg-background transition-colors"
+                    >
+                      <td className="px-4 py-3">
+                        <p className="text-sm font-medium text-foreground truncate max-w-xs">
+                          {task.title}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <TypeBadge type={task.type} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <PriorityBadge priority={task.priority} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={task.status} />
+                      </td>
+                      <td className="px-4 py-3">
+                        {task.assignee ? (
+                          <div className="flex items-center gap-2">
+                            <div className={cn(
+                              'w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0',
+                              getAvatarColor(task.assignee.name)
+                            )}>
+                              {getInitials(task.assignee.name)}
+                            </div>
+                            <span className="text-xs text-muted-foreground whitespace-nowrap">
+                              {task.assignee.name}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-400">
+                            Unassigned
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {task.dueDate ? (
+                          <div className={cn(
+                            'flex items-center gap-1 text-xs whitespace-nowrap',
+                            overdue ? 'text-red-500' : 'text-muted-foreground'
+                          )}>
+                            {overdue && <AlertTriangle className="w-3 h-3" />}
+                            <Calendar className="w-3 h-3" />
+                            {formatDate(task.dueDate, 'MMM dd')}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-400">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* ── Tab: Members ── */}
+    {activeTab === 'members' && (
+      <div className="space-y-4">
         {canEdit && (
           <AddProjectMember
             projectId={project.id}
@@ -649,9 +652,12 @@ export default function ProjectDetailPage({ params }) {
             </table>
           )}
         </div>
-        </div>
-      )}
+      </div>
+    )}
 
+  </div>
+
+</div>
       {/* Edit Modal */}
       {showEditModal && (
         <EditProjectModal
