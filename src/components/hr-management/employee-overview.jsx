@@ -1,14 +1,54 @@
 'use client'
 
-import {
-  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,
-} from '@/components/ui/dialog'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { EmployeeProfile } from './employee-profile'
 
+// Demo profiles only. Replace these records with employee data when needed.
 const MOCK_EMPLOYEES = [
-  { id: '1', name: 'Ananya Rao', role: 'Project Manager', product: 'Varadhi', status: 'Active' },
-  { id: '2', name: 'Rahul Kumar', role: 'Software Engineer', product: 'DeepFace', status: 'Active' },
-  { id: '3', name: 'Priya Sharma', role: 'HR Executive', product: 'HR', status: 'On Leave' },
-  { id: '4', name: 'Arjun Reddy', role: 'UI/UX Designer', product: 'Varadhi', status: 'Active' },
+  {
+    id: '1', name: 'Ananya Rao', role: 'Project Manager', product: 'Varadhi', status: 'Active',
+    joinedDate: '12 Jan 2024', companyExperience: '2 Years 8 Months',
+    email: 'ananya@example.com', gender: 'Female', age: 29, maritalStatus: 'Married',
+    familyName: 'Rao Kumar', shift: '9:30 AM - 6:30 PM',
+    temporaryAddress: 'Chennai, Tamil Nadu', permanentAddress: 'Hyderabad, Telangana',
+    maskedAadhaar: 'XXXX XXXX 4521', education: 'B.E Computer Science',
+    college: 'Anna University', completionYear: 2019,
+    skills: 'Project Management, React', previousCompany: 'ABC Technologies',
+    totalExperience: '6 Years', resignationDate: null,
+  },
+  {
+    id: '2', name: 'Rahul Kumar', role: 'Software Engineer', product: 'DeepFace', status: 'Active',
+    joinedDate: '18 Mar 2025', companyExperience: '1 Year 6 Months',
+    email: 'rahul@example.com', gender: 'Male', age: 26, maritalStatus: 'Single',
+    familyName: 'Suresh Kumar', shift: '9:30 AM - 6:30 PM',
+    temporaryAddress: 'Bengaluru, Karnataka', permanentAddress: 'Coimbatore, Tamil Nadu',
+    maskedAadhaar: 'XXXX XXXX 7832', education: 'B.Tech Information Technology',
+    college: 'Demo Institute of Technology', completionYear: 2021,
+    skills: 'Python, React, Machine Learning', previousCompany: 'Demo Software Labs',
+    totalExperience: '4 Years', resignationDate: null,
+  },
+  {
+    id: '3', name: 'Priya Sharma', role: 'HR Executive', product: 'HR', status: 'On Leave',
+    joinedDate: '08 Jul 2024', companyExperience: '2 Years 2 Months',
+    email: 'priya@example.com', gender: 'Female', age: 28, maritalStatus: 'Single',
+    familyName: 'Rajesh Sharma', shift: '9:00 AM - 6:00 PM',
+    temporaryAddress: 'Chennai, Tamil Nadu', permanentAddress: 'Pune, Maharashtra',
+    maskedAadhaar: 'XXXX XXXX 6194', education: 'MBA Human Resources',
+    college: 'Demo School of Management', completionYear: 2020,
+    skills: 'Recruitment, Employee Relations, Payroll', previousCompany: 'Demo People Services',
+    totalExperience: '5 Years', resignationDate: null,
+  },
+  {
+    id: '4', name: 'Arjun Reddy', role: 'UI/UX Designer', product: 'Varadhi', status: 'Active',
+    joinedDate: '10 Nov 2025', companyExperience: '10 Months',
+    email: 'arjun@example.com', gender: 'Male', age: 25, maritalStatus: 'Single',
+    familyName: 'Venkat Reddy', shift: '10:00 AM - 7:00 PM',
+    temporaryAddress: 'Hyderabad, Telangana', permanentAddress: 'Vijayawada, Andhra Pradesh',
+    maskedAadhaar: 'XXXX XXXX 2058', education: 'Bachelor of Design',
+    college: 'Demo Institute of Design', completionYear: 2022,
+    skills: 'Figma, User Research, Prototyping', previousCompany: 'Demo Design Studio',
+    totalExperience: '3 Years', resignationDate: null,
+  },
 ]
 
 function EmployeeStatus({ status }) {
@@ -50,17 +90,7 @@ export function EmployeeOverview({ employees = MOCK_EMPLOYEES }) {
                     <DialogTrigger asChild>
                       <button type="button" aria-label={`View ${employee.name}'s profile`} className="rounded text-xs font-semibold text-violet-600 hover:text-violet-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600">View</button>
                     </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>{employee.name}</DialogTitle>
-                        <DialogDescription>Employee profile overview</DialogDescription>
-                      </DialogHeader>
-                      <dl className="space-y-3 text-sm">
-                        <div><dt className="text-xs text-slate-500">Role</dt><dd className="mt-1">{employee.role}</dd></div>
-                        <div><dt className="text-xs text-slate-500">Product</dt><dd className="mt-1">{employee.product}</dd></div>
-                        <div><dt className="mb-1 text-xs text-slate-500">Status</dt><dd><EmployeeStatus status={employee.status} /></dd></div>
-                      </dl>
-                    </DialogContent>
+                    <EmployeeProfile employee={employee} />
                   </Dialog>
                 </td>
               </tr>
