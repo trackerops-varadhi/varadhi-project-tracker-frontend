@@ -7,12 +7,14 @@ import { formatRelativeTime } from '@/utils'
 
 function Shell({ children }) {
   return (
-    <div className="bg-card border border-border rounded-xl p-5">
-      <div className="mb-5 flex items-center gap-2">
+    <div className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-3">
+      <div className="mb-3 flex shrink-0 items-center gap-2">
         <Mail className="h-4 w-4 text-amber-600" />
-        <h3 className="text-lg font-semibold text-foreground">Pending Invites</h3>
+        <h3 className="text-xs font-semibold leading-4 text-foreground">Pending Invites</h3>
       </div>
-      {children}
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-1">
+        {children}
+      </div>
     </div>
   )
 }
@@ -74,16 +76,16 @@ export function PendingInvitesCard() {
         {invites.map((invite) => (
           <div
             key={invite.id}
-            className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
+            className="space-y-1.5 rounded-lg border border-border p-2"
           >
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-foreground">
+              <p className="truncate text-[11px] font-medium leading-4 text-foreground">
                 {invite.name || invite.email}
               </p>
-              <p className="truncate text-xs text-muted-foreground">{invite.email}</p>
+              <p title={invite.email} className="truncate text-[10px] leading-4 text-muted-foreground">{invite.email}</p>
             </div>
 
-            <span className="shrink-0 text-xs text-slate-400">
+            <span className="block text-[10px] leading-4 text-slate-400">
               {formatRelativeTime(invite.created_at ?? invite.createdAt)}
             </span>
           </div>

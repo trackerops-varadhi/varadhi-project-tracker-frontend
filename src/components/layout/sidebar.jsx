@@ -503,7 +503,7 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
       )}
     >
       {/* Logo Section */}
-      <div className="flex items-center px-4 py-5 border-b border-slate-100">
+      <div className="flex items-center pl-1 pr-4 py-5 border-b border-slate-100">
         {/* Logo Container */}
         <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 select-none">
           <img
@@ -523,11 +523,12 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
         )}
 
         <button
-          type="button"
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="ml-auto text-slate-400 hover:text-slate-600 flex-shrink-0 p-1 hover:bg-slate-100 rounded-md transition"
-        >
+  type="button"
+  onClick={() => setCollapsed(!collapsed)}
+  aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+  className="ml-auto mr-2 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition-all duration-200 hover:bg-slate-100 hover:text-slate-600
+  "
+>
           {collapsed ? (
             <ChevronRight className="w-4 h-4" />
           ) : (

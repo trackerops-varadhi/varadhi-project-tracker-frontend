@@ -32,7 +32,7 @@ export function KanbanStats() {
 
   if (isLoading) {
     return (
-      <div className="grid w-full min-w-0 grid-cols-4 gap-2 lg:gap-3">
+      <div className="grid w-full min-w-0 grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
@@ -98,7 +98,7 @@ return (
       grid
       w-full
       min-w-0
-      grid-cols-4
+      grid-cols-2 md:grid-cols-4
       gap-2
       lg:gap-3
     "

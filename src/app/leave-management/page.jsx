@@ -127,6 +127,14 @@ export default function ManagerLeavePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { user } = useAuthStore()
+  const userRole = user?.role?.toLowerCase()
+
+const canManageLeave =
+  userRole === 'admin' ||
+  userRole === 'manager'
+
+const isEmployee =
+  userRole === 'employee'
 
   const [rejectReason, setRejectReason] = useState('')
 
@@ -554,31 +562,12 @@ export default function ManagerLeavePage() {
   ===================================================== */
 
   return (
-    <div className="h-full w-full overflow-hidden bg-[#f7f8fc] text-slate-800">
-
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
-      <header className="flex h-[64px] shrink-0 items-center border-b bg-white px-5">
-
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">
-            Leave Management
-          </h1>
-
-          <p className="text-xs text-slate-500">
-            Review and manage leave requests from your team
-          </p>
-        </div>
-
-      </header>
-
-      {/* =================================================
+<div className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-[#f7f8fc] text-slate-800">
+{/* =================================================
           MAIN
       ================================================= */}
 
-      <main className="h-[calc(100vh-64px)] overflow-y-auto overflow-x-hidden p-4 lg:p-5">
+      <main className="flex min-h-0 flex-1 flex-col overflow-hidden p-3">
 
         {/* =================================================
             TITLE
@@ -587,25 +576,32 @@ export default function ManagerLeavePage() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
-              Team Leave Requests
-            </h2>
+           <div>
+  <h2 className="text-lg font-bold text-slate-900">
+    {canManageLeave
+      ? 'Team Leave Requests'
+      : 'My Leave Requests'}
+  </h2>
 
-            <p className="text-xs text-slate-500">
-              Review, approve or reject employee leave requests
-            </p>
+  <p className="text-xs text-slate-500">
+    {canManageLeave
+      ? 'Review, approve or reject employee leave requests'
+      : 'View and manage your leave requests'}
+  </p>
+</div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
 
-            <button
-              onClick={() => setShowReports(true)}
-              className="flex items-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-medium shadow-sm transition hover:bg-slate-50"
-            >
-              <Download size={17} />
-
-              Leave Reports
-            </button>
+            {canManageLeave && (
+  <button
+    onClick={() => setShowReports(true)}
+    className="flex items-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-medium shadow-sm transition hover:bg-slate-50"
+  >
+    <Download size={17} />
+    Leave Reports
+  </button>
+)}
 
             {/* Anyone signed in can apply for their own leave — the backend
                 takes user_id from the token, so this is not a privileged
@@ -626,7 +622,7 @@ export default function ManagerLeavePage() {
         {/* =================================================
             STATISTICS
         ================================================= */}
-
+{canManageLeave && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
 
           <StatCard
@@ -675,12 +671,13 @@ export default function ManagerLeavePage() {
           />
 
         </div>
+)}
 
         {/* =================================================
             CONFLICT ALERT
         ================================================= */}
 
-        {conflicts.length > 0 && (
+        {canManageLeave && conflicts.length > 0 && (
           <div className="mt-4 rounded-xl border border-orange-200 bg-orange-50 p-4">
 
             <div className="flex items-start gap-3">
@@ -725,13 +722,17 @@ export default function ManagerLeavePage() {
 
             <div>
 
-              <h3 className="font-semibold text-slate-900">
-                Leave Requests
-              </h3>
+            <h3 className="font-semibold text-slate-900">
+  {canManageLeave
+    ? 'Leave Requests'
+    : 'My Leave Requests'}
+</h3>
 
-              <p className="text-xs text-slate-500">
-                {pendingRequests.length} requests waiting for approval
-              </p>
+<p className="text-xs text-slate-500">
+  {canManageLeave
+    ? `${pendingRequests.length} requests waiting for approval`
+    : 'Track the status of your leave applications'}
+</p>
 
             </div>
 
@@ -800,7 +801,7 @@ export default function ManagerLeavePage() {
           {/* =================================================
               BULK ACTION
           ================================================= */}
-
+{canManageLeave && (
           <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-slate-50 px-4 py-3">
 
             <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600">
@@ -833,6 +834,7 @@ export default function ManagerLeavePage() {
             )}
 
           </div>
+)}
 
           {/* =================================================
               TABLE
@@ -931,7 +933,7 @@ export default function ManagerLeavePage() {
 
                       <td className="px-4 py-3">
 
-                        {request.status === 'Pending' ? (
+{canManageLeave && request.status === 'Pending' ? (
 
                           <input
                             type="checkbox"
@@ -1073,25 +1075,24 @@ export default function ManagerLeavePage() {
                             <Eye size={15} />
                           </button>
 
-                          {/* APPROVE */}
-
-                          {request.status === 'Pending' && (
-
-                            <button
-                              onClick={() =>
-                                approveLeave(request.id)
-                              }
-                              title="Approve Leave"
-                              className="rounded-lg border border-green-200 p-2 text-green-600 transition hover:bg-green-50"
-                            >
-                              <Check size={15} />
-                            </button>
-
-                          )}
+{canManageLeave &&
+  request.status === 'Pending' && (
+    <button
+      onClick={() =>
+        approveLeave(request.id)
+      }
+      title="Approve Leave"
+      className="rounded-lg border border-green-200 p-2 text-green-600 transition hover:bg-green-50"
+    >
+      <Check size={15} />
+    </button>
+  )}
+                        
 
                           {/* REJECT */}
 
-                          {request.status === 'Pending' && (
+                          {canManageLeave &&
+  request.status === 'Pending' && (
 
                             <button
                               onClick={() =>
@@ -1239,7 +1240,8 @@ export default function ManagerLeavePage() {
 
               {/* ACTIONS */}
 
-              {selectedRequest.status === 'Pending' && (
+              {canManageLeave &&
+  selectedRequest.status === 'Pending' && (
 
                 <div className="flex gap-2 pt-2">
 

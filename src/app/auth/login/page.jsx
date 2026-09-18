@@ -47,7 +47,7 @@ export default function LoginPage() {
 
             {/* Footer */}
             <p className="text-center text-sm text-slate-400 mt-6">
-              Internal tool — Varadhi Club © 2026
+              Varadhi Club © 2026
             </p>
 
           </div>

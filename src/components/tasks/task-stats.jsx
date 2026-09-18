@@ -44,100 +44,30 @@ export function TaskStats() {
     }
   }, [])
 
-  /* =====================================================
-     SAME GRID FOR LOADING + REAL CARDS
-     5 CARDS ALWAYS IN ONE ROW
-  ====================================================== */
-
-  const gridStyle = {
-    gridTemplateColumns:
-      'repeat(5, minmax(0, 1fr))',
-  }
-
-  /* =====================================================
-     LOADING
-  ====================================================== */
-
   if (isLoading) {
     return (
-      <div
-        className="
-          grid
-          w-full
-          min-w-0
-          gap-2
-        "
-        style={gridStyle}
-      >
-        {[0, 1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            className="
-              h-[76px]
-              min-h-0
-              min-w-0
-              overflow-hidden
-              rounded-xl
-              border
-              border-border
-              bg-card
-              px-3
-              py-2
-            "
-          >
-            <div className="flex h-full animate-pulse items-center gap-3">
-
-              {/* ICON */}
-              <div
-                className="
-                  h-8
-                  w-8
-                  shrink-0
-                  rounded-lg
-                  bg-slate-100
-                "
-              />
-
-              {/* TEXT */}
-              <div className="min-w-0 flex-1">
-                <div className="mb-1 h-5 w-10 rounded bg-slate-100" />
-                <div className="mb-1 h-2.5 w-16 rounded bg-slate-100" />
-                <div className="h-2 w-20 max-w-full rounded bg-slate-100" />
-              </div>
-
+      <div className="task-summary-grid" style={{ display: 'grid', height: '100%', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 10 }} role="status" aria-label="Loading task statistics">
+        {Array.from({ length: 5 }, (_, index) => (
+          <div key={index} className="min-w-0 animate-pulse rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="h-3 w-20 rounded bg-slate-100" />
+              <div className="h-4 w-4 rounded bg-slate-100" />
             </div>
+            <div className="h-7 w-12 rounded bg-slate-100" />
+            <div className="mt-2 h-3 w-24 rounded bg-slate-100" />
           </div>
         ))}
       </div>
     )
   }
 
-  /* =====================================================
-     ERROR
-  ====================================================== */
-
   if (error || !stats) {
     return (
-      <div
-        className="
-          rounded-xl
-          border
-          border-border
-          bg-card
-          px-4
-          py-3
-          text-xs
-          text-muted-foreground
-        "
-      >
+      <div role="status" className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500">
         {error ?? 'No task statistics available.'}
       </div>
     )
   }
-
-  /* =====================================================
-     CARDS
-  ====================================================== */
 
   const cards = [
     {
@@ -148,7 +78,6 @@ export function TaskStats() {
           ? `+${stats.completedThisWeek} this week`
           : 'Across all projects',
       icon: CheckSquare,
-      iconBg: 'bg-violet-100',
       iconColor: 'text-violet-600',
     },
 
@@ -157,7 +86,6 @@ export function TaskStats() {
       value: stats.completed ?? 0,
       subtitle: `${stats.completedPercent ?? 0}% of total`,
       icon: CheckCircle2,
-      iconBg: 'bg-green-100',
       iconColor: 'text-green-600',
     },
 
@@ -166,7 +94,6 @@ export function TaskStats() {
       value: stats.inProgress ?? 0,
       subtitle: `${stats.inProgressPercent ?? 0}% of total`,
       icon: Clock3,
-      iconBg: 'bg-blue-100',
       iconColor: 'text-blue-600',
     },
 
@@ -175,7 +102,6 @@ export function TaskStats() {
       value: stats.overdue ?? 0,
       subtitle: `${stats.overduePercent ?? 0}% of total`,
       icon: AlertTriangle,
-      iconBg: 'bg-red-100',
       iconColor: 'text-red-600',
     },
 
@@ -184,134 +110,25 @@ export function TaskStats() {
       value: stats.inReview ?? 0,
       subtitle: `${stats.inReviewPercent ?? 0}% of total`,
       icon: Eye,
-      iconBg: 'bg-amber-100',
       iconColor: 'text-amber-600',
     },
   ]
 
-  /* =====================================================
-     REAL CONTENT
-  ====================================================== */
-
   return (
-    <div
-      className="
-        grid
-        w-full
-        min-w-0
-        gap-2
-      "
-      style={gridStyle}
-    >
+    <div className="task-summary-grid" style={{ display: 'grid', height: '100%', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 10 }}>
       {cards.map((card) => {
         const Icon = card.icon
 
         return (
-          <div
-            key={card.title}
-            className="
-              h-[76px]
-              min-h-0
-              min-w-0
-              overflow-hidden
-              rounded-xl
-              border
-              border-border
-              bg-card
-              px-3
-              py-2
-              shadow-sm
-            "
-          >
-            <div
-              className="
-                flex
-                h-full
-                min-w-0
-                items-center
-                gap-3
-              "
-            >
-              {/* =========================================
-                  ICON
-              ========================================== */}
-
-              <div
-                className={`
-                  flex
-                  h-8
-                  w-8
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-lg
-                  ${card.iconBg}
-                `}
-              >
-                <Icon
-                  className={`
-                    h-4
-                    w-4
-                    ${card.iconColor}
-                  `}
-                />
-              </div>
-
-              {/* =========================================
-                  CONTENT
-              ========================================== */}
-
-              <div
-                className="
-                  min-w-0
-                  flex-1
-                  overflow-hidden
-                "
-              >
-                {/* VALUE */}
-
-                <h3
-                  className="
-                    truncate
-                    text-lg
-                    font-bold
-                    leading-5
-                    text-foreground
-                  "
-                >
-                  {card.value}
-                </h3>
-
-                {/* TITLE */}
-
-                <p
-                  className="
-                    truncate
-                    text-[11px]
-                    font-medium
-                    leading-4
-                    text-muted-foreground
-                  "
-                >
-                  {card.title}
-                </p>
-
-                {/* SUBTITLE */}
-
-                <p
-                  className="
-                    truncate
-                    text-[9px]
-                    leading-3
-                    text-slate-400
-                  "
-                  title={card.subtitle}
-                >
-                  {card.subtitle}
-                </p>
-              </div>
-
+          <div key={card.title} className="flex min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-xs font-semibold text-slate-700">{card.title}</h2>
+              <Icon aria-hidden="true" className={`h-4 w-4 shrink-0 ${card.iconColor}`} />
             </div>
+            <p className="mt-2 break-words text-2xl font-bold leading-tight tabular-nums text-slate-900">
+              {card.value}
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-slate-500">{card.subtitle}</p>
           </div>
         )
       })}

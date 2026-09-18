@@ -1,108 +1,139 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Card } from '@/components/ui/card'
-import { tasksApi } from '@/lib/api/tasks.api'
-import { formatDueLabel, priorityBadgeClass } from '@/lib/deadline-format'
+'use client';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Card } from '@/components/ui/card';
+import { tasksApi } from '@/lib/api/tasks.api';
+import { formatDueLabel, priorityBadgeClass } from '@/lib/deadline-format';
 
 function Shell({ children }) {
   return (
-    <Card className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground">Upcoming Deadlines</h3>
-        <Link href="/tasks" className="text-xs font-medium text-violet-600 hover:underline">
-          View All
-        </Link>
+    <Card
+      className='flex h-full min-h-0 min-w-0 flex-col gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm'>
+      <div className='mb-1.5 flex shrink-0 items-center justify-between gap-2'>
+        <h3 className='min-w-0 truncate text-sm font-semibold text-slate-800'>Upcoming Deadlines</h3>
+        <Link href='/tasks' className='shrink-0 whitespace-nowrap text-xs font-medium text-violet-600 hover:underline'>View All</Link>
       </div>
-      {children}
+      <div className='deadline-content min-h-0 min-w-0 flex-1'>
+        {children}
+      </div>
     </Card>
-  )
+  );
 }
 
 export function UpcomingDeadlines() {
-  const [tasks, setTasks] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [tasks, setTasks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let cancelled = false
+    let cancelled = false;
+
     async function load() {
       try {
-        const data = await tasksApi.getUpcoming({ limit: 4, days: 30 })
-        if (!cancelled) setTasks(data ?? [])
+        const data = await tasksApi.getUpcoming({
+          limit: 4,
+          days: 30
+        });
+
+        if (!cancelled) {
+          setTasks(data ?? []);
+        }
       } catch {
-        if (!cancelled) setError('Failed to load deadlines.')
+        if (!cancelled) {
+          setError('Failed to load deadlines.');
+        }
       } finally {
-        if (!cancelled) setIsLoading(false)
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     }
-    load()
-    return () => { cancelled = true }
-  }, [])
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /* =====================================================
+           LOADING
+        ====================================================== */
 
   if (isLoading) {
     return (
       <Shell>
-        <div className="space-y-3">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="animate-pulse space-y-2">
-              <div className="h-3 w-3/4 rounded bg-slate-100" />
-              <div className="h-3 w-1/2 rounded bg-slate-100" />
-            </div>
-          ))}
+        <div className='space-y-1.5'>
+          {[0, 1, 2].map(i => (<div key={i} className='animate-pulse rounded-lg border border-slate-100 px-2 py-1.5'>
+            <div className='mb-1 h-2 w-3/4 rounded bg-slate-100' />
+            <div className='h-2 w-1/2 rounded bg-slate-100' />
+          </div>))}
         </div>
       </Shell>
-    )
+    );
   }
+
+  /* =====================================================
+           ERROR
+        ====================================================== */
 
   if (error) {
     return (
       <Shell>
-        <p className="text-sm text-muted-foreground">{error}</p>
+        <div className='flex h-full items-center'>
+          <p className='text-xs text-slate-500'>
+            {error}
+          </p>
+        </div>
       </Shell>
-    )
+    );
   }
+
+  /* =====================================================
+           EMPTY
+        ====================================================== */
 
   if (tasks.length === 0) {
     return (
       <Shell>
-        <p className="py-4 text-sm text-muted-foreground">No upcoming deadlines.</p>
+        <div className='flex h-full items-center'>
+          <p className='text-xs text-slate-500'>No upcoming deadlines.</p>
+        </div>
       </Shell>
-    )
+    );
   }
+
+  /* =====================================================
+           DATA
+        ====================================================== */
 
   return (
     <Shell>
-      <div className="space-y-3">
-        {tasks.map((task) => (
-          <Link
-            key={task.id}
-            href={`/tasks/${task.id}`}
-            className="block rounded-lg border border-border p-3 transition hover:bg-slate-50"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <p className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
-                {task.title}
-              </p>
-              <span
-                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${priorityBadgeClass(
-                  task.priority
-                )}`}
-              >
-                {task.priority}
-              </span>
-            </div>
-
-            <div className="mt-1 flex items-center justify-between text-xs">
-              <span className="truncate text-slate-400">{task.projectName ?? 'No project'}</span>
-              <span className={task.isOverdue ? 'font-medium text-red-600' : 'text-muted-foreground'}>
-                {formatDueLabel(task.daysLeft, task.dueDate)}
-              </span>
-            </div>
-          </Link>
-        ))}
+      <div className='deadline-items'>
+        {tasks.map(task => (<Link
+          key={task.id}
+          href={`/tasks/${task.id}`}
+          className='deadline-item min-w-0 rounded-lg transition-colors'>
+          <div className='flex min-w-0 items-center justify-between gap-1.5'>
+            <p title={task.title} className='min-w-0 flex-1 truncate text-xs font-semibold leading-tight text-slate-800'>
+              {task.title}
+            </p>
+            <span
+              className={`shrink-0 whitespace-nowrap rounded-full px-1.5 py-[1px] text-xs font-medium leading-tight ${priorityBadgeClass(task.priority)}`}>
+              {task.priority}
+            </span>
+          </div>
+          <div className='mt-1 flex min-w-0 items-center justify-between gap-1.5'>
+            <span className='min-w-0 flex-1 truncate text-xs leading-tight text-slate-400'>
+              {task.projectName ?? 'No project'}
+            </span>
+            <span
+              className={`shrink-0 whitespace-nowrap text-xs leading-tight ${task.isOverdue ? 'font-medium text-red-600' : 'text-slate-500'}`}>
+              {formatDueLabel(task.daysLeft, task.dueDate)}
+            </span>
+          </div>
+        </Link>))}
       </div>
     </Shell>
-  )
+  );
 }

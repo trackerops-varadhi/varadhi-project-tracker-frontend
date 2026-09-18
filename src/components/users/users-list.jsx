@@ -71,7 +71,7 @@ const STATUS_CONFIG = {
    USERS LIST
 ========================================================= */
 
-export function UsersList() {
+export function UsersList({ leftColumn, rightColumn }) {
   const { user: currentUser } = useAuthStore()
   const searchParams = useSearchParams()
 
@@ -345,6 +345,9 @@ export function UsersList() {
         ))}
       </div>
 
+      <div className="users-columns">
+        <aside className="users-left">{leftColumn}</aside>
+        <div className="users-directory flex min-h-0 min-w-0 flex-col rounded-xl border border-border bg-card p-3">
       {/* ===================================================
           COMPACT TOOLBAR
       ==================================================== */}
@@ -967,6 +970,10 @@ export function UsersList() {
               </div>
             )}
         </div>
+      </div>
+
+        </div>
+        <aside className="users-right">{rightColumn}</aside>
       </div>
 
       {/* ===================================================

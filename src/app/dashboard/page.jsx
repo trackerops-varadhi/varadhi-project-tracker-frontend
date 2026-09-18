@@ -16,293 +16,276 @@ export const metadata = {
 
 export default function DashboardPage() {
   return (
-    <main
-      className="
-        box-border
-        h-[calc(100dvh-60px)]
-        max-h-[calc(100dvh-60px)]
-        min-h-0
-        w-full
-        min-w-0
-        overflow-hidden
-        overscroll-none
-        bg-slate-50
-      "
-    >
+    <div className="dashboard-page bg-slate-50">
+      <input
+        className="dashboard-panel-choice"
+        type="radio"
+        name="dashboard-panel"
+        id="dashboard-overview"
+        defaultChecked
+      />
+      <input
+        className="dashboard-panel-choice"
+        type="radio"
+        name="dashboard-panel"
+        id="dashboard-activity"
+      />
+      <input
+        className="dashboard-panel-choice"
+        type="radio"
+        name="dashboard-panel"
+        id="dashboard-timeline"
+      />
+      <div className="dashboard-mobile-navigation" role="group" aria-label="Dashboard sections">
+        <label htmlFor="dashboard-overview">Overview</label>
+        <label htmlFor="dashboard-activity">Activity</label>
+        <label htmlFor="dashboard-timeline">Timeline</label>
+      </div>
       {/* =====================================================
-          DASHBOARD WRAPPER
-
-          IMPORTANT:
-          h-full + min-h-0 + overflow-hidden
-
-          Nothing inside this wrapper is allowed to increase
-          the page height.
+          TOP FILTER
       ====================================================== */}
 
-      <div
-        className="
-          mx-auto
-          flex
-          h-full
-          max-h-full
-          min-h-0
-          w-full
-          min-w-0
-          max-w-[1500px]
-          flex-col
-          overflow-hidden
-          px-4
-          pb-2
-        "
-      >
-        {/* =================================================
-            TOP FILTER
-        ================================================== */}
-
-        <div
+      <div className="dashboard-filter">
+        <button
+          type="button"
           className="
-            mb-2
             flex
             h-7
-            min-h-0
             shrink-0
             items-center
-            justify-end
-            overflow-hidden
+            gap-1.5
+            rounded-lg
+            border
+            border-slate-200
+            bg-white
+            px-3
+            text-[11px]
+            font-medium
+            text-slate-700
+            shadow-sm
+            transition
+            hover:bg-slate-50
           "
         >
-          <button
-            type="button"
-            className="
-              flex
-              h-7
-              shrink-0
-              items-center
-              gap-1.5
-              rounded-lg
-              border
-              border-slate-200
-              bg-white
-              px-3
-              text-[11px]
-              font-medium
-              text-slate-700
-              shadow-sm
-              transition
-              hover:bg-slate-50
-            "
-          >
-            This week
+          This week
 
-            <ChevronDown className="h-3.5 w-3.5 shrink-0" />
-          </button>
+          <ChevronDown className="h-3.5 w-3.5 shrink-0" />
+        </button>
+      </div>
+
+      {/* =====================================================
+          STATS
+      ====================================================== */}
+
+      <section className="dashboard-stats">
+        <StatsCards />
+      </section>
+
+      {/* =====================================================
+          ROW 1
+      ====================================================== */}
+
+      <section className="dashboard-row-one">
+        <div className="dashboard-card-slot">
+          <ProjectHealth />
         </div>
 
-        {/* =================================================
-            STATS
-            FIXED HEIGHT
-        ================================================== */}
+        <div className="dashboard-card-slot">
+          <TasksOverview />
+        </div>
 
-        <section
-          className="
-            mb-2
-            h-[82px]
-            min-h-[82px]
-            shrink-0
-            overflow-hidden
-          "
-        >
-          <div className="h-full min-h-0 w-full min-w-0 overflow-hidden">
-            <StatsCards />
-          </div>
-        </section>
+        <div className="dashboard-card-slot dashboard-deadlines">
+          <UpcomingDeadlines />
+        </div>
+      </section>
 
-        {/* =================================================
-            MAIN DASHBOARD
+      {/* =====================================================
+          ROW 2
+      ====================================================== */}
 
-            Uses ALL remaining height.
-            No page-level scrolling.
-        ================================================== */}
+      <section className="dashboard-row-two">
+        <div className="dashboard-card-slot">
+          <RecentActivity />
+        </div>
 
-        <section
-          className="
-            grid
-            h-full
-            min-h-0
-            min-w-0
-            flex-1
-            gap-2
-            overflow-hidden
-          "
-          style={{
-            gridTemplateRows:
-              'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)',
-          }}
-        >
-          {/* =================================================
-              ROW 1
+        <div className="dashboard-card-slot">
+          <ProjectProgress />
+        </div>
 
-              Project Health
-              Tasks Overview
-              Upcoming Deadlines
-          ================================================== */}
+        <div className="dashboard-card-slot">
+          <NotificationsCard />
+        </div>
 
-          <div
-            className="
-              grid
-              h-full
-              min-h-0
-              min-w-0
-              gap-2
-              overflow-hidden
-            "
-            style={{
-              gridTemplateColumns:
-                'minmax(0,1fr) minmax(0,1fr) minmax(0,1.7fr)',
-            }}
-          >
-            {/* PROJECT HEALTH */}
+        <div className="dashboard-card-slot">
+          <CalendarSyncWidget />
+        </div>
+      </section>
 
-            <div
-              className="
-                h-full
-                max-h-full
-                min-h-0
-                min-w-0
-                overflow-hidden
-              "
-            >
-              <ProjectHealth />
-            </div>
+      {/* =====================================================
+          ROW 3
+      ====================================================== */}
 
-            {/* TASKS OVERVIEW */}
+      <section className="dashboard-gantt">
+        <GanttPreview />
+      </section>
 
-            <div
-              className="
-                h-full
-                max-h-full
-                min-h-0
-                min-w-0
-                overflow-hidden
-              "
-            >
-              <TasksOverview />
-            </div>
+      <style>{`
 
-            {/* UPCOMING DEADLINES */}
+        .dashboard-shell > div > header {
+          flex-shrink: 0;
+        }
 
-            <div
-              className="
-                h-full
-                max-h-full
-                min-h-0
-                min-w-0
-                overflow-hidden
-              "
-            >
-              <UpcomingDeadlines />
-            </div>
-          </div>
+        .dashboard-page {
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          max-width: 1500px;
+          height: 100%;
+          min-height: 0;
+          margin: 0 auto;
+          padding: 0 16px 8px;
+          overflow: hidden;
+        }
 
-          {/* =================================================
-              ROW 2
+        .dashboard-filter {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          height: 28px;
+          flex-shrink: 0;
+          margin-bottom: 6px;
+        }
 
-              Recent Activity
-              Project Progress
-              Notifications
-              Calendar Sync
-          ================================================== */}
+        .dashboard-stats {
+          flex: 0 0 76px;
+          min-width: 0;
+          min-height: 0;
+          margin-bottom: 8px;
+          overflow: hidden;
+        }
 
-          <div
-            className="
-              grid
-              h-full
-              min-h-0
-              min-w-0
-              gap-2
-              overflow-hidden
-            "
-            style={{
-              gridTemplateColumns:
-                'repeat(4,minmax(0,1fr))',
-            }}
-          >
-            {/* RECENT ACTIVITY */}
+        .dashboard-stats > div {
+          height: 100%;
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
 
-            <div
-              className="
-                h-full
-                max-h-full
-                min-h-0
-                min-w-0
-                overflow-hidden
-              "
-            >
-              <RecentActivity />
-            </div>
+        .dashboard-row-one,
+        .dashboard-row-two {
+          display: grid;
+          gap: 8px;
+          flex: 1 1 0;
+          min-width: 0;
+          min-height: 0;
+          margin-bottom: 8px;
+        }
 
-            {/* PROJECT PROGRESS */}
+        .dashboard-row-one {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.7fr);
+        }
 
-            <div
-              className="
-                h-full
-                max-h-full
-                min-h-0
-                min-w-0
-                overflow-hidden
-              "
-            >
-              <ProjectProgress />
-            </div>
+        .dashboard-row-two {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
 
-            {/* NOTIFICATIONS */}
+        .dashboard-card-slot {
+          width: 100%;
+          height: 100%;
+          min-width: 0;
+          min-height: 0;
+          overflow: hidden;
+        }
 
-            <div
-              className="
-                h-full
-                max-h-full
-                min-h-0
-                min-w-0
-                overflow-hidden
-              "
-            >
-              <NotificationsCard />
-            </div>
+        .dashboard-gantt {
+          flex: 0.9 1 0;
+          min-width: 0;
+          min-height: 105px;
+          overflow: hidden;
+        }
 
-            {/* CALENDAR SYNC */}
+        .dashboard-panel-choice,
+        .dashboard-mobile-navigation {
+          display: none;
+        }
 
-            <div
-              className="
-                h-full
-                max-h-full
-                min-h-0
-                min-w-0
-                overflow-hidden
-              "
-            >
-              <CalendarSyncWidget />
-            </div>
-          </div>
+        .dashboard-canvas[data-mobile="true"] .dashboard-page {
+          padding: 0 0 4px;
+        }
 
-          {/* =================================================
-              ROW 3
+        .dashboard-canvas[data-mobile="true"] .dashboard-panel-choice {
+          display: block;
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          clip-path: inset(50%);
+          overflow: hidden;
+        }
 
-              GANTT — FULL WIDTH
-          ================================================== */}
+        .dashboard-canvas[data-mobile="true"] .dashboard-mobile-navigation {
+          display: flex;
+          flex-shrink: 0;
+          gap: 4px;
+          margin-bottom: 8px;
+        }
 
-          <div
-            className="
-              h-full
-              max-h-full
-              min-h-0
-              min-w-0
-              overflow-hidden
-            "
-          >
-            <GanttPreview />
-          </div>
-        </section>
-      </div>
-    </main>
+        .dashboard-mobile-navigation label {
+          flex: 1;
+          padding: 8px 4px;
+          border-radius: 8px;
+          background: white;
+          color: #475569;
+          text-align: center;
+          font-size: 12px;
+          cursor: pointer;
+        }
+
+        #dashboard-overview:checked ~ .dashboard-mobile-navigation label[for="dashboard-overview"],
+        #dashboard-activity:checked ~ .dashboard-mobile-navigation label[for="dashboard-activity"],
+        #dashboard-timeline:checked ~ .dashboard-mobile-navigation label[for="dashboard-timeline"] {
+          background: #ede9fe;
+          color: #6d28d9;
+          font-weight: 600;
+        }
+
+        .dashboard-panel-choice:focus-visible ~ .dashboard-mobile-navigation {
+          outline: 2px solid #7c3aed;
+          outline-offset: 2px;
+        }
+
+        .dashboard-canvas[data-mobile="true"] .dashboard-stats {
+          flex-basis: 152px;
+        }
+
+        .dashboard-canvas[data-mobile="true"] .dashboard-stats > div {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-rows: repeat(2, minmax(0, 1fr));
+        }
+
+        .dashboard-canvas[data-mobile="true"] .dashboard-row-one,
+        .dashboard-canvas[data-mobile="true"] .dashboard-row-two {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-rows: repeat(2, minmax(0, 1fr));
+          margin-bottom: 0;
+        }
+
+        .dashboard-canvas[data-mobile="true"] .dashboard-deadlines {
+          grid-column: 1 / -1;
+        }
+
+        .dashboard-canvas[data-mobile="true"] #dashboard-overview:not(:checked) ~ .dashboard-row-one,
+        .dashboard-canvas[data-mobile="true"] #dashboard-activity:not(:checked) ~ .dashboard-row-two,
+        .dashboard-canvas[data-mobile="true"] #dashboard-timeline:not(:checked) ~ .dashboard-gantt {
+          display: none;
+        }
+
+        @media (max-width: 767px) {
+          .dashboard-shell > div > header {
+            gap: 8px;
+            padding-left: 8px;
+            padding-right: 8px;
+          }
+        }
+      `}</style>
+    </div>
   )
 }

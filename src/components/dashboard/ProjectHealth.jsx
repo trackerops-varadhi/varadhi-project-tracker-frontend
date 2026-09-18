@@ -7,7 +7,9 @@ import {
   RadialBarChart,
   RadialBar,
   PolarAngleAxis,
+  ResponsiveContainer,
 } from 'recharts'
+
 import { dashboardApi } from '@/lib/api/dashboard.api'
 
 const HEALTH_STYLES = {
@@ -26,22 +28,6 @@ const HEALTH_STYLES = {
     dot: 'bg-red-500',
     text: 'text-red-600',
   },
-}
-
-function Shell({ children }) {
-  return (
-    <Card className="h-full min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex h-[30px] items-center justify-between px-3">
-        <h3 className="truncate text-[11px] font-semibold text-slate-800">
-          Project Health Overview
-        </h3>
-
-  
-      </div>
-
-      {children}
-    </Card>
-  )
 }
 
 export function ProjectHealth() {
@@ -77,28 +63,6 @@ export function ProjectHealth() {
     }
   }, [])
 
-  if (loading) {
-    return (
-      <Shell>
-        <div className="flex h-[105px] items-center px-3">
-          <div className="h-[78px] w-[78px] animate-pulse rounded-full bg-slate-100" />
-        </div>
-      </Shell>
-    )
-  }
-
-  if (error) {
-    return (
-      <Shell>
-        <div className="flex h-[105px] items-center justify-center px-3">
-          <p className="text-[9px] text-slate-500">
-            {error}
-          </p>
-        </div>
-      </Shell>
-    )
-  }
-
   const overall = data?.overallPercent ?? 0
   const projects = (data?.projects ?? []).slice(0, 4)
 
@@ -110,89 +74,125 @@ export function ProjectHealth() {
   ]
 
   return (
-    <Shell>
-      <div className="flex h-[105px] items-center px-3 pb-2">
+    <Card className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
 
-        {/* LEFT DONUT */}
-        <div className="flex w-[92px] shrink-0 items-center">
-          <RadialBarChart
-            width={88}
-            height={88}
-            data={chartData}
-            innerRadius="68%"
-            outerRadius="88%"
-            startAngle={90}
-            endAngle={-270}
-            barSize={7}
-          >
-            <PolarAngleAxis
-              type="number"
-              domain={[0, 100]}
-              tick={false}
-            />
+      {/* TITLE - SAME CARD */}
+      <h3 className="shrink-0 truncate text-[11px] font-semibold text-slate-800 sm:text-xs">
+        Project Health Overview
+      </h3>
 
-            <RadialBar
-              dataKey="value"
-              background={{ fill: '#ECEEF3' }}
-              cornerRadius={20}
-            />
+      {/* LOADING - SAME CARD */}
+      {loading && (
+        <div className="flex min-h-0 min-w-0 flex-1 items-center gap-2">
+          <div className="h-[68px] w-[68px] shrink-0 animate-pulse rounded-full bg-slate-100 sm:h-[76px] sm:w-[76px]" />
 
-            <text
-              x="50%"
-              y="42%"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="fill-slate-500 text-[6px]"
-            >
-              Health
-            </text>
-
-            <text
-              x="50%"
-              y="59%"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="fill-slate-900 text-[15px] font-bold"
-            >
-              {overall}%
-            </text>
-          </RadialBarChart>
-        </div>
-
-        {/* RIGHT INFO */}
-        <div className="min-w-0 flex-1 pl-2">
-          <div className="space-y-2">
-            {projects.map((project) => {
-              const style =
-                HEALTH_STYLES[project.health] ??
-                HEALTH_STYLES.on_track
-
-              return (
-                <div
-                  key={project.id}
-                  className="flex min-w-0 items-center justify-between gap-2"
-                >
-                  <div className="flex min-w-0 items-center gap-1.5">
-                    <span
-                      className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot}`}
-                    />
-
-                    <span className="truncate text-[9px] font-medium text-slate-600">
-                      {project.name}
-                    </span>
-                  </div>
-
-                  <span
-                    className={`shrink-0 text-[8px] font-medium ${style.text}`}
-                  >
-                    {style.label}
-                  </span>
-                </div>
-              )
-            })}
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <div className="h-2 w-full rounded bg-slate-100" />
+            <div className="h-2 w-5/6 rounded bg-slate-100" />
+            <div className="h-2 w-4/6 rounded bg-slate-100" />
           </div>
         </div>
-      </div>
-    </Shell>
+      )}
+
+      {/* ERROR - SAME CARD */}
+      {!loading && error && (
+        <div className="flex min-h-0 flex-1 items-center justify-center">
+          <p className="text-[8px] text-slate-500">
+            {error}
+          </p>
+        </div>
+      )}
+
+      {/* MAIN CONTENT - SAME CARD */}
+      {!loading && !error && (
+        <div className="flex min-h-0 min-w-0 flex-1 items-center gap-2">
+
+          {/* DONUT */}
+          <div className="h-[68px] w-[68px] shrink-0 sm:h-[76px] sm:w-[76px] lg:h-[82px] lg:w-[82px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadialBarChart
+                data={chartData}
+                innerRadius="68%"
+                outerRadius="88%"
+                startAngle={90}
+                endAngle={-270}
+                barSize={7}
+              >
+                <PolarAngleAxis
+                  type="number"
+                  domain={[0, 100]}
+                  tick={false}
+                />
+
+                <RadialBar
+                  dataKey="value"
+                  background={{ fill: '#ECEEF3' }}
+                  cornerRadius={20}
+                />
+
+                <text
+                  x="50%"
+                  y="42%"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="fill-slate-500 text-[6px]"
+                >
+                  Health
+                </text>
+
+                <text
+                  x="50%"
+                  y="59%"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="fill-slate-900 text-[13px] font-bold sm:text-[14px]"
+                >
+                  {overall}%
+                </text>
+              </RadialBarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* PROJECT INFORMATION */}
+          <div className="min-w-0 flex-1">
+            <div className="space-y-1">
+              {projects.map((project) => {
+                const style =
+                  HEALTH_STYLES[project.health] ??
+                  HEALTH_STYLES.on_track
+
+                return (
+                  <div
+                    key={project.id}
+                    className="flex min-w-0 items-center justify-between gap-1.5"
+                  >
+                    <div className="flex min-w-0 flex-1 items-center gap-1.5">
+                      <span
+                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot}`}
+                      />
+
+                      <span
+                        className="min-w-0 truncate text-[8px] font-medium text-slate-600 sm:text-[9px]"
+                        title={project.name}
+                      >
+                        {project.name}
+                      </span>
+                    </div>
+
+                    <span
+                      className={`shrink-0 whitespace-nowrap text-[7px] font-medium sm:text-[8px] ${style.text}`}
+                    >
+                      {style.label}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+        </div>
+      )}
+
+    </Card>
   )
 }

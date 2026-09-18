@@ -5,11 +5,12 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  KeyboardSensor,
   useSensor,
   useSensors,
   closestCorners,
 } from '@dnd-kit/core'
-import { arrayMove } from '@dnd-kit/sortable'
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { CloudOff, X } from 'lucide-react'
 import { KanbanColumn } from './kanban-column'
 import { KanbanCard } from './kanban-card'
@@ -42,7 +43,7 @@ export function KanbanBoard() {
   async function fetchTasks() {
     try {
       const response = await tasksApi.getAll()
-      setTasks(response.data || [])
+      setTasks(Array.isArray(response) ? response : response?.data || [])
       setLoadFailed(false)
     } catch (err) {
       // Offline with nothing cached, the SW rejects the request and we land
@@ -69,7 +70,8 @@ export function KanbanBoard() {
       activationConstraint: {
         distance: 5,
       },
-    })
+    }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
 
@@ -290,44 +292,21 @@ export function KanbanBoard() {
         </div>
       )}
 
-{/* =========================================================
-    KANBAN BOARD
-
-    Always keeps:
-    1. To Do
-    2. In Progress
-    3. In Review
-    4. Completed
-
-    in ONE ROW.
-========================================================= */}
-
-<div
-  className="
-    grid
-    w-full
-    min-w-0
-    grid-cols-4
-    gap-2
-    xl:gap-3
-  "
->
-  {KANBAN_COLUMNS.map((column) => (
-    <div
-      key={column.id}
-      className="
-        min-w-0
-        w-full
-        overflow-hidden
-      "
-    >
-      <KanbanColumn
-        column={column}
-        tasks={getTasksByStatus(column.id)}
-      />
-    </div>
-  ))}
-</div>
+      <div
+        className="kanban-board-region"
+        role="region"
+        aria-label="Kanban columns"
+      >
+        <div className="kanban-columns">
+          {KANBAN_COLUMNS.map((column) => (
+            <KanbanColumn
+              key={column.id}
+              column={column}
+              tasks={getTasksByStatus(column.id)}
+            />
+          ))}
+        </div>
+      </div>
 
       {/* Drag Overlay — shows floating card while dragging */}
       <DragOverlay>

@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { useHasMounted } from '@/hooks/use-has-mounted'
 import { X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +15,7 @@ import { usersApi } from '@/lib/api/users.api'
 
 
 export function CreateTaskModal({ onClose, onSuccess }) {
+  const mounted = useHasMounted()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -115,7 +118,10 @@ export function CreateTaskModal({ onClose, onSuccess }) {
     }
   }
 
-return (
+if (!mounted) return null
+
+// Render outside the scaled task layout so the backdrop covers the viewport.
+return createPortal(
   <div
     className="
       fixed inset-0 z-50
@@ -604,6 +610,7 @@ return (
         </div>
       </form>
     </div>
-  </div>
+  </div>,
+  document.body
 )
 }

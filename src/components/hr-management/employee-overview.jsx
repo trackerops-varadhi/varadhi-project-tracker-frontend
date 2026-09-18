@@ -58,34 +58,34 @@ function EmployeeStatus({ status }) {
       ? 'bg-amber-50 text-amber-700'
       : 'bg-slate-100 text-slate-600'
 
-  return <span className={`inline-flex rounded-full px-2 py-1 text-[10px] font-semibold ${color}`}>{status}</span>
+  return <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${color}`}>{status}</span>
 }
 
 // Pass employee records here when backend data is available.
 export function EmployeeOverview({ employees = MOCK_EMPLOYEES }) {
   return (
-    <section aria-labelledby="employee-overview-title" className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h2 id="employee-overview-title" className="text-sm font-semibold text-slate-900">Employee Overview</h2>
-      <p className="mt-1 text-xs text-slate-500">Active employees and quick profile access</p>
+    <section aria-labelledby="employee-overview-title" className="h-full min-w-0 rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm">
+      <h2 id="employee-overview-title" className="text-xs font-semibold text-slate-900">Employee Overview</h2>
+      <p className="mt-0.5 text-[11px] leading-4 text-slate-500">Employee records and quick profile access</p>
 
-      <div className="mt-3 overflow-x-auto">
+      <div className="mt-2 overflow-x-auto">
         <table className="w-full min-w-[520px] text-left text-xs">
           <thead className="border-b border-slate-200 text-[10px] text-slate-500">
             <tr>
               {['Employee', 'Role', 'Product', 'Status'].map((heading) => (
-                <th key={heading} scope="col" className="px-2 py-2 font-medium first:pl-0">{heading}</th>
+                <th key={heading} scope="col" className="px-2 py-1 font-medium first:pl-0">{heading}</th>
               ))}
-              <th scope="col" className="py-2"><span className="sr-only">Profile</span></th>
+              <th scope="col" className="py-1"><span className="sr-only">Profile</span></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {employees.map((employee) => (
               <tr key={employee.id} className="text-slate-500">
-                <th scope="row" className="py-3 pr-2 font-medium text-slate-800">{employee.name}</th>
-                <td className="px-2 py-3">{employee.role}</td>
-                <td className="px-2 py-3">{employee.product}</td>
-                <td className="px-2 py-3"><EmployeeStatus status={employee.status} /></td>
-                <td className="py-3 pl-2 text-right">
+                <th scope="row" className="py-1 pr-2 font-medium text-slate-800">{employee.name}</th>
+                <td className="px-2 py-1">{employee.role}</td>
+                <td className="px-2 py-1">{employee.product}</td>
+                <td className="px-2 py-1"><EmployeeStatus status={employee.status} /></td>
+                <td className="py-1 pl-2 text-right">
                   <Dialog>
                     <DialogTrigger asChild>
                       <button type="button" aria-label={`View ${employee.name}'s profile`} className="rounded text-xs font-semibold text-violet-600 hover:text-violet-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600">View</button>

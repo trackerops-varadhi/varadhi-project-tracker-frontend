@@ -11,23 +11,6 @@ import {
   priorityLabel,
 } from '@/lib/deadline-format'
 
-function Shell({ children }) {
-  return (
-    <Card className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-      <div className="flex h-[30px] shrink-0 items-center justify-between border-b border-slate-100 px-3">
-        <h3 className="text-[11px] font-semibold text-slate-800">
-          Upcoming Deadlines
-        </h3>
-
-
-      </div>
-
-      {children}
-    </Card>
-  )
-}
-
 export function UpcomingDeadlines() {
   const [tasks, setTasks] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -64,84 +47,190 @@ export function UpcomingDeadlines() {
     }
   }, [])
 
-  if (isLoading) {
-    return (
-      <Shell>
-        <div className="min-h-0 flex-1 overflow-hidden">
+  return (
+    <Card
+      className="
+        flex
+        h-full
+        min-h-0
+        min-w-0
+        flex-col
+        overflow-hidden
+        rounded-2xl
+        border
+        border-slate-200
+        bg-white
+        px-3
+        py-2
+        shadow-sm
+      "
+    >
+      {/* TITLE */}
+      <h3
+        className="
+          shrink-0
+          truncate
+          text-[11px]
+          font-semibold
+          text-slate-800
+          sm:text-xs
+        "
+      >
+        Upcoming Deadlines
+      </h3>
+
+      {/* LOADING */}
+      {isLoading && (
+        <div className="min-h-0 min-w-0 flex-1 overflow-hidden pt-1">
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
-              className="flex items-center gap-3 px-3 py-2 animate-pulse"
+              className="
+                flex
+                min-w-0
+                animate-pulse
+                items-center
+                gap-2
+                py-1.5
+              "
             >
-              <div className="h-2.5 w-16 rounded bg-slate-100" />
-              <div className="h-2.5 flex-1 rounded bg-slate-100" />
+              <div className="h-2 w-[54px] shrink-0 rounded bg-slate-100 sm:w-[62px]" />
+
+              <div className="min-w-0 flex-1">
+                <div className="h-2 w-full rounded bg-slate-100" />
+              </div>
+
+              <div className="h-3 w-[34px] shrink-0 rounded bg-slate-100" />
             </div>
           ))}
         </div>
-      </Shell>
-    )
-  }
+      )}
 
-  if (error) {
-    return (
-      <Shell>
+      {/* ERROR */}
+      {!isLoading && error && (
         <div className="flex min-h-0 flex-1 items-center justify-center">
-          <p className="text-[9px] text-slate-500">
+          <p className="text-[8px] text-slate-500 sm:text-[9px]">
             {error}
           </p>
         </div>
-      </Shell>
-    )
-  }
+      )}
 
-  return (
-    <Shell>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="divide-y divide-slate-100">
-          {tasks.map((task) => (
-            <Link
-              key={task.id}
-              href={`/tasks/${task.id}`}
-              className="flex items-center gap-3 px-3 py-2 hover:bg-slate-50"
-            >
-              <div
-                className={`w-[76px] shrink-0 text-[9px] ${
-                  task.isOverdue
-                    ? 'font-medium text-red-600'
-                    : 'text-slate-500'
-                }`}
-              >
-                {formatDueLabel(
-                  task.daysLeft,
-                  task.dueDate
-                )}
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[10px] font-medium text-slate-800">
-                  {task.title}
-                </p>
-
-                {task.projectName && (
-                  <p className="truncate text-[8px] text-slate-400">
-                    {task.projectName}
-                  </p>
-                )}
-              </div>
-
-              <span
-                className={`
-                  shrink-0 rounded-full
-                  px-2 py-0.5 text-[8px] font-medium
-                  ${priorityBadgeClass(task.priority)}
-                `}
-              >
-                {priorityLabel(task.priority)}
-              </span>
-            </Link>
-          ))}
+      {/* EMPTY */}
+      {!isLoading && !error && tasks.length === 0 && (
+        <div className="flex min-h-0 flex-1 items-center justify-center">
+          <p className="text-[8px] text-slate-400 sm:text-[9px]">
+            No upcoming deadlines.
+          </p>
         </div>
-      </div>
-    </Shell>
+      )}
+
+      {/* MAIN CONTENT */}
+      {!isLoading && !error && tasks.length > 0 && (
+        <div
+          className="
+            mt-1
+            min-h-0
+            min-w-0
+            flex-1
+            overflow-y-auto
+            overflow-x-hidden
+            overscroll-contain
+            pr-0.5
+          "
+        >
+          <div className="divide-y divide-slate-100">
+            {tasks.map((task) => (
+              <Link
+                key={task.id}
+                href={`/tasks/${task.id}`}
+                className="
+                  flex
+                  min-w-0
+                  items-center
+                  gap-2
+                  py-1.5
+                  transition
+                  hover:bg-slate-50
+                "
+              >
+                {/* DUE DATE */}
+                <div
+                  className={`
+                    w-[54px]
+                    shrink-0
+                    truncate
+                    text-[7px]
+                    sm:w-[62px]
+                    sm:text-[8px]
+                    ${
+                      task.isOverdue
+                        ? 'font-medium text-red-600'
+                        : 'text-slate-500'
+                    }
+                  `}
+                  title={formatDueLabel(
+                    task.daysLeft,
+                    task.dueDate
+                  )}
+                >
+                  {formatDueLabel(
+                    task.daysLeft,
+                    task.dueDate
+                  )}
+                </div>
+
+                {/* TASK DETAILS */}
+                <div className="min-w-0 flex-1">
+                  <p
+                    className="
+                      truncate
+                      text-[8px]
+                      font-medium
+                      text-slate-800
+                      sm:text-[9px]
+                    "
+                    title={task.title}
+                  >
+                    {task.title}
+                  </p>
+
+                  {task.projectName && (
+                    <p
+                      className="
+                        truncate
+                        text-[7px]
+                        text-slate-400
+                        sm:text-[8px]
+                      "
+                      title={task.projectName}
+                    >
+                      {task.projectName}
+                    </p>
+                  )}
+                </div>
+
+                {/* PRIORITY */}
+                <span
+                  className={`
+                    shrink-0
+                    whitespace-nowrap
+                    rounded-full
+                    px-1.5
+                    py-0.5
+                    text-[7px]
+                    font-medium
+                    sm:px-2
+                    sm:text-[8px]
+                    ${priorityBadgeClass(task.priority)}
+                  `}
+                >
+                  {priorityLabel(task.priority)}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </Card>
   )
 }

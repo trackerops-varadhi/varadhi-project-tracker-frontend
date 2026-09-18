@@ -1,91 +1,117 @@
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+'use client'
+
+import { CalendarCheck, CalendarDays, FolderOpen, MessagesSquare } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 const MOCK_ACTIONS = [
   {
     id: 'attendance',
     title: 'Attendance',
-    summary: '112 present · 3 late',
-    href: null,
+    summary: '112 present ? 3 late',
+    details: [
+      ['Present today', '112 employees'],
+      ['Late arrivals', '3 employees'],
+      ['Attendance rate', '87.5%'],
+    ],
   },
   {
     id: 'leave',
     title: 'Leave Management',
     summary: '9 employees on leave',
-    href: '/leave-management',
+    details: [
+      ['Planned leave', '3 employees'],
+      ['Unplanned leave', '6 employees'],
+      ['Pending requests', '3 requests'],
+    ],
   },
   {
     id: 'resumes',
     title: 'Resume Folder',
     summary: '36 candidate resumes',
-    href: null,
+    details: [
+      ['Resume records', '36'],
+      ['Access', 'Admin / HR workspace preview'],
+      ['Files', 'Sample counts only; no files uploaded'],
+    ],
   },
   {
     id: 'interviews',
     title: 'Interviews',
     summary: '5 scheduled today',
-    href: null,
+    details: [
+      ['Scheduled today', '5 interviews'],
+      ['Selected candidates', '4'],
+      ['Candidates on hold', '3'],
+    ],
   },
 ]
 
-// Supply each workspace's href when its page is ready.
+const ACTION_ICONS = {
+  attendance: CalendarCheck,
+  leave: CalendarDays,
+  resumes: FolderOpen,
+  interviews: MessagesSquare,
+}
+
+// Local previews only. No navigation, uploads or API requests.
 export function HRQuickActions({ actions = MOCK_ACTIONS }) {
   return (
     <section
       aria-labelledby="hr-quick-actions-title"
-      className="h-full min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+      className="h-full min-w-0 rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-200/80 via-purple-100/70 to-blue-200/70 p-2.5 shadow-sm"
     >
-      <h2
-        id="hr-quick-actions-title"
-        className="text-sm font-semibold text-slate-900"
-      >
+      <h2 id="hr-quick-actions-title" className="text-xs font-semibold text-violet-900">
         HR Quick Actions
       </h2>
-      <p className="mt-1 text-xs text-slate-500">
-        Open a detailed workspace in one click
-      </p>
+      <p className="mt-0.5 text-[11px] leading-4 text-slate-500">Select a module to view its details</p>
 
-      <ul className="mt-3 divide-y divide-slate-100">
-        {actions.map((action) => (
-          <li
-            key={action.id}
-            className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 py-3 sm:grid-cols-[1fr_1.2fr_auto]"
-          >
-            <span className="text-xs font-medium text-slate-800">
-              {action.title}
-            </span>
-            <span className="col-start-1 row-start-2 text-[11px] text-slate-500 sm:col-start-2 sm:row-start-1">
-              {action.summary}
-            </span>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        {actions.map((action) => {
+          const Icon = ACTION_ICONS[action.id] ?? FolderOpen
 
-            {action.href ? (
-              <Link
-                href={action.href}
-                prefetch={false}
-                aria-label={`Open ${action.title}`}
-                className="col-start-2 row-span-2 row-start-1 inline-flex items-center justify-self-end gap-1 rounded text-xs font-semibold text-violet-600 hover:text-violet-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600 sm:col-start-3 sm:row-span-1 sm:row-start-1"
-              >
-                Open <ArrowRight aria-hidden="true" className="h-3 w-3" />
-              </Link>
-            ) : (
-              <button
-                type="button"
-                disabled
-                aria-label={`Open ${action.title}`}
-                className="col-start-2 row-span-2 row-start-1 inline-flex items-center justify-self-end gap-1 rounded text-xs font-semibold text-violet-600 disabled:cursor-not-allowed sm:col-start-3 sm:row-span-1 sm:row-start-1"
-              >
-                Open <ArrowRight aria-hidden="true" className="h-3 w-3" />
-              </button>
-            )}
-          </li>
-        ))}
+          return (
+            <Dialog key={action.id}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={`View ${action.title}`}
+                  className="group flex min-w-0 flex-col items-start rounded-xl border border-violet-300/80 bg-white/70 p-2 text-left transition-colors hover:border-violet-400 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+                >
+                  <Icon aria-hidden="true" className="mb-1 h-4 w-4 text-violet-600" />
+                  <span className="text-xs font-semibold text-slate-800">{action.title}</span>
+                  <span className="mt-0.5 text-[11px] leading-4 text-slate-500">{action.summary}</span>
+                </button>
+              </DialogTrigger>
 
-        {actions.length === 0 && (
-          <li className="py-6 text-xs text-slate-500">
-            No quick actions available.
-          </li>
-        )}
-      </ul>
+              <DialogContent className="max-h-[85dvh] overflow-y-auto rounded-2xl sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>{action.title}</DialogTitle>
+                  <DialogDescription>{action.summary} ? Mock data preview</DialogDescription>
+                </DialogHeader>
+                <dl className="divide-y divide-slate-100">
+                  {(action.details ?? []).map(([label, value]) => (
+                    <div key={label} className="grid grid-cols-2 gap-4 py-3 text-xs">
+                      <dt className="text-slate-500">{label}</dt>
+                      <dd className="break-words font-medium text-slate-800">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </DialogContent>
+            </Dialog>
+          )
+        })}
+      </div>
+
+      {actions.length === 0 && (
+        <p className="py-4 text-xs text-slate-500">No quick actions available.</p>
+      )}
     </section>
   )
 }

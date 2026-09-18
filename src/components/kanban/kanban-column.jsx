@@ -31,10 +31,10 @@ export function KanbanColumn({ column, tasks }) {
       </div>
 
       {/* Cards Container */}
-<div
-  ref={setNodeRef}
-  className={cn(
-    'flex-1 rounded-2xl p-3 space-y-3 min-h-[700px] transition-colors',
+      <div
+        ref={setNodeRef}
+        className={cn(
+          'flex-1 rounded-2xl p-3 space-y-3 min-h-[700px] transition-colors',
           isOver
             ? 'bg-violet-50 border-2 border-dashed border-violet-300'
             : 'bg-slate-100/60 border-2 border-transparent'

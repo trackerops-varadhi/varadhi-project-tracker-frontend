@@ -13,201 +13,62 @@ export const metadata = {
 
 export default function UsersPage() {
   return (
-    <div
-      className="
-        flex
-        h-full
-        min-h-0
-        w-full
-        min-w-0
-        flex-col
-        overflow-hidden
-        bg-background
-        px-4
-        pb-2
-        pt-0
-      "
-    >
-      {/* =====================================================
-          PAGE HEADER
-      ====================================================== */}
-
-      <div
-        className="
-          mb-2
-          shrink-0
-          pt-0
-        "
-      >
-        <h2
-          className="
-            text-[18px]
-            font-bold
-            tracking-tight
-            text-foreground
-          "
-        >
-          Team Members
-        </h2>
-
-        <p
-          className="
-            mt-0.5
-            text-[11px]
-            text-muted-foreground
-          "
-        >
-          Manage your team — roles, permissions and invites.
+    <div className="users-page flex w-full min-w-0 flex-col gap-3 pb-3">
+      <header>
+        <h2 className="text-[18px] font-bold tracking-tight text-foreground">Team Members</h2>
+        <p className="mt-0.5 text-[11px] text-muted-foreground">
+          Manage your team roles, permissions and invites.
         </p>
-      </div>
+      </header>
 
-      {/* =====================================================
-          MAIN PAGE
+      <Suspense fallback={null}>
+        <UsersList
+          leftColumn={<><TeamsFiltersCard /><MemberProfileCard /></>}
+          rightColumn={<><TopPerformersCard /><PendingInvitesCard /><RecentlyJoinedCard /></>}
+        />
+      </Suspense>
 
-          LEFT   = FILTERS + PROFILE
-          CENTER = STATS + SEARCH + TABLE
-          RIGHT  = PERFORMERS + INVITES + RECENT
-      ====================================================== */}
-
-      <div
-        className="
-          grid
-          min-h-0
-          min-w-0
-          flex-1
-          items-start
-          gap-3
-          overflow-hidden
-        "
-        style={{
-          gridTemplateColumns:
-            'minmax(210px,0.85fr) minmax(0,3.4fr) minmax(270px,1.2fr)',
-        }}
-      >
-        {/* ===================================================
-            LEFT COLUMN
-        ==================================================== */}
-
-        <div
-          className="
-            flex
-            min-h-0
-            min-w-0
-            flex-col
-            gap-3
-            overflow-hidden
-          "
-        >
-          {/* TEAMS & FILTERS */}
-
-          <div
-            className="
-              min-w-0
-              shrink-0
-              overflow-hidden
-            "
-          >
-            <Suspense fallback={null}>
-              <TeamsFiltersCard />
-            </Suspense>
-          </div>
-
-          {/* PROFILE */}
-
-          <div
-            className="
-              min-w-0
-              shrink-0
-              overflow-hidden
-            "
-          >
-            <MemberProfileCard />
-          </div>
-        </div>
-
-        {/* ===================================================
-            CENTER COLUMN
-
-            UsersList already contains:
-            - 4 statistics
-            - search
-            - roles
-            - invite member
-            - users table
-        ==================================================== */}
-
-        <div
-          className="
-            flex
-            h-full
-            min-h-0
-            min-w-0
-            flex-col
-            overflow-hidden
-          "
-        >
-          <Suspense fallback={null}>
-            <UsersList />
-          </Suspense>
-        </div>
-
-        {/* ===================================================
-            RIGHT COLUMN
-
-            IMPORTANT:
-            FLEX + SHRINK-0
-
-            No fractional grid rows.
-            Therefore NO large spaces between cards.
-        ==================================================== */}
-
-        <div
-          className="
-            flex
-            min-h-0
-            min-w-0
-            flex-col
-            gap-3
-            overflow-hidden
-          "
-        >
-          {/* TOP PERFORMERS */}
-
-          <div
-            className="
-              min-w-0
-              shrink-0
-              overflow-hidden
-            "
-          >
-            <TopPerformersCard />
-          </div>
-
-          {/* PENDING INVITES */}
-
-          <div
-            className="
-              min-w-0
-              shrink-0
-              overflow-hidden
-            "
-          >
-            <PendingInvitesCard />
-          </div>
-
-          {/* RECENTLY JOINED */}
-
-          <div
-            className="
-              min-w-0
-              shrink-0
-              overflow-hidden
-            "
-          >
-            <RecentlyJoinedCard />
-          </div>
-        </div>
-      </div>
+      <style>{`
+        .users-page { container-type: inline-size; }
+        .users-columns {
+          display: grid;
+          grid-template-columns: minmax(180px, 0.95fr) minmax(0, 3.15fr) minmax(200px, 1fr);
+          gap: 12px;
+          align-items: stretch;
+          min-width: 0;
+        }
+        .users-left, .users-right {
+          display: grid;
+          min-height: 0;
+          min-width: 0;
+          gap: 12px;
+        }
+        .users-columns { height: clamp(500px, 68dvh, 680px); }
+        .users-left { grid-template-rows: 0.9fr 1.1fr; }
+        .users-right { grid-template-rows: 1fr 0.8fr 1.4fr; }
+        .users-left > div, .users-right > div {
+          min-width: 0;
+          min-height: 0;
+          height: 100%;
+          overflow-y: auto;
+          scrollbar-width: thin;
+        }
+        .users-right > div { padding: 12px; overflow: hidden; }
+        .users-right > div > div:first-child { margin-bottom: 12px; }
+        .users-directory { height: 100%; }
+        @container (max-width: 850px) {
+          .users-columns { height: auto; }
+          .users-directory { height: 520px; }
+          .users-left { grid-template-rows: auto auto; }
+          .users-right { grid-template-rows: 240px; }
+          .users-columns { grid-template-columns: minmax(180px, 1fr) minmax(0, 3fr); }
+          .users-right { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @container (max-width: 640px) {
+          .users-columns, .users-right { grid-template-columns: minmax(0, 1fr); }
+          .users-right { grid-template-rows: none; grid-auto-rows: auto; }
+        }
+      `}</style>
     </div>
   )
 }
