@@ -7,7 +7,13 @@ import {
   CheckCircle2,
   Clock,
   AlertTriangle,
+  CalendarDays,
+  Check,
+  ChevronDown,
 } from 'lucide-react'
+
+import { Popover } from 'radix-ui'
+import { endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subWeeks } from 'date-fns'
 
 import { dashboardApi } from '@/lib/api/dashboard.api'
 
@@ -84,28 +90,36 @@ export function StatsCards() {
   const [stats, setStats] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const [error, setError] = useState(false)
+  const [requestId, setRequestId] = useState(0)
+
   useEffect(() => {
+    let cancelled = false
+
     async function fetchStats() {
       try {
         const data = await dashboardApi.getStats()
-
-        setStats(data)
+        // Missing counts are not genuine zeros.
+        if (!data || STAT_CONFIG.some(({ key }) => data[key] == null)) {
+          throw new Error('Incomplete dashboard stats')
+        }
+        if (!cancelled) setStats(data)
       } catch {
-        setStats({
-          totalProjects: 0,
-          activeProjects: 0,
-          totalTasks: 0,
-          completedTasks: 0,
-          inProgressTasks: 0,
-          overdueTasks: 0,
-        })
+        if (!cancelled) setError(true)
       } finally {
-        setIsLoading(false)
+        if (!cancelled) setIsLoading(false)
       }
     }
 
     fetchStats()
-  }, [])
+    return () => { cancelled = true }
+  }, [requestId])
+
+  function retry() {
+    setError(false)
+    setIsLoading(true)
+    setRequestId((value) => value + 1)
+  }
 
   if (isLoading) {
     return (
@@ -125,6 +139,21 @@ export function StatsCards() {
         {Array.from({ length: 6 }).map((_, i) => (
           <StatSkeleton key={i} />
         ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div role="alert" className="flex w-full items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-3 py-2">
+        <p className="text-xs text-red-700">Unable to load dashboard stats.</p>
+        <button
+          type="button"
+          onClick={retry}
+          className="shrink-0 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 focus-visible:outline-2 focus-visible:outline-red-600"
+        >
+          Retry
+        </button>
       </div>
     )
   }
@@ -234,7 +263,7 @@ export function StatsCards() {
                 lg:text-[24px]
               "
             >
-              {stats?.[stat.key] ?? 0}
+              {stats[stat.key]}
             </p>
 
             {/* DESCRIPTION */}
@@ -259,5 +288,83 @@ export function StatsCards() {
         )
       })}
     </div>
+  )
+}
+const PRESETS = ['This week', 'Last week', 'This month', 'Custom range']
+
+function presetRange(label) {
+  const today = new Date()
+  const date = label === 'Last week' ? subWeeks(today, 1) : today
+  const start = label === 'This month' ? startOfMonth(date) : startOfWeek(date, { weekStartsOn: 1 })
+  const end = label === 'This month' ? endOfMonth(date) : endOfWeek(date, { weekStartsOn: 1 })
+  return { label, from: format(start, 'yyyy-MM-dd'), to: format(end, 'yyyy-MM-dd') }
+}
+
+// UI-only period selection; dashboard requests are unchanged.
+export function DashboardPeriodSelector({ onRangeChange }) {
+  const [open, setOpen] = useState(false)
+  const [selected, setSelected] = useState(null)
+  const [draft, setDraft] = useState({ label: 'This week', from: '', to: '' })
+  const valid = Boolean(draft.from && draft.to && draft.from <= draft.to)
+
+  function handleOpen(nextOpen) {
+    if (nextOpen) setDraft(selected ?? presetRange('This week'))
+    setOpen(nextOpen)
+  }
+
+  function apply(event) {
+    event.preventDefault()
+    if (!valid) return
+    setSelected(draft)
+    onRangeChange?.(draft)
+    setOpen(false)
+  }
+
+  return (
+    <Popover.Root open={open} onOpenChange={handleOpen}>
+      <div className="flex min-w-0 items-center gap-2">
+        <Popover.Trigger asChild>
+          <button type="button" className="flex h-7 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[11px] font-medium text-slate-700 shadow-sm hover:border-violet-300 hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-violet-600">
+            <CalendarDays className="h-3.5 w-3.5 text-violet-600" />
+            {selected?.label === 'Custom range' ? `${selected.from} to ${selected.to}` : selected?.label ?? 'This week'}
+            <ChevronDown className="h-3.5 w-3.5" />
+          </button>
+        </Popover.Trigger>
+      </div>
+      <Popover.Portal>
+        <Popover.Content align="end" sideOffset={6} aria-label="Dashboard date range" className="z-50 w-64 max-w-[calc(100vw-24px)] rounded-xl border border-slate-200 bg-white p-3 text-slate-800 shadow-xl">
+          <form onSubmit={apply}>
+            <h2 className="text-xs font-semibold">Dashboard period</h2>
+            <p className="mt-1 text-[10px] text-slate-500">Weeks run Monday to Sunday.</p>
+            <div className="my-2 grid grid-cols-2 gap-1.5" role="group" aria-label="Date presets">
+              {PRESETS.map((label) => (
+                <button key={label} type="button" aria-pressed={draft.label === label} onClick={() => setDraft(label === 'Custom range' ? { ...draft, label } : presetRange(label))} className={`flex items-center justify-between rounded-lg border px-2.5 py-1.5 text-[11px] ${draft.label === label ? 'border-violet-200 bg-violet-50 text-violet-700' : 'border-slate-200 hover:bg-slate-50'}`}>
+                  {label}
+                  {draft.label === label && <Check className="h-3 w-3" />}
+                </button>
+              ))}
+            </div>
+            {draft.label === 'Custom range' && (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="text-[10px] text-slate-600">From
+                    <input required type="date" value={draft.from} max={draft.to || undefined} onChange={(event) => setDraft({ ...draft, label: 'Custom range', from: event.target.value })} className="mt-1 w-full min-w-0 rounded-lg border border-slate-200 px-2 py-1.5 text-[11px]" />
+                  </label>
+                  <label className="text-[10px] text-slate-600">To
+                    <input required type="date" value={draft.to} min={draft.from || undefined} onChange={(event) => setDraft({ ...draft, label: 'Custom range', to: event.target.value })} className="mt-1 w-full min-w-0 rounded-lg border border-slate-200 px-2 py-1.5 text-[11px]" />
+                  </label>
+                </div>
+                {!valid && <p className="mt-2 text-xs text-red-600">Choose an end date on or after the start date.</p>}
+              </>
+            )}
+            <p className="mt-2 text-[10px] leading-4 text-slate-500">Preview only. Dashboard data is not filtered yet.</p>
+            <div className="mt-2 flex justify-end gap-2">
+              <Popover.Close asChild><button type="button" className="rounded-lg border border-slate-200 px-3 py-1.5 text-[11px]">Cancel</button></Popover.Close>
+              <button type="submit" disabled={!valid} className="rounded-lg bg-violet-600 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-violet-700 disabled:opacity-50">Select period</button>
+            </div>
+          </form>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   )
 }

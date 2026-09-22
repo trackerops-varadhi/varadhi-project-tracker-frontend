@@ -1,51 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 
-import { tasksApi } from '@/lib/api/tasks.api'
 import {
+  useUpcomingDeadlines,
   formatDueLabel,
   priorityBadgeClass,
   priorityLabel,
 } from '@/lib/deadline-format'
 
 export function UpcomingDeadlines() {
-  const [tasks, setTasks] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function load() {
-      try {
-        const data = await tasksApi.getUpcoming({
-          limit: 5,
-          days: 30,
-        })
-
-        if (!cancelled) {
-          setTasks(data ?? [])
-        }
-      } catch {
-        if (!cancelled) {
-          setError('Failed to load deadlines.')
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    load()
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const { tasks, isLoading, error } = useUpcomingDeadlines({ limit: 5, days: 30 })
 
   return (
     <Card

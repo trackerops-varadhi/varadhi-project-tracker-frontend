@@ -1,4 +1,4 @@
-import { StatsCards } from '@/components/dashboard/stats-cards'
+import { StatsCards, DashboardPeriodSelector } from '@/components/dashboard/stats-cards'
 import { RecentActivity } from '@/components/dashboard/recent-activity'
 import { ProjectProgress } from '@/components/dashboard/project-progress'
 import { CalendarSyncWidget } from '@/components/dashboard/calendar-sync-widget'
@@ -8,7 +8,6 @@ import { UpcomingDeadlines } from '@/components/dashboard/UpcomingDeadlines'
 import { NotificationsCard } from '@/components/dashboard/NotificationsCard'
 import { GanttPreview } from '@/components/dashboard/GanttPreview'
 
-import { ChevronDown } from 'lucide-react'
 
 export const metadata = {
   title: 'Dashboard',
@@ -46,31 +45,7 @@ export default function DashboardPage() {
       ====================================================== */}
 
       <div className="dashboard-filter">
-        <button
-          type="button"
-          className="
-            flex
-            h-7
-            shrink-0
-            items-center
-            gap-1.5
-            rounded-lg
-            border
-            border-slate-200
-            bg-white
-            px-3
-            text-[11px]
-            font-medium
-            text-slate-700
-            shadow-sm
-            transition
-            hover:bg-slate-50
-          "
-        >
-          This week
-
-          <ChevronDown className="h-3.5 w-3.5 shrink-0" />
-        </button>
+        <DashboardPeriodSelector />
       </div>
 
       {/* =====================================================

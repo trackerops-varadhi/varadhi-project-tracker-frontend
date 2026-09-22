@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react'
+import { tasksApi } from '@/lib/api/tasks.api'
+
 // Shared formatting for the three "upcoming deadlines" cards (dashboard,
 // tasks sidebar, kanban). They render different chrome but agree on how a
 // due date and priority should read, so the logic lives here once.
@@ -35,4 +38,34 @@ export function priorityBadgeClass(priority) {
 export function priorityLabel(priority) {
   if (!priority) return 'No Priority'
   return `${priority.charAt(0).toUpperCase()}${priority.slice(1)} Priority`
+}
+
+// Shared request lifecycle for the three client-side deadline cards.
+export function useUpcomingDeadlines({ limit = 4, days = 30 } = {}) {
+  const [result, setResult] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function load() {
+      try {
+        const tasks = await tasksApi.getUpcoming({ limit, days })
+        if (!cancelled) setResult({ limit, days, tasks: tasks ?? [], error: null })
+      } catch {
+        if (!cancelled) {
+          setResult({ limit, days, tasks: [], error: 'Failed to load deadlines.' })
+        }
+      }
+    }
+
+    load()
+    return () => { cancelled = true }
+  }, [limit, days])
+
+  const isLoading = !result || result.limit !== limit || result.days !== days
+  return {
+    tasks: isLoading ? [] : result.tasks,
+    isLoading,
+    error: isLoading ? null : result.error,
+  }
 }
