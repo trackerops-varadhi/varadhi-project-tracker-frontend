@@ -7,6 +7,31 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import apiClient from '@/lib/api-client'
 
+// Hoisted to module scope to prevent re-mounting and focus loss on every keystroke (Fixes C-02)
+function PasswordInput({ id, name, placeholder, showField, showPasswords, formData, handleChange, isLoading, toggleShow }) {
+  return (
+    <div className="relative">
+      <Input
+        id={id}
+        name={name}
+        type={showPasswords[showField] ? 'text' : 'password'}
+        placeholder={placeholder}
+        value={formData[name]}
+        onChange={handleChange}
+        disabled={isLoading}
+        className="pr-10"
+      />
+      <button
+        type="button"
+        onClick={() => toggleShow(showField)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-muted-foreground"
+      >
+        {showPasswords[showField] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      </button>
+    </div>
+  )
+}
+
 export function ChangePasswordForm() {
   const [formData, setFormData] = useState({
     currentPassword: '',
@@ -86,30 +111,6 @@ export function ChangePasswordForm() {
     }
   }
 
-  function PasswordInput({ id, name, placeholder, showField }) {
-    return (
-      <div className="relative">
-        <Input
-          id={id}
-          name={name}
-          type={showPasswords[showField] ? 'text' : 'password'}
-          placeholder={placeholder}
-          value={formData[name]}
-          onChange={handleChange}
-          disabled={isLoading}
-          className="pr-10"
-        />
-        <button
-          type="button"
-          onClick={() => toggleShow(showField)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-muted-foreground"
-        >
-          {showPasswords[showField] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-        </button>
-      </div>
-    )
-  }
-
   return (
     <div className="bg-card rounded-xl border border-border p-6">
       <h3 className="text-sm font-semibold text-foreground mb-5">
@@ -137,6 +138,11 @@ export function ChangePasswordForm() {
             name="currentPassword"
             placeholder="Enter current password"
             showField="current"
+            showPasswords={showPasswords}
+            formData={formData}
+            handleChange={handleChange}
+            isLoading={isLoading}
+            toggleShow={toggleShow}
           />
           {errors.currentPassword && (
             <p className="text-red-500 text-xs">{errors.currentPassword}</p>
@@ -150,6 +156,11 @@ export function ChangePasswordForm() {
             name="newPassword"
             placeholder="Min. 6 characters"
             showField="new"
+            showPasswords={showPasswords}
+            formData={formData}
+            handleChange={handleChange}
+            isLoading={isLoading}
+            toggleShow={toggleShow}
           />
           {errors.newPassword && (
             <p className="text-red-500 text-xs">{errors.newPassword}</p>
@@ -163,6 +174,11 @@ export function ChangePasswordForm() {
             name="confirmPassword"
             placeholder="Re-enter new password"
             showField="confirm"
+            showPasswords={showPasswords}
+            formData={formData}
+            handleChange={handleChange}
+            isLoading={isLoading}
+            toggleShow={toggleShow}
           />
           {errors.confirmPassword && (
             <p className="text-red-500 text-xs">{errors.confirmPassword}</p>
