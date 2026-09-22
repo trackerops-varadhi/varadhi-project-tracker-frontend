@@ -364,7 +364,7 @@ export default function TimeManagementPage() {
 
       <div>
 
-        <h1 className="text-2xl font-bold text-blue-700">
+        <h1 className="text-2xl font-bold text-primary">
           Time Management
         </h1>
 
@@ -445,7 +445,7 @@ export default function TimeManagementPage() {
             </div>
 
             <CalendarDays
-              className="text-violet-600"
+              className="text-primary"
               size={30}
             />
 
