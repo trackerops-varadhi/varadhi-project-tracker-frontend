@@ -23,6 +23,8 @@ export default function TimeManagementPage() {
 
   const [currentTime, setCurrentTime] = useState(new Date())
 
+  const [error, setError] = useState("");
+
 
   // ============================================
   // LOAD DATA
@@ -110,59 +112,61 @@ export default function TimeManagementPage() {
 
   }, [])
 
+  {error && (
+  <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    {error}
+  </div>
+)}
+
 
   // ============================================
   // CHECK IN
   // ============================================
 
-  async function handleCheckIn() {
+  const handleCheckIn = async () => {
+  const previousCheckIn = checkIn;
 
-    const now =
-      new Date()
+  const now = new Date();
+  setCheckIn(now);
+  setError("");
 
-    setCheckIn(now)
+  try {
+    await timeManagementApi.checkIn();
+  } catch (error) {
+    console.error(error);
 
-    /*
-      Connect to backend: create a check-in record and refresh
-    */
-    try {
-      const date = new Date().toISOString().split('T')[0]
-      await timeManagementApi.checkIn({ date, checkIn: now.toISOString() })
-      await loadData()
-    } catch (err) {
-      console.error('Check-in failed:', err)
-    }
+    // Roll back UI state
+    setCheckIn(previousCheckIn);
+
+    // Show error to user
+    setError("Check-in failed. Your attendance was not recorded. Please try again.");
   }
+};
 
 
   // ============================================
   // CHECK OUT
   // ============================================
 
-  async function handleCheckOut() {
+ const handleCheckOut = async () => {
+  const previousCheckOut = checkOut;
 
-    if (!checkIn) {
+  const now = new Date();
+  setCheckOut(now);
+  setError("");
 
-      alert(
-        'Please Check In first'
-      )
+  try {
+    await timeManagementApi.checkOut();
+  } catch (error) {
+    console.error(error);
 
-      return
-    }
+    // Roll back UI state
+    setCheckOut(previousCheckOut);
 
-    const now =
-      new Date()
-
-    setCheckOut(now)
-
-    try {
-      const date = new Date().toISOString().split('T')[0]
-      await timeManagementApi.checkOut({ date, checkOut: now.toISOString() })
-      await loadData()
-    } catch (err) {
-      console.error('Check-out failed:', err)
-    }
+    // Show error to user
+    setError("Check-out failed. Your attendance was not recorded. Please try again.");
   }
+};
 
 
   // ============================================
