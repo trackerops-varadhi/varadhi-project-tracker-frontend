@@ -1,5 +1,7 @@
 'use client'
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState } from 'react'
 import { X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -86,7 +88,7 @@ export function CreateProjectModal({ onClose, onSuccess }) {
 
   return (
     // Backdrop
-    <div
+    <KeyboardModal title={"Create Project"} onClose={onClose}
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
@@ -282,6 +284,6 @@ export function CreateProjectModal({ onClose, onSuccess }) {
 
         </form>
       </div>
-    </div>
+    </KeyboardModal>
   )
 }

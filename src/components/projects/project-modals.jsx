@@ -1,5 +1,7 @@
 "use client";
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState, useMemo } from "react";
 import {
   X,
@@ -16,7 +18,7 @@ function ModalWrapper({ open, onClose, title, subtitle, children }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <KeyboardModal title={title} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden">
         <div className="flex justify-between items-start bg-gradient-to-r from-violet-600 to-indigo-600 p-6 text-white">
           <div>
@@ -34,7 +36,7 @@ function ModalWrapper({ open, onClose, title, subtitle, children }) {
 
         <div className="p-6">{children}</div>
       </div>
-    </div>
+    </KeyboardModal>
   );
 }
 

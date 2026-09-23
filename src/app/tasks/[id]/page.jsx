@@ -12,22 +12,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { tasksApi } from '@/lib/api/tasks.api'
 import { usersApi } from '@/lib/api/users.api'
+import {
+  TASK_STATUS_COLORS, TASK_STATUS_LABELS,
+  TASK_PRIORITY_COLORS, TASK_PRIORITY_LABELS,
+} from '@/constants'
 import { TaskComments } from '@/components/tasks/task-comments'
 import { formatDate, getInitials, getAvatarColor, cn } from '@/utils'
-
-const STATUS_CONFIG = {
-  todo:        { label: 'To Do',       color: 'bg-slate-100 text-muted-foreground' },
-  in_progress: { label: 'In Progress', color: 'bg-blue-100 text-blue-700' },
-  in_review:   { label: 'In Review',   color: 'bg-amber-100 text-amber-700' },
-  completed:   { label: 'Completed',   color: 'bg-green-100 text-green-700' },
-}
-
-const PRIORITY_CONFIG = {
-  low:      { label: 'Low',      color: 'bg-slate-100 text-muted-foreground' },
-  medium:   { label: 'Medium',   color: 'bg-blue-100 text-blue-700' },
-  high:     { label: 'High',     color: 'bg-amber-100 text-amber-700' },
-  critical: { label: 'Critical', color: 'bg-red-100 text-red-700' },
-}
 
 function DetailsSkeleton() {
   return (
@@ -257,8 +247,14 @@ async function handleSave() {
     )
   }
 
-  const status = STATUS_CONFIG[task.status] ?? STATUS_CONFIG.todo
-  const priority = PRIORITY_CONFIG[task.priority] ?? PRIORITY_CONFIG.medium
+  const status = {
+    label: TASK_STATUS_LABELS[task.status] ?? TASK_STATUS_LABELS.todo,
+    color: TASK_STATUS_COLORS[task.status] ?? TASK_STATUS_COLORS.todo,
+  }
+  const priority = {
+    label: TASK_PRIORITY_LABELS[task.priority] ?? TASK_PRIORITY_LABELS.medium,
+    color: TASK_PRIORITY_COLORS[task.priority] ?? TASK_PRIORITY_COLORS.medium,
+  }
   const projectName = task.project?.name ?? task.projectName ?? null
   const assignee = task.assignee ?? null
   const assigneeName = assignee?.name ?? task.assigneeName ?? null

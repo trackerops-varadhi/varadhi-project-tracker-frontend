@@ -1,5 +1,7 @@
 'use client'
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState } from 'react'
 import {
   Users,
@@ -231,7 +233,7 @@ export function HrModules() {
 
       {/* 1. Employee Details Card Grid Modal */}
       {isEmployeeModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <KeyboardModal title={"Employee Directory"} onClose={() => setIsEmployeeModalOpen(false)} className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
               <div>
@@ -329,12 +331,12 @@ export function HrModules() {
               </button>
             </div>
           </div>
-        </div>
+        </KeyboardModal>
       )}
 
       {/* 2. Attrition Management Card Grid Modal */}
       {isAttritionModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <KeyboardModal title="Attrition Management" onClose={() => setIsAttritionModalOpen(false)} className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-rose-50/50">
               <div>
@@ -458,12 +460,12 @@ export function HrModules() {
               </button>
             </div>
           </div>
-        </div>
+        </KeyboardModal>
       )}
 
       {/* 3. Interview Management Card Grid Modal */}
       {isInterviewModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <KeyboardModal title="Interview Management" onClose={() => setIsInterviewModalOpen(false)} className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-violet-50/50">
               <div>
@@ -584,7 +586,7 @@ export function HrModules() {
               </button>
             </div>
           </div>
-        </div>
+        </KeyboardModal>
       )}
     </>
   );

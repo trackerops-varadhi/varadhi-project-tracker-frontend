@@ -7,31 +7,6 @@ import { UpcomingDeadlines } from '@/components/tasks/UpcomingDeadlines'
 
 // Keep the scoped task styles with the page so they arrive with its markup.
 const taskPageStyles = `
-.tasks-filterOptions {
-  width: 96px;
-  height: 28px;
-  overflow-x: hidden;
-  scroll-snap-type: y mandatory;
-  overscroll-behavior-y: contain;
-  overflow-y: scroll !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: #94a3b8 #f1f5f9;
-}
-
-.tasks-filterOptions::-webkit-scrollbar {
-  display: block !important;
-  width: 6px;
-}
-
-.tasks-filterOptions::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-.tasks-filterOptions::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: #94a3b8;
-}
-
 .tasks-page {
   display: grid;
   grid-template-rows: 88px minmax(0, 1fr);

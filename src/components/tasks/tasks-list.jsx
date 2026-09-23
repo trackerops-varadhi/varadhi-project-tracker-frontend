@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Search, Calendar, AlertTriangle, MoreHorizontal, Eye, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TaskTabs } from './task-tabs';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreateTaskModal } from './create-task-modal';
 import { StatusBadge, PriorityBadge, TypeBadge } from './task-badge';
 import { useAuthStore } from '@/store/auth.store';
@@ -14,28 +15,22 @@ const TASKS_PER_PAGE = 10;
 
 function TaskFilter({ label, value, onChange, options }) {
   return (
-    <div
-      role='group'
-      aria-label={label}
-      className='tasks-filterOptions shrink-0 rounded-lg border border-slate-200 bg-white'
-    >
-      {options.map(([optionValue, text]) => (
-        <button
-          key={optionValue}
-          type='button'
-          aria-pressed={value === optionValue}
-          onClick={() => onChange(optionValue)}
-          className={cn(
-            'block h-[26px] w-full snap-start cursor-pointer whitespace-nowrap px-2 text-left text-xs font-medium transition-colors hover:bg-violet-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400',
-            value === optionValue
-              ? 'bg-violet-100 font-semibold text-violet-700'
-              : 'text-slate-600'
-          )}
-        >
-          {text}
-        </button>
-      ))}
-    </div>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger
+        size='sm'
+        aria-label={label}
+        className='min-w-[120px] shrink-0 border-slate-200 bg-white text-xs font-medium text-slate-700'
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align='start'>
+        {options.map(([optionValue, text]) => (
+          <SelectItem key={optionValue} value={optionValue} className='text-xs'>
+            {text}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 

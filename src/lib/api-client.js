@@ -78,3 +78,18 @@ apiClient.interceptors.response.use(
 )
 
 export default apiClient
+// Collect paginated resources for boards and selectors that need the complete list.
+export async function fetchAllPages(fetchPage) {
+  const items = []
+  let page = 1
+  while (true) {
+    const result = await fetchPage(page)
+    if (!result || !Array.isArray(result.data) || !Number.isFinite(Number(result.totalPages))) {
+      throw new Error('Invalid paginated response')
+    }
+    items.push(...result.data)
+    if (page >= Number(result.totalPages)) return items
+    if (result.data.length === 0) throw new Error('Incomplete paginated response')
+    page += 1
+  }
+}

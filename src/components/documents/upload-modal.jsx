@@ -1,5 +1,7 @@
 'use client'
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState, useRef, useEffect } from 'react'
 import { X, Upload, File, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -33,7 +35,7 @@ async function loadProjects() {
   setProjectsLoading(true)
   setProjectsError(false)
   try {
-    const response = await projectsApi.getAll()
+    const response = await projectsApi.getAllPages()
 
 
     const list = response?.data ?? response ?? []
@@ -152,7 +154,7 @@ if (!allowedExtensions.includes(ext)) {
   }
 
   return (
-    <div
+    <KeyboardModal title={"Upload Document"} onClose={onClose} preventClose={isUploading}
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && !isUploading && onClose()}
     >
@@ -300,7 +302,7 @@ if (!allowedExtensions.includes(ext)) {
 
   {projectsError && (
     <p className="text-amber-600 text-xs">
-      Couldn't load projects.{' '}
+      Couldn&apos;t load projects.{' '}
       <button
         type="button"
         onClick={loadProjects}
@@ -388,6 +390,6 @@ if (!allowedExtensions.includes(ext)) {
 
         </div>
       </div>
-    </div>
+    </KeyboardModal>
   )
 }

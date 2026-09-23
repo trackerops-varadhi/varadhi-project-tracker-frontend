@@ -65,6 +65,7 @@ export function ProjectsList() {
   // here after the V2.0 list rewrite.
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [pageSelection, setPageSelection] = useState({ key: '', page: 1 })
   const [selectedDeadlineDate, setSelectedDeadlineDate] = useState('')
 
   const [view, setView] = useState('table')
@@ -88,8 +89,8 @@ export function ProjectsList() {
       const filters = {}
       if (search.trim()) filters.search = search
 
-      const response = await projectsApi.getAll(filters)
-      setAllProjects(response.data || [])
+      const response = await projectsApi.getAllPages(filters)
+      setAllProjects(response)
     } catch (err) {
       setAllProjects([])
       setError('Failed to load projects.')
@@ -167,6 +168,11 @@ export function ProjectsList() {
       .sort((a, b) => new Date(a.endDate) - new Date(b.endDate))
       .slice(0, 5)
   }, [allProjects, selectedDeadlineDate])
+
+  const pageKey = `${search}:${statusFilter}`
+  const totalPages = Math.max(1, Math.ceil(displayedProjects.length / 10))
+  const currentPage = Math.min(pageSelection.key === pageKey ? pageSelection.page : 1, totalPages)
+  const pageProjects = displayedProjects.slice((currentPage - 1) * 10, currentPage * 10)
 
   return (
     <div className="w-full space-y-6 text-slate-800">
@@ -438,7 +444,7 @@ export function ProjectsList() {
             <>
               {view === "grid" ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {displayedProjects.map((project) => (
+                  {pageProjects.map((project) => (
                     <ProjectCard key={project.id} project={project} onUpdated={fetchProjects} />
                   ))}
                 </div>
@@ -457,7 +463,7 @@ export function ProjectsList() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 bg-white">
-                        {displayedProjects.map((project) => {
+                        {pageProjects.map((project) => {
                           const statusStyles = {
                             active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
                             in_progress: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -543,6 +549,17 @@ export function ProjectsList() {
                 </div>
               )}
             </>
+          )}
+
+          {!isLoading && !error && displayedProjects.length > 0 && (
+            <nav aria-label="Project pagination" className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+              <span>Showing {(currentPage - 1) * 10 + 1}-{Math.min(currentPage * 10, displayedProjects.length)} of {displayedProjects.length} projects</span>
+              <div className="flex items-center gap-3">
+                <button type="button" disabled={currentPage === 1} onClick={() => setPageSelection({ key: pageKey, page: currentPage - 1 })} className="rounded-lg border px-3 py-1.5 disabled:opacity-40">Previous</button>
+                <span>{currentPage} / {totalPages}</span>
+                <button type="button" disabled={currentPage === totalPages} onClick={() => setPageSelection({ key: pageKey, page: currentPage + 1 })} className="rounded-lg border px-3 py-1.5 disabled:opacity-40">Next</button>
+              </div>
+            </nav>
           )}
 
           {/* EMPTY STATE */}

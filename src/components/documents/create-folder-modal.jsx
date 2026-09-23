@@ -1,5 +1,7 @@
 'use client'
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState } from 'react'
 import { X, Loader2, FolderPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -35,7 +37,7 @@ export function CreateFolderModal({ onClose, onSuccess }) {
   }
 
   return (
-    <div
+    <KeyboardModal title={"Create Folder"} onClose={onClose} preventClose={isLoading}
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && !isLoading && onClose()}
     >
@@ -92,6 +94,6 @@ export function CreateFolderModal({ onClose, onSuccess }) {
 
         </form>
       </div>
-    </div>
+    </KeyboardModal>
   )
 }
