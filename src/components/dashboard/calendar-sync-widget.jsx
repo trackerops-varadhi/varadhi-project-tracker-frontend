@@ -83,7 +83,7 @@ export function CalendarSyncWidget() {
               bg-violet-50
             "
           >
-            <CalendarSync className="h-3 w-3 text-violet-600" />
+            <CalendarSync className="h-3 w-3 text-primary" />
           </div>
 
           <div className="min-w-0">
@@ -121,8 +121,8 @@ export function CalendarSyncWidget() {
             items-center gap-0.5
             text-[8px]
             font-medium
-            text-violet-600
-            hover:text-violet-700
+            text-primary
+            hover:text-primary-hover
           "
         >
           {connected ? 'Manage' : 'Connect'}
@@ -217,12 +217,12 @@ export function CalendarSyncWidget() {
             className="
               mt-1.5
               rounded-md
-              bg-violet-600
+              bg-primary
               px-2 py-1
               text-[7px]
               font-medium
               text-white
-              hover:bg-violet-700
+              hover:bg-primary-hover
             "
           >
             Connect calendar

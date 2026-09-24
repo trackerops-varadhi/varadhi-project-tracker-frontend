@@ -170,7 +170,7 @@ export function ChangePasswordForm() {
         </div>
 
         <div className="flex justify-end pt-2">
-          <Button type="submit" className="bg-violet-600 hover:bg-violet-700" disabled={isLoading}>
+          <Button type="submit" className="bg-primary hover:bg-primary-hover" disabled={isLoading}>
             {isLoading ? (
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Updating...</>
             ) : (

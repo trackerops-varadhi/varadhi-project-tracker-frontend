@@ -10,7 +10,7 @@ import { dashboardApi } from '@/lib/api/dashboard.api'
 
 const BAR_COLORS = [
   'bg-gradient-to-r from-indigo-600 to-violet-500',
-  'bg-gradient-to-r from-violet-600 to-purple-500',
+  'bg-gradient-to-r from-primary to-purple-500',
   'bg-gradient-to-r from-emerald-500 to-teal-400',
   'bg-gradient-to-r from-indigo-500 to-violet-400',
 ]

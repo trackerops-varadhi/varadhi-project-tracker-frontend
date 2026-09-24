@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/layout/topbar'
 import { HRStats } from '@/components/hr-management/hr-stats'
 import { EmployeeOverview } from '@/components/hr-management/employee-overview'
 import { HRQuickActions } from '@/components/hr-management/hr-quick-actions'
@@ -8,7 +9,8 @@ import { HrModules } from '@/components/hr-management/hr-modules'
 
 export default function HRManagementPage() {
   return (
-    <main className="min-h-full w-full min-w-0 space-y-3 bg-slate-50 p-3 lg:p-4">
+    <div className="mx-auto w-full min-w-0 max-w-[1500px] space-y-3 bg-slate-50 sm:space-y-4">
+      <PageHeader>HR Management</PageHeader>
       <HRStats />
 
       <div className="grid min-w-0 grid-cols-1 items-stretch gap-3 md:grid-cols-2">
@@ -23,6 +25,6 @@ export default function HRManagementPage() {
       </div>
 
       <HrModules />
-    </main>
+    </div>
   )
 }

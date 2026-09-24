@@ -10,10 +10,11 @@ import { clearOfflineCaches } from '@/lib/offline-cache'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { getFromStorage } from '@/utils'
 
 export function LoginForm() {
   const router = useRouter()
-  const { setAuth } = useAuthStore()
+  const { setAuth, clearAuth } = useAuthStore()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -30,6 +31,7 @@ export function LoginForm() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (isLoading) return
     setError('')
 
     if (!formData.email || !formData.password) {
@@ -38,8 +40,17 @@ export function LoginForm() {
     }
 
     setIsLoading(true)
+    let sessionSaved = false
     try {
-      const { user, token } = await authApi.login(formData)
+      const { user, token } = await authApi.login({
+        ...formData,
+        email: formData.email.trim(),
+      })
+
+      if (!user || typeof token !== 'string' || !token) {
+        setError('The server did not return a valid login session. Please try again.')
+        return
+      }
 
       // Discard any service-worker cache left by a previous session BEFORE
       // navigating. This is the real cross-user-leak guarantee: logout clears
@@ -56,14 +67,25 @@ export function LoginForm() {
 
       // Save to Zustand store + localStorage
       setAuth(user, token)
+      sessionSaved = true
 
       // Save token in cookie for middleware
-      document.cookie = `varadhi_token=${token}; path=/; max-age=${7 * 24 * 60 * 60}`
+      document.cookie = `varadhi_token=${token}; path=/; SameSite=Lax; max-age=${7 * 24 * 60 * 60}`
 
-      // Redirect based on role
-      router.push('/dashboard')
-      router.refresh()
+      const cookieSaved = document.cookie.split(';').some(
+        cookie => cookie.trim() === `varadhi_token=${token}`
+      )
+      if (!cookieSaved || getFromStorage('varadhi_token') !== token) {
+        clearAuth()
+        setError('Your browser could not save the login session. Allow cookies and site storage, then try again.')
+        return
+      }
+
+      // Check the saved session before navigating; keep any rejection visible.
+      await authApi.getMe({ skipAuthRedirect: true })
+      router.replace('/dashboard')
     } catch (err) {
+      if (sessionSaved) clearAuth()
       // No `response` means the request never reached the server — offline, DNS
       // failure, or the API is down. Falling through to the credentials message
       // would tell an offline user their correct password is wrong, and they'd
@@ -87,7 +109,7 @@ export function LoginForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
+        <div role="alert" className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
           {error}
         </div>
       )}
@@ -111,7 +133,7 @@ export function LoginForm() {
           <Label htmlFor="password">Password</Label>
           <Link
             href="/auth/forgot-password"
-            className="text-xs text-violet-600 hover:underline"
+            className="text-xs text-primary hover:underline"
           >
             Forgot password?
           </Link>
@@ -143,7 +165,7 @@ export function LoginForm() {
 
       <Button
         type="submit"
-        className="w-full bg-violet-600 hover:bg-violet-700"
+        className="w-full bg-primary hover:bg-primary-hover"
         disabled={isLoading}
       >
         {isLoading
@@ -156,7 +178,7 @@ export function LoginForm() {
         Don&apos;t have an account?{' '}
         <Link
           href="/auth/register"
-          className="text-violet-600 font-medium hover:underline"
+          className="text-primary font-medium hover:underline"
         >
           Contact your admin
         </Link>

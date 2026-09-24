@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/utils'
 
 import {
@@ -15,9 +16,13 @@ import {
 
 export function StatusBadge({ status }) {
   return (
-    <span
+    <Badge
+      variant="outline"
       className={cn(
         `
+          h-auto
+          border-0
+          shrink
           inline-flex
           max-w-full
           items-center
@@ -34,7 +39,7 @@ export function StatusBadge({ status }) {
       )}
     >
       {TASK_STATUS_LABELS[status] || status || '—'}
-    </span>
+    </Badge>
   )
 }
 
@@ -44,9 +49,13 @@ export function StatusBadge({ status }) {
 
 export function PriorityBadge({ priority }) {
   return (
-    <span
+    <Badge
+      variant="outline"
       className={cn(
         `
+          h-auto
+          border-0
+          shrink
           inline-flex
           max-w-full
           items-center
@@ -63,7 +72,7 @@ export function PriorityBadge({ priority }) {
       )}
     >
       {TASK_PRIORITY_LABELS[priority] || priority || '—'}
-    </span>
+    </Badge>
   )
 }
 
@@ -73,9 +82,13 @@ export function PriorityBadge({ priority }) {
 
 export function TypeBadge({ type }) {
   return (
-    <span
+    <Badge
+      variant="outline"
       className={cn(
         `
+          h-auto
+          border-0
+          shrink
           inline-flex
           max-w-full
           items-center
@@ -92,6 +105,6 @@ export function TypeBadge({ type }) {
       )}
     >
       {TASK_TYPE_LABELS[type] || type || '—'}
-    </span>
+    </Badge>
   )
 }

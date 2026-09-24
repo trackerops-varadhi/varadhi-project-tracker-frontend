@@ -146,7 +146,7 @@ export function MemberProfileCard() {
             text-[11px]
             font-medium
             capitalize
-            text-violet-700
+            text-primary-hover
           "
         >
           <Shield className="h-3 w-3 shrink-0" />

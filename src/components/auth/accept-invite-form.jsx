@@ -140,7 +140,7 @@ export function AcceptInviteForm() {
         </div>
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{' '}
-          <Link href="/auth/login" className="text-violet-600 font-medium hover:underline">
+          <Link href="/auth/login" className="text-primary font-medium hover:underline">
             Sign in
           </Link>
         </p>
@@ -155,7 +155,7 @@ export function AcceptInviteForm() {
       {/* Invited-as banner */}
       <div className="bg-violet-50 border border-violet-100 rounded-lg px-4 py-3 flex items-center gap-2">
         <CheckCircle2 className="w-4 h-4 text-violet-500 flex-shrink-0" />
-        <p className="text-xs text-violet-700">
+        <p className="text-xs text-primary-hover">
           You&apos;re joining as <span className="font-medium">{invite?.email}</span>
           {invite?.role ? <> · <span className="capitalize font-medium">{invite.role}</span></> : null}
         </p>
@@ -239,7 +239,7 @@ export function AcceptInviteForm() {
       {/* Submit */}
       <Button
         type="submit"
-        className="w-full bg-violet-600 hover:bg-violet-700"
+        className="w-full bg-primary hover:bg-primary-hover"
         disabled={isLoading}
       >
         {isLoading
@@ -249,7 +249,7 @@ export function AcceptInviteForm() {
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{' '}
-        <Link href="/auth/login" className="text-violet-600 font-medium hover:underline">
+        <Link href="/auth/login" className="text-primary font-medium hover:underline">
           Sign in
         </Link>
       </p>

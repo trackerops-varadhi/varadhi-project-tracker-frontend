@@ -24,7 +24,7 @@ export default function LoginPage() {
             {/* Logo & Title */}
             <div className="text-center mb-8">
 
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 text-white font-bold text-2xl shadow-lg mb-4">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-purple-700 text-white font-bold text-2xl shadow-lg mb-4">
                 V
               </div>
 
@@ -58,7 +58,7 @@ export default function LoginPage() {
 
         <div className="hidden lg:flex flex-col justify-center">
 
-          <div className="inline-flex w-fit items-center rounded-full bg-violet-100 text-violet-700 px-4 py-2 text-sm font-semibold">
+          <div className="inline-flex w-fit items-center rounded-full bg-violet-100 text-primary-hover px-4 py-2 text-sm font-semibold">
             🚀 Tracking Workspace
           </div>
 

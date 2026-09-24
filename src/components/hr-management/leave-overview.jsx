@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card'
 import { CalendarDays } from 'lucide-react'
 
 export default function LeaveOverview({ planned = 3, unplanned = 6, pending = 3 }) {
@@ -8,6 +9,7 @@ export default function LeaveOverview({ planned = 3, unplanned = 6, pending = 3 
   ]
 
   return (
+    <Card asChild layout="custom">
     <section
       aria-labelledby="leave-overview-title"
       className="flex h-full min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm"
@@ -51,5 +53,6 @@ export default function LeaveOverview({ planned = 3, unplanned = 6, pending = 3 
 
       <p className="text-[10px] leading-4 text-slate-500">Pending requests await admin or manager approval.</p>
     </section>
+    </Card>
   )
 }

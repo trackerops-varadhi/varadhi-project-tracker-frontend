@@ -1,5 +1,7 @@
 'use client'
 
+import { Table } from '@/components/ui/table'
+import { PageHeader } from '@/components/layout/topbar'
 import { useState, useEffect, use } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -145,7 +147,7 @@ export default function ProjectDetailPage({ params }) {
         </p>
         <Link
           href="/projects"
-          className="text-sm text-violet-600 hover:underline font-medium"
+          className="text-sm text-primary hover:underline font-medium"
         >
           ← Back to Projects
         </Link>
@@ -196,9 +198,9 @@ export default function ProjectDetailPage({ params }) {
                 {PROJECT_STATUS_LABELS[project.status] || project.status}
               </span>
             </div>
-            <h1 className="text-2xl font-semibold text-foreground mb-2">
+            <PageHeader>
               {project.name}
-            </h1>
+            </PageHeader>
             {project.description && (
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {project.description}
@@ -355,7 +357,7 @@ export default function ProjectDetailPage({ params }) {
             className={cn(
               'px-4 py-2.5 text-sm font-medium capitalize border-b-2 -mb-px transition-colors',
               activeTab === tab
-                ? 'border-violet-600 text-violet-600'
+                ? 'border-primary text-primary'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             )}
           >
@@ -455,7 +457,7 @@ export default function ProjectDetailPage({ params }) {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <Table scrollable={false} className="w-full">
                 <thead>
                   <tr className="border-b border-slate-100 bg-background">
                     <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
@@ -540,7 +542,7 @@ export default function ProjectDetailPage({ params }) {
                     )
                   })}
                 </tbody>
-              </table>
+              </Table>
             </div>
           )}
         </div>
@@ -568,7 +570,7 @@ export default function ProjectDetailPage({ params }) {
               <p className="text-sm font-medium text-muted-foreground">No members yet</p>
             </div>
           ) : (
-            <table className="w-full">
+            <Table scrollable={false} className="w-full">
               <thead>
                 <tr className="border-b border-slate-100 bg-background">
                   <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
@@ -646,7 +648,7 @@ export default function ProjectDetailPage({ params }) {
                   )
                 })}
               </tbody>
-            </table>
+            </Table>
           )}
         </div>
         </div>

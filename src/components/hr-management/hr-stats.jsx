@@ -21,7 +21,7 @@ export function HRStats({ stats = MOCK_STATS }) {
       value: stats.totalEmployees,
       subtitle: `+${stats.newEmployeesThisMonth} this month`,
       icon: Users,
-      color: 'text-violet-600',
+      color: 'text-primary',
     },
     {
       title: 'Present Today',

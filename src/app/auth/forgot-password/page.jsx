@@ -1,30 +1,34 @@
-import { ForgotPasswordForm } from '@/components/auth/forgot-password-form'
+import { ForgotPasswordForm, ResetPasswordForm } from '@/components/auth/forgot-password-form'
 
-export const metadata = {
-  title: 'Forgot Password',
+export async function generateMetadata({ searchParams }) {
+  const params = await searchParams
+  return { title: params.mode === 'reset' ? 'Reset Password' : 'Forgot Password' }
 }
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage({ searchParams }) {
+  const params = await searchParams
+  const isReset = params.mode === 'reset'
+  const token = typeof params.token === 'string' ? params.token.trim() : ''
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
 
         {/* Logo & Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-violet-600 text-white font-bold text-xl mb-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-white font-bold text-xl mb-4">
             V
           </div>
           <h1 className="text-2xl font-semibold text-foreground">
-            Forgot Password
+            {isReset ? 'Reset Password' : 'Forgot Password'}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Enter your email — we&apos;ll send a reset link
+            {isReset ? 'Choose a new password for your account.' : 'Enter your email to receive a reset link.'}
           </p>
         </div>
 
         {/* Form Card */}
         <div className="bg-card rounded-2xl shadow-sm border border-border p-8">
-          <ForgotPasswordForm />
+          {isReset ? <ResetPasswordForm token={token} /> : <ForgotPasswordForm />}
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-6">

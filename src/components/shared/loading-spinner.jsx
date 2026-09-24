@@ -25,7 +25,7 @@ export function PageLoader() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center text-white font-bold text-lg animate-pulse">
+        <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-lg animate-pulse">
           V
         </div>
         <p className="text-sm text-slate-400">Loading Varadhi...</p>

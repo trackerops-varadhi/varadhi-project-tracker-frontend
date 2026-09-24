@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card'
 import { CalendarCheck } from 'lucide-react'
 
 const MOCK_DAYS = [
@@ -17,6 +18,7 @@ export function AttendanceSnapshot({ days = MOCK_DAYS, totalEmployees = 128 }) {
     : null
 
   return (
+    <Card asChild layout="custom">
     <section
       aria-labelledby="attendance-snapshot-title"
       className="flex h-full min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm"
@@ -28,7 +30,7 @@ export function AttendanceSnapshot({ days = MOCK_DAYS, totalEmployees = 128 }) {
           </h2>
           <p className="mt-0.5 text-[11px] leading-4 text-slate-500">Daily presence / sample workweek</p>
         </div>
-        <span className="rounded-lg bg-violet-50 p-1.5 text-violet-600">
+        <span className="rounded-lg bg-violet-50 p-1.5 text-primary">
           <CalendarCheck aria-hidden="true" className="h-4 w-4" />
         </span>
       </div>
@@ -43,7 +45,7 @@ export function AttendanceSnapshot({ days = MOCK_DAYS, totalEmployees = 128 }) {
               <p className="mt-1 text-[11px] text-slate-500">Average present</p>
             </div>
             <div className="text-right">
-              <p className="text-xs font-semibold tabular-nums text-violet-700">{attendanceRate === null ? 'N/A' : `${attendanceRate}%`}</p>
+              <p className="text-xs font-semibold tabular-nums text-primary-hover">{attendanceRate === null ? 'N/A' : `${attendanceRate}%`}</p>
               <p className="mt-1 text-[11px] text-slate-500">Attendance</p>
             </div>
           </div>
@@ -69,5 +71,6 @@ export function AttendanceSnapshot({ days = MOCK_DAYS, totalEmployees = 128 }) {
         <p className="py-4 text-center text-xs text-slate-500">No attendance data to display.</p>
       )}
     </section>
+    </Card>
   )
 }

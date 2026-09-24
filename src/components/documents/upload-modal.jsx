@@ -210,7 +210,7 @@ if (!allowedExtensions.includes(ext)) {
               <Upload className="w-8 h-8 text-slate-300 mx-auto mb-3" />
               <p className="text-sm font-medium text-muted-foreground mb-1">
                 Drop your file here or{' '}
-                <span className="text-violet-600">browse</span>
+                <span className="text-primary">browse</span>
               </p>
               <p className="text-xs text-slate-400">
                 PDF, DOC, XLS, PNG, JPG, ZIP · Max 10MB
@@ -376,7 +376,7 @@ if (!allowedExtensions.includes(ext)) {
             <Button
               onClick={handleUpload}
               disabled={!selectedFile || isUploading || isSuccess}
-              className="bg-violet-600 hover:bg-violet-700"
+              className="bg-primary hover:bg-primary-hover"
             >
               {isUploading ? (
                 <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>

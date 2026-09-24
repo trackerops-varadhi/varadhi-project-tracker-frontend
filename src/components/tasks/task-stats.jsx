@@ -46,9 +46,9 @@ export function TaskStats() {
 
   if (isLoading) {
     return (
-      <div className="task-summary-grid" style={{ display: 'grid', height: '100%', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 10 }} role="status" aria-label="Loading task statistics">
+      <div className="task-summary-grid grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5" role="status" aria-label="Loading task statistics">
         {Array.from({ length: 5 }, (_, index) => (
-          <div key={index} className="min-w-0 animate-pulse rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div key={index} className="min-w-0 animate-pulse rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
             <div className="mb-3 flex items-center justify-between">
               <div className="h-3 w-20 rounded bg-slate-100" />
               <div className="h-4 w-4 rounded bg-slate-100" />
@@ -78,7 +78,7 @@ export function TaskStats() {
           ? `+${stats.completedThisWeek} this week`
           : 'Across all projects',
       icon: CheckSquare,
-      iconColor: 'text-violet-600',
+      iconColor: 'text-primary',
     },
 
     {
@@ -115,14 +115,14 @@ export function TaskStats() {
   ]
 
   return (
-    <div className="task-summary-grid" style={{ display: 'grid', height: '100%', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 10 }}>
+    <div className="task-summary-grid grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
       {cards.map((card) => {
         const Icon = card.icon
 
         return (
-          <div key={card.title} className="flex min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+          <div key={card.title} className="flex min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-xs font-semibold text-slate-700">{card.title}</h2>
+              <h2 className="min-w-0 text-xs font-semibold leading-4 text-slate-700">{card.title}</h2>
               <Icon aria-hidden="true" className={`h-4 w-4 shrink-0 ${card.iconColor}`} />
             </div>
             <p className="mt-2 break-words text-2xl font-bold leading-tight tabular-nums text-slate-900">

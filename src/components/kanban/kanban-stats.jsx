@@ -64,7 +64,7 @@ export function KanbanStats() {
           : 'Across all projects',
       icon: ClipboardList,
       iconBg: 'bg-violet-100',
-      iconColor: 'text-violet-600',
+      iconColor: 'text-primary',
     },
     {
       title: 'In Progress',

@@ -324,8 +324,8 @@ export function DashboardPeriodSelector({ onRangeChange }) {
     <Popover.Root open={open} onOpenChange={handleOpen}>
       <div className="flex min-w-0 items-center gap-2">
         <Popover.Trigger asChild>
-          <button type="button" className="flex h-7 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[11px] font-medium text-slate-700 shadow-sm hover:border-violet-300 hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-violet-600">
-            <CalendarDays className="h-3.5 w-3.5 text-violet-600" />
+          <button type="button" className="flex h-7 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[11px] font-medium text-slate-700 shadow-sm hover:border-violet-300 hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-primary">
+            <CalendarDays className="h-3.5 w-3.5 text-primary" />
             {selected?.label === 'Custom range' ? `${selected.from} to ${selected.to}` : selected?.label ?? 'This week'}
             <ChevronDown className="h-3.5 w-3.5" />
           </button>
@@ -338,7 +338,7 @@ export function DashboardPeriodSelector({ onRangeChange }) {
             <p className="mt-1 text-[10px] text-slate-500">Weeks run Monday to Sunday.</p>
             <div className="my-2 grid grid-cols-2 gap-1.5" role="group" aria-label="Date presets">
               {PRESETS.map((label) => (
-                <button key={label} type="button" aria-pressed={draft.label === label} onClick={() => setDraft(label === 'Custom range' ? { ...draft, label } : presetRange(label))} className={`flex items-center justify-between rounded-lg border px-2.5 py-1.5 text-[11px] ${draft.label === label ? 'border-violet-200 bg-violet-50 text-violet-700' : 'border-slate-200 hover:bg-slate-50'}`}>
+                <button key={label} type="button" aria-pressed={draft.label === label} onClick={() => setDraft(label === 'Custom range' ? { ...draft, label } : presetRange(label))} className={`flex items-center justify-between rounded-lg border px-2.5 py-1.5 text-[11px] ${draft.label === label ? 'border-violet-200 bg-violet-50 text-primary-hover' : 'border-slate-200 hover:bg-slate-50'}`}>
                   {label}
                   {draft.label === label && <Check className="h-3 w-3" />}
                 </button>
@@ -360,7 +360,7 @@ export function DashboardPeriodSelector({ onRangeChange }) {
             <p className="mt-2 text-[10px] leading-4 text-slate-500">Preview only. Dashboard data is not filtered yet.</p>
             <div className="mt-2 flex justify-end gap-2">
               <Popover.Close asChild><button type="button" className="rounded-lg border border-slate-200 px-3 py-1.5 text-[11px]">Cancel</button></Popover.Close>
-              <button type="submit" disabled={!valid} className="rounded-lg bg-violet-600 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-violet-700 disabled:opacity-50">Select period</button>
+              <button type="submit" disabled={!valid} className="rounded-lg bg-primary px-3 py-1.5 text-[11px] font-medium text-white hover:bg-primary-hover disabled:opacity-50">Select period</button>
             </div>
           </form>
         </Popover.Content>

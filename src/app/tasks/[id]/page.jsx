@@ -1,4 +1,6 @@
 'use client'
+import { Badge } from '@/components/ui/badge'
+import { PageHeader } from '@/components/layout/topbar'
 import { useAuthStore } from '@/store/auth.store'
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
@@ -293,17 +295,17 @@ async function handleSave() {
   </h3> */}
 
   <div className="flex items-center gap-3 flex-wrap">
-    <h2 className="text-2xl font-bold text-foreground">
+    <PageHeader>
       {task.title}
-    </h2>
+    </PageHeader>
 
-    <span className={cn('text-xs px-2 py-0.5 rounded-md font-medium', status.color)}>
+    <Badge variant="outline" className={cn('h-auto border-0 text-xs px-2 py-0.5 font-medium', status.color)}>
       {status.label}
-    </span>
+    </Badge>
 
-    <span className={cn('text-xs px-2 py-0.5 rounded-md font-medium', priority.color)}>
+    <Badge variant="outline" className={cn('h-auto border-0 text-xs px-2 py-0.5 font-medium', priority.color)}>
       {priority.label}
-    </span>
+    </Badge>
   </div>
 </div>
               
@@ -316,7 +318,7 @@ async function handleSave() {
               <>
                 <Button
                   type="button"
-                  className="bg-violet-600 hover:bg-violet-700"
+                  className="bg-primary hover:bg-primary-hover"
                   onClick={handleSave}
                   disabled={isSaving}
                 >
@@ -355,7 +357,7 @@ async function handleSave() {
     <>
       <Button
         type="button"
-        className="bg-violet-600 hover:bg-violet-700"
+        className="bg-primary hover:bg-primary-hover"
         onClick={handleSave}
         disabled={isSaving}
       >
@@ -569,9 +571,9 @@ async function handleSave() {
                   <CircleDot className="w-3.5 h-3.5" /> Status
                 </dt>
                 <dd>
-                  <span className={cn('text-xs px-2 py-0.5 rounded-md font-medium', status.color)}>
+                  <Badge variant="outline" className={cn('h-auto border-0 text-xs px-2 py-0.5 font-medium', status.color)}>
                     {status.label}
-                  </span>
+                  </Badge>
                 </dd>
               </div>
               <div className="flex items-center justify-between">
@@ -579,9 +581,9 @@ async function handleSave() {
                   <Flag className="w-3.5 h-3.5" /> Priority
                 </dt>
                 <dd>
-                  <span className={cn('text-xs px-2 py-0.5 rounded-md font-medium', priority.color)}>
+                  <Badge variant="outline" className={cn('h-auto border-0 text-xs px-2 py-0.5 font-medium', priority.color)}>
                     {priority.label}
-                  </span>
+                  </Badge>
                 </dd>
               </div>
               <div className="flex items-center justify-between">

@@ -596,8 +596,8 @@ return createPortal(
             type="submit"
             disabled={isLoading}
             className="
-              bg-violet-600
-              hover:bg-violet-700
+              bg-primary
+              hover:bg-primary-hover
             "
           >
             {isLoading ? (

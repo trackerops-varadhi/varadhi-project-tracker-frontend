@@ -26,7 +26,7 @@ import {
 const CARDS = [
   {
     icon: CheckSquare,
-    tone: "bg-violet-50 text-violet-600",
+    tone: "bg-violet-50 text-primary",
     title: "New Task Assigned",
     facts: [
       ["Task", "UI Design for Dashboard"],
@@ -106,7 +106,7 @@ export default function AdaptiveCardPreview() {
                 {card.actions.map((a) => (
                   <span
                     key={a.label}
-                    className="rounded bg-violet-600 px-2.5 py-1 text-xs font-medium text-white"
+                    className="rounded bg-primary px-2.5 py-1 text-xs font-medium text-white"
                   >
                     {a.label}
                   </span>

@@ -1,5 +1,7 @@
 'use client'
 
+import { Table } from '@/components/ui/table'
+import { PageHeader } from '@/components/layout/topbar'
 import { useEffect, useState } from 'react'
 import {
   Clock3,
@@ -364,9 +366,7 @@ export default function TimeManagementPage() {
 
       <div>
 
-        <h1 className="text-2xl font-bold text-blue-700">
-          Time Management
-        </h1>
+        <PageHeader>Time Management</PageHeader>
 
         <p className="mt-1 text-sm text-slate-500">
           Track your daily login, logout and working hours.
@@ -445,7 +445,7 @@ export default function TimeManagementPage() {
             </div>
 
             <CalendarDays
-              className="text-violet-600"
+              className="text-primary"
               size={30}
             />
 
@@ -501,7 +501,7 @@ export default function TimeManagementPage() {
 
         <div className="border-b p-5">
 
-          <h2 className="text-xl font-semibold text-blue-700">
+          <h2 className="text-xl font-semibold text-primary">
 
             Do Your Daily Check-In / Check-Out
 
@@ -559,7 +559,7 @@ export default function TimeManagementPage() {
                            rounded-full border
                            px-5 py-3
                            font-medium
-                           hover:bg-blue-600
+                           hover:bg-primary
                            hover:text-white
                            disabled:bg-slate-100
                            disabled:text-slate-400"
@@ -606,7 +606,7 @@ export default function TimeManagementPage() {
                            rounded-full border
                            px-5 py-3
                            font-medium
-                           hover:bg-blue-600
+                           hover:bg-primary
                            hover:text-white
                            disabled:bg-slate-100
                            disabled:text-slate-400"
@@ -698,7 +698,7 @@ export default function TimeManagementPage() {
 
         <div className="border-b p-5">
 
-          <h2 className="text-xl font-semibold text-blue-700">
+          <h2 className="text-xl font-semibold text-primary">
 
             View Past Submissions
 
@@ -723,7 +723,7 @@ export default function TimeManagementPage() {
 
           <div className="overflow-x-auto">
 
-            <table className="w-full">
+            <Table scrollable={false} className="w-full">
 
               <thead className="bg-slate-100">
 
@@ -808,7 +808,7 @@ export default function TimeManagementPage() {
 
               </tbody>
 
-            </table>
+            </Table>
 
           </div>
 

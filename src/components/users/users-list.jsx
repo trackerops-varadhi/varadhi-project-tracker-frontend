@@ -1,5 +1,6 @@
 'use client'
 
+import { Table } from '@/components/ui/table'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 
@@ -470,7 +471,7 @@ export function UsersList({ leftColumn, rightColumn }) {
 
                 ${
                   roleFilter === role.value
-                    ? 'bg-violet-600 text-white'
+                    ? 'bg-primary text-white'
                     : 'bg-white text-slate-700 hover:bg-slate-100'
                 }
               `}
@@ -492,12 +493,12 @@ export function UsersList({ leftColumn, rightColumn }) {
               shrink-0
               gap-1.5
               rounded-lg
-              bg-violet-600
+              bg-primary
               px-3
               text-[10px]
               font-semibold
               text-white
-              hover:bg-violet-700
+              hover:bg-primary-hover
             "
           >
             <UserPlus className="h-3.5 w-3.5" />
@@ -528,10 +529,10 @@ export function UsersList({ leftColumn, rightColumn }) {
             h-full
             w-full
             min-w-0
-            overflow-hidden
+            overflow-auto
           "
         >
-          <table className="w-full table-fixed">
+          <Table scrollable={false} className="w-full table-fixed">
 
             {/* HEADER */}
 
@@ -666,7 +667,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                                   py-0.5
                                   text-[8px]
                                   font-medium
-                                  text-violet-600
+                                  text-primary
                                 "
                               >
                                 You
@@ -866,7 +867,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                                       `,
                                       member.role ===
                                         role
-                                        ? 'font-medium text-violet-600'
+                                        ? 'font-medium text-primary'
                                         : 'text-foreground'
                                     )}
                                   >
@@ -935,7 +936,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                 )
               })}
             </tbody>
-          </table>
+          </Table>
 
           {/* =================================================
               EMPTY STATE

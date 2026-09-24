@@ -1,5 +1,6 @@
 'use client'
 
+import { Table } from '@/components/ui/table'
 import { useState, useEffect } from 'react'
 import {
   Upload, Search, Download, Trash2, Filter, Loader2,
@@ -216,7 +217,7 @@ export function DocumentsList() {
           className={cn(
             'inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors',
             selectedFolder === 'all'
-              ? 'bg-violet-600 border-violet-600 text-white'
+              ? 'bg-primary border-primary text-white'
               : 'bg-white border-slate-200 text-slate-600 hover:border-violet-300'
           )}
         >
@@ -230,7 +231,7 @@ export function DocumentsList() {
           className={cn(
             'inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors',
             selectedFolder === 'root'
-              ? 'bg-violet-600 border-violet-600 text-white'
+              ? 'bg-primary border-primary text-white'
               : 'bg-white border-slate-200 text-slate-600 hover:border-violet-300'
           )}
         >
@@ -245,7 +246,7 @@ export function DocumentsList() {
             className={cn(
               'inline-flex items-center gap-1 rounded-lg border transition-colors',
               selectedFolder === f.id
-                ? 'bg-violet-600 border-violet-600'
+                ? 'bg-primary border-primary'
                 : 'bg-white border-slate-200 hover:border-violet-300'
             )}
           >
@@ -324,7 +325,7 @@ export function DocumentsList() {
         {canManage && (
           <button
             onClick={() => setShowCreateFolder(true)}
-            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-dashed border-slate-300 text-slate-500 hover:border-violet-400 hover:text-violet-600 font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-dashed border-slate-300 text-slate-500 hover:border-violet-400 hover:text-primary font-medium transition-colors"
           >
             <FolderPlus className="w-3.5 h-3.5" />
             New Folder
@@ -361,7 +362,7 @@ export function DocumentsList() {
 
         <Button
           onClick={() => setShowUploadModal(true)}
-          className="bg-violet-600 hover:bg-violet-700 flex-shrink-0"
+          className="bg-primary hover:bg-primary-hover flex-shrink-0"
         >
           <Upload className="w-4 h-4 mr-2" />
           Upload File
@@ -371,7 +372,7 @@ export function DocumentsList() {
       {/* ─── Metrics Banner ──────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
         {[
-          { label: 'Total Documents', value: totalFiles, icon: FileText, color: 'bg-violet-50 text-violet-600' },
+          { label: 'Total Documents', value: totalFiles, icon: FileText, color: 'bg-violet-50 text-primary' },
           { label: 'Storage Used', value: formatFileSize(documents.reduce((acc, d) => acc + (d.fileSize || 0), 0)), icon: HardDrive, color: 'bg-blue-50 text-blue-600' },
           { label: 'Docs & PDFs', value: pdfCount + docCount, icon: Clock, color: 'bg-emerald-50 text-emerald-600' },
           { label: 'Spreadsheets', value: sheetCount, icon: Share2, color: 'bg-amber-50 text-amber-600' },
@@ -399,7 +400,7 @@ export function DocumentsList() {
         <div className="flex items-center space-x-1 text-xs font-medium text-slate-600">
           <span>Documents</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-violet-600 font-semibold">{selectedFolderName}</span>
+          <span className="text-primary font-semibold">{selectedFolderName}</span>
           {unfiledCount > 0 && (
             <span className="ml-2 text-slate-400">
               ({unfiledCount} unfiled)
@@ -413,7 +414,7 @@ export function DocumentsList() {
             onClick={() => setViewMode('table')}
             className={cn(
               'p-1.5 rounded-md text-xs font-medium flex items-center gap-1 transition',
-              viewMode === 'table' ? 'bg-white shadow-xs text-violet-600' : 'text-slate-500 hover:text-slate-800'
+              viewMode === 'table' ? 'bg-white shadow-xs text-primary' : 'text-slate-500 hover:text-slate-800'
             )}
           >
             <List className="w-3.5 h-3.5" /> Table
@@ -422,7 +423,7 @@ export function DocumentsList() {
             onClick={() => setViewMode('grid')}
             className={cn(
               'p-1.5 rounded-md text-xs font-medium flex items-center gap-1 transition',
-              viewMode === 'grid' ? 'bg-white shadow-xs text-violet-600' : 'text-slate-500 hover:text-slate-800'
+              viewMode === 'grid' ? 'bg-white shadow-xs text-primary' : 'text-slate-500 hover:text-slate-800'
             )}
           >
             <LayoutGrid className="w-3.5 h-3.5" /> Grid
@@ -439,7 +440,7 @@ export function DocumentsList() {
         viewMode === 'table' ? (
         <div className="bg-white rounded-xl border border-slate-200 shadow-xs flex flex-col overflow-hidden">
           <div className="max-h-[520px] overflow-y-auto overflow-x-auto relative custom-scrollbar">
-            <table className="w-full text-left text-xs border-collapse min-w-[650px]">
+            <Table scrollable={false} className="w-full text-left text-xs border-collapse min-w-[650px]">
               <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 font-semibold text-slate-500 uppercase tracking-wider shadow-xs">
                 <tr>
                   <th className="p-3">Name</th>
@@ -472,7 +473,7 @@ export function DocumentsList() {
                             grid view's permission rules. */}
                         <button
                           onClick={() => handleDownload(doc)}
-                          className="p-1 hover:text-violet-600 rounded transition"
+                          className="p-1 hover:text-primary rounded transition"
                           title="Download"
                         >
                           <Download className="w-3.5 h-3.5" />
@@ -491,7 +492,7 @@ export function DocumentsList() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </Table>
           </div>
 
           {/* Pagination Bar */}
@@ -558,7 +559,7 @@ export function DocumentsList() {
                     </span>
                   )}
                   {doc.project && (
-                    <span className="text-xs bg-violet-50 text-violet-600 px-2 py-0.5 rounded-md font-medium">
+                    <span className="text-xs bg-violet-50 text-primary px-2 py-0.5 rounded-md font-medium">
                       {doc.project.name}
                     </span>
                   )}
@@ -587,7 +588,7 @@ export function DocumentsList() {
                       <button
                         title="Move to folder"
                         onClick={() => setMoveTargetDoc(moveTargetDoc?.id === doc.id ? null : doc)}
-                        className="p-1.5 text-slate-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-primary hover:bg-violet-50 rounded-lg transition-colors"
                       >
                         <FolderInput className="w-3.5 h-3.5" />
                       </button>
@@ -626,7 +627,7 @@ export function DocumentsList() {
                       <button
                         title="Download"
                         onClick={() => handleDownload(doc)}
-                        className="p-1.5 text-slate-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-primary hover:bg-violet-50 rounded-lg transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
                       </button>

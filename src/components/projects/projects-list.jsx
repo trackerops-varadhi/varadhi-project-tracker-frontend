@@ -1,5 +1,6 @@
 'use client'
 
+import { Table } from '@/components/ui/table'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -181,14 +182,8 @@ export function ProjectsList() {
       <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
 
-          {/* Left Title */}
-          <div className="flex flex-col justify-center shrink-0">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">Projects</h2>
-            <p className="text-xs font-medium text-slate-500 mt-1.5">Plan, track and deliver projects successfully.</p>
-          </div>
-
           {/* Right Action Bar */}
-          <div className="flex flex-wrap items-center gap-3 md:justify-end">
+          <div className="flex w-full flex-wrap items-center gap-3 md:justify-end">
 
             {/* Search Input */}
             <div className="relative w-full sm:w-64">
@@ -208,7 +203,7 @@ export function ProjectsList() {
                 type="button"
                 onClick={() => setView("grid")}
                 className={`p-1.5 rounded-lg transition ${
-                  view === "grid" ? "bg-white text-violet-600 shadow-xs font-semibold" : "text-slate-500 hover:text-slate-800"
+                  view === "grid" ? "bg-white text-primary shadow-xs font-semibold" : "text-slate-500 hover:text-slate-800"
                 }`}
                 title="Grid View"
               >
@@ -218,7 +213,7 @@ export function ProjectsList() {
                 type="button"
                 onClick={() => setView("table")}
                 className={`p-1.5 rounded-lg transition ${
-                  view === "table" ? "bg-white text-violet-600 shadow-xs font-semibold" : "text-slate-500 hover:text-slate-800"
+                  view === "table" ? "bg-white text-primary shadow-xs font-semibold" : "text-slate-500 hover:text-slate-800"
                 }`}
                 title="Table View"
               >
@@ -239,7 +234,7 @@ export function ProjectsList() {
             {canCreate && (
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="h-10 px-4 rounded-xl bg-violet-600 hover:bg-violet-700 active:bg-violet-800 text-white text-sm font-semibold inline-flex items-center gap-2 transition shrink-0 shadow-xs"
+                className="h-10 px-4 rounded-xl bg-primary hover:bg-primary-hover active:bg-violet-800 text-white text-sm font-semibold inline-flex items-center gap-2 transition shrink-0 shadow-xs"
               >
                 <Plus className="w-4 h-4" />
                 New Project
@@ -250,9 +245,9 @@ export function ProjectsList() {
       </div>
 
       {/* TOP KPI STAT CARDS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid min-w-0 grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
         {[
-          { title: 'Total Projects', value: statistics.total, icon: FolderKanban, color: 'bg-violet-50 text-violet-600' },
+          { title: 'Total Projects', value: statistics.total, icon: FolderKanban, color: 'bg-violet-50 text-primary' },
           { title: 'Active Projects', value: statistics.active, icon: TrendingUp, color: 'bg-emerald-50 text-emerald-600' },
           { title: 'Completed', value: statistics.completed, icon: CheckCircle2, color: 'bg-blue-50 text-blue-600' },
           { title: 'On Hold', value: statistics.hold, icon: PauseCircle, color: 'bg-amber-50 text-amber-600' },
@@ -268,7 +263,7 @@ export function ProjectsList() {
           return (
             <div
               key={item.title}
-              className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs flex items-center justify-between"
+              className="bg-white border border-slate-200/80 rounded-2xl p-3 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-2 min-w-0"
             >
               <div>
                 <p className="text-xs font-semibold text-slate-500">{item.title}</p>
@@ -284,7 +279,7 @@ export function ProjectsList() {
       </div>
 
       {/* MIDDLE ANALYTICS SECTION */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      <div className="grid min-w-0 grid-cols-1 xl:grid-cols-3 gap-5 [&>*]:min-w-0">
         {/* Project Health Overview */}
         <div className="project-panel p-5 space-y-4">
           <h3 className="project-panel-title">Project Health Overview</h3>
@@ -338,7 +333,7 @@ export function ProjectsList() {
               {selectedDeadlineDate && (
                 <button 
                   onClick={() => setSelectedDeadlineDate('')} 
-                  className="text-xs text-violet-600 hover:underline mt-0.5"
+                  className="text-xs text-primary hover:underline mt-0.5"
                 >
                   Clear filter
                 </button>
@@ -352,7 +347,7 @@ export function ProjectsList() {
                 className="p-1.5 hover:bg-slate-100 rounded-lg transition"
                 title="Filter by Date"
               >
-                <CalendarDays className="w-5 h-5 text-violet-600" />
+                <CalendarDays className="w-5 h-5 text-primary" />
               </button>
               <input 
                 ref={dateInputRef}
@@ -372,7 +367,7 @@ export function ProjectsList() {
                     <p className="font-semibold text-slate-800 text-xs sm:text-sm truncate">{project.name}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{project.manager?.name || 'Unassigned'}</p>
                   </div>
-                  <span className="shrink-0 px-2.5 py-1 text-xs font-semibold bg-violet-50 text-violet-700 rounded-lg border border-violet-100">
+                  <span className="shrink-0 px-2.5 py-1 text-xs font-semibold bg-violet-50 text-primary-hover rounded-lg border border-violet-100">
                     {new Date(project.endDate).toLocaleDateString()}
                   </span>
                 </div>
@@ -387,14 +382,14 @@ export function ProjectsList() {
       </div>
 
       {/* MAIN DATA SECTION */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      <div className="grid min-w-0 grid-cols-1 xl:grid-cols-3 gap-5 [&>*]:min-w-0">
         
         {/* MAIN PROJECTS TABLE/GRID */}
         <div className="xl:col-span-2 project-panel p-5 space-y-4">
           
           {/* TAB FILTERS */}
           <div className="flex items-center justify-between border-b border-slate-100 pb-3 text-sm">
-            <div className="flex space-x-6 overflow-x-auto">
+            <div className="flex gap-4 overflow-x-auto whitespace-nowrap pb-2">
               {[
                 { id: 'all', label: `All (${statistics.total})` },
                 { id: 'active', label: `Active (${statistics.active})` },
@@ -407,7 +402,7 @@ export function ProjectsList() {
                   onClick={() => setStatusFilter(tab.id)}
                   className={`pb-2 font-semibold text-sm whitespace-nowrap transition-colors border-b-2 ${
                     statusFilter === tab.id
-                      ? 'border-violet-600 text-violet-600'
+                      ? 'border-primary text-primary'
                       : 'border-transparent text-slate-400 hover:text-slate-600'
                   }`}
                 >
@@ -449,9 +444,9 @@ export function ProjectsList() {
                   ))}
                 </div>
               ) : (
-                <div className="w-full overflow-x-auto">
-                  <div className="w-full overflow-x-auto rounded-xl border border-slate-200/80">
-                    <table className="w-full text-left border-collapse min-w-[700px]">
+                <div className="w-full min-w-0 overflow-x-auto">
+                  <div className="w-full min-w-0 overflow-x-auto rounded-xl border border-slate-200/80">
+                    <Table scrollable={false} className="w-full text-left border-collapse min-w-[700px]">
                       <thead>
                         <tr className="border-b border-slate-200 bg-slate-50/80 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           <th className="py-3 px-4">Project Name</th>
@@ -483,7 +478,7 @@ export function ProjectsList() {
                                   href={`/projects/${project.id}`}
                                   className="block group"
                                 >
-                                  <p className="font-bold text-slate-900 text-sm group-hover:text-violet-600 transition-colors">
+                                  <p className="font-bold text-slate-900 text-sm group-hover:text-primary transition-colors">
                                     {project.name}
                                   </p>
                                   <p className="text-xs text-slate-500 line-clamp-1 mt-0.5 max-w-[240px]">
@@ -495,7 +490,7 @@ export function ProjectsList() {
                               {/* Manager */}
                               <td className="py-3.5 px-4 text-sm text-slate-700 font-medium whitespace-nowrap">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs font-bold flex items-center justify-center">
+                                  <div className="w-6 h-6 rounded-full bg-violet-100 text-primary-hover text-xs font-bold flex items-center justify-center">
                                     {project.manager?.name?.[0] || 'U'}
                                   </div>
                                   <span>{project.manager?.name || "Unassigned"}</span>
@@ -534,7 +529,7 @@ export function ProjectsList() {
                                 <div className="flex items-center justify-end gap-2">
                                   <Link
                                     href={`/projects/${project.id}`}
-                                    className="px-3 py-1.5 text-xs font-semibold text-violet-600 hover:bg-violet-50 rounded-lg transition inline-block"
+                                    className="px-3 py-1.5 text-xs font-semibold text-primary hover:bg-violet-50 rounded-lg transition inline-block"
                                   >
                                     View Details
                                   </Link>
@@ -544,7 +539,7 @@ export function ProjectsList() {
                           )
                         })}
                       </tbody>
-                    </table>
+                    </Table>
                   </div>
                 </div>
               )}
@@ -571,7 +566,7 @@ export function ProjectsList() {
               {canCreate && (
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="mt-4 h-10 px-4 rounded-xl bg-violet-600 text-white text-sm font-semibold inline-flex items-center gap-2"
+                  className="mt-4 h-10 px-4 rounded-xl bg-primary text-white text-sm font-semibold inline-flex items-center gap-2"
                 >
                   Create Project
                 </button>
@@ -585,7 +580,7 @@ export function ProjectsList() {
           {/* Project summary — real counts derived from `statistics`, not AI.
               Renamed from "AI Project Insights" when the AI surface was
               removed; the data and behaviour are unchanged. */}
-          <div className="bg-gradient-to-br from-violet-600 to-indigo-700 text-white p-5 rounded-2xl shadow-xs space-y-4">
+          <div className="bg-gradient-to-br from-primary to-indigo-700 text-white p-5 rounded-2xl shadow-xs space-y-4">
             <div className="flex items-center gap-2.5">
               <div className="p-2 bg-white/20 rounded-xl">
                 <Sparkles className="w-5 h-5 text-white" />
@@ -617,7 +612,7 @@ export function ProjectsList() {
                   onClick={() => setShowCreateModal(true)}
                   className="p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition text-left space-y-1.5"
                 >
-                  <Plus className="w-5 h-5 text-violet-600" />
+                  <Plus className="w-5 h-5 text-primary" />
                   <p className="text-xs sm:text-sm font-bold text-slate-800">New Project</p>
                 </button>
               )}

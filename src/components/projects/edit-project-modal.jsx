@@ -208,7 +208,7 @@ export function EditProjectModal({ project, onClose, onSuccess }) {
             </Button>
             <Button
               type="submit"
-              className="bg-violet-600 hover:bg-violet-700"
+              className="bg-primary hover:bg-primary-hover"
               disabled={isLoading}
             >
               {isLoading

@@ -30,7 +30,7 @@ export function OfflineRetryButton({ className }) {
       onClick={retry}
       className={
         className ||
-        'mt-6 inline-flex h-9 items-center justify-center rounded-lg bg-violet-600 px-4 text-sm font-medium text-white transition-colors hover:bg-violet-700'
+        'mt-6 inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary-hover'
       }
     >
       Try again

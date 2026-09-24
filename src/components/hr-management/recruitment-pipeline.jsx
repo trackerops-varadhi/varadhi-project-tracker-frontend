@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card'
 import { UserSearch } from 'lucide-react'
 
 // Candidate states follow the People & Workforce specification.
@@ -18,6 +19,7 @@ export function RecruitmentPipeline({ stages = MOCK_STAGES }) {
   const total = stages.reduce((count, stage) => count + stage.count, 0)
 
   return (
+    <Card asChild layout="custom">
     <section
       aria-labelledby="recruitment-pipeline-title"
       className="flex h-full min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm"
@@ -53,5 +55,6 @@ export function RecruitmentPipeline({ stages = MOCK_STAGES }) {
         ))}
       </dl>
     </section>
+    </Card>
   )
 }

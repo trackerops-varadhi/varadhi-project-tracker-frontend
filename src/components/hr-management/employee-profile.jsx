@@ -38,7 +38,7 @@ export function EmployeeProfile({ employee }) {
       <DialogHeader className="sticky top-0 z-10 flex-row items-center gap-3 rounded-t-2xl border-b border-border bg-card px-5 py-3 sm:px-6">
         <div
           aria-hidden="true"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-xs font-semibold text-violet-600"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-xs font-semibold text-primary"
         >
           {initials}
         </div>
@@ -50,7 +50,7 @@ export function EmployeeProfile({ employee }) {
           <button
             type="button"
             aria-label="Close employee profile"
-            className="ml-auto shrink-0 rounded-lg p-1 text-slate-400 transition hover:bg-background hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600"
+            className="ml-auto shrink-0 rounded-lg p-1 text-slate-400 transition hover:bg-background hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
           >
             <X aria-hidden="true" className="h-4 w-4" />
           </button>
@@ -61,7 +61,7 @@ export function EmployeeProfile({ employee }) {
         <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {summary.map(([label, value]) => (
             <div key={label} className="rounded-xl border border-violet-100 bg-violet-50 px-3 py-2.5">
-              <dt className="text-[10px] font-medium uppercase tracking-wide text-violet-600">{label}</dt>
+              <dt className="text-[10px] font-medium uppercase tracking-wide text-primary">{label}</dt>
               <dd className="mt-1 break-words text-xs font-semibold text-slate-800">{value ?? '—'}</dd>
             </div>
           ))}

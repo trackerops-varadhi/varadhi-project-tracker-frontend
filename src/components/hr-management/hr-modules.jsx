@@ -199,7 +199,7 @@ export function HrModules() {
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
           {moduleGroups.map((group) => (
             <div key={group.title} className="min-w-0">
-              <h3 className="text-xs font-semibold text-violet-700">{group.title}</h3>
+              <h3 className="text-xs font-semibold text-primary-hover">{group.title}</h3>
               <p className="mt-1 min-h-0 text-[11px] leading-4 text-slate-500">{group.description}</p>
               <div className="mt-1.5 space-y-1.5">
                 {group.modules.map((mod) => {
@@ -212,9 +212,9 @@ export function HrModules() {
                       onClick={mod.action}
                       disabled={!mod.action}
                       aria-label={`Open ${mod.title}`}
-                      className="group flex w-full items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/60 p-2 text-left transition-colors enabled:hover:border-violet-200 enabled:hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 disabled:cursor-not-allowed"
+                      className="group flex w-full items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/60 p-2 text-left transition-colors enabled:hover:border-violet-200 enabled:hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed"
                     >
-                      <span className="rounded-lg bg-white p-1.5 text-violet-600 ring-1 ring-slate-100">
+                      <span className="rounded-lg bg-white p-1.5 text-primary ring-1 ring-slate-100">
                         <Icon aria-hidden="true" className="h-4 w-4" />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -255,7 +255,7 @@ export function HrModules() {
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-bold text-slate-900 text-base">{emp.employeeName}</h4>
-                        <span className="inline-block px-2 py-0.5 bg-violet-50 text-violet-700 text-xs font-semibold rounded mt-1">
+                        <span className="inline-block px-2 py-0.5 bg-violet-50 text-primary-hover text-xs font-semibold rounded mt-1">
                           {emp.role}
                         </span>
                       </div>
@@ -315,7 +315,7 @@ export function HrModules() {
                     onChange={(e)=>setNewEmp({...newEmp, coreSkill: e.target.value})}
                     className="p-2.5 bg-white border border-slate-200 rounded-lg text-xs" 
                   />
-                  <button type="submit" className="md:col-span-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg text-xs font-semibold py-2.5 flex items-center justify-center gap-1">
+                  <button type="submit" className="md:col-span-3 bg-primary hover:bg-primary-hover text-white rounded-lg text-xs font-semibold py-2.5 flex items-center justify-center gap-1">
                     <Plus size={16} /> Save & Add Employee Card
                   </button>
                 </form>
@@ -488,7 +488,7 @@ export function HrModules() {
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-bold text-slate-900 text-base">{item.candidateName}</h4>
-                        <span className="inline-block px-2 py-0.5 bg-violet-50 text-violet-700 text-xs font-semibold rounded mt-1">
+                        <span className="inline-block px-2 py-0.5 bg-violet-50 text-primary-hover text-xs font-semibold rounded mt-1">
                           {item.roleApplied}
                         </span>
                       </div>
@@ -570,7 +570,7 @@ export function HrModules() {
                     onChange={(e)=>setNewInterview({...newInterview, expectations: e.target.value})}
                     className="md:col-span-3 p-2.5 bg-white border border-slate-200 rounded-lg text-xs" 
                   />
-                  <button type="submit" className="md:col-span-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg text-xs font-semibold py-2.5 flex items-center justify-center gap-1">
+                  <button type="submit" className="md:col-span-3 bg-primary hover:bg-primary-hover text-white rounded-lg text-xs font-semibold py-2.5 flex items-center justify-center gap-1">
                     <Plus size={16} /> Save Interview Record
                   </button>
                 </form>

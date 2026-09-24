@@ -1,5 +1,8 @@
 'use client'
 
+import { Card } from '@/components/ui/card'
+import { Table } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { EmployeeProfile } from './employee-profile'
 
@@ -58,18 +61,19 @@ function EmployeeStatus({ status }) {
       ? 'bg-amber-50 text-amber-700'
       : 'bg-slate-100 text-slate-600'
 
-  return <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${color}`}>{status}</span>
+  return <Badge variant="outline" className={`h-auto border-0 px-1.5 py-0.5 text-[10px] font-semibold ${color}`}>{status}</Badge>
 }
 
 // Pass employee records here when backend data is available.
 export function EmployeeOverview({ employees = MOCK_EMPLOYEES }) {
   return (
+    <Card asChild layout="custom">
     <section aria-labelledby="employee-overview-title" className="h-full min-w-0 rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm">
       <h2 id="employee-overview-title" className="text-xs font-semibold text-slate-900">Employee Overview</h2>
       <p className="mt-0.5 text-[11px] leading-4 text-slate-500">Employee records and quick profile access</p>
 
-      <div className="mt-2 overflow-x-auto">
-        <table className="w-full min-w-[520px] text-left text-xs">
+      <div role="region" aria-label="Employee directory" tabIndex={0} className="mt-2 max-w-full overflow-x-auto focus-visible:outline-primary">
+        <Table scrollable={false} className="w-full min-w-[520px] text-left text-xs">
           <thead className="border-b border-slate-200 text-[10px] text-slate-500">
             <tr>
               {['Employee', 'Role', 'Product', 'Status'].map((heading) => (
@@ -88,7 +92,7 @@ export function EmployeeOverview({ employees = MOCK_EMPLOYEES }) {
                 <td className="py-1 pl-2 text-right">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <button type="button" aria-label={`View ${employee.name}'s profile`} className="rounded text-xs font-semibold text-violet-600 hover:text-violet-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-600">View</button>
+                      <button type="button" aria-label={`View ${employee.name}'s profile`} className="rounded text-xs font-semibold text-primary hover:text-violet-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">View</button>
                     </DialogTrigger>
                     <EmployeeProfile employee={employee} />
                   </Dialog>
@@ -99,8 +103,9 @@ export function EmployeeOverview({ employees = MOCK_EMPLOYEES }) {
               <tr><td colSpan={5} className="py-6 text-center text-slate-500">No employees to display.</td></tr>
             )}
           </tbody>
-        </table>
+        </Table>
       </div>
     </section>
+    </Card>
   )
 }

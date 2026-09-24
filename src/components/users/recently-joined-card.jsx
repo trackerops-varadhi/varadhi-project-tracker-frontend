@@ -1,5 +1,6 @@
 'use client'
 
+import { Card } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 import { UserPlus } from 'lucide-react'
 import { usersApi } from '@/lib/api/users.api'
@@ -7,15 +8,15 @@ import { getInitials, getAvatarColor, formatRelativeTime, cn } from '@/utils'
 
 function Shell({ children }) {
   return (
-    <div className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-3">
+    <Card layout="custom" className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-3">
       <div className="mb-3 flex shrink-0 items-center gap-2">
-        <UserPlus className="h-4 w-4 text-violet-600" />
+        <UserPlus className="h-4 w-4 text-primary" />
         <h3 className="text-xs font-semibold leading-4 text-foreground">Recently Joined</h3>
       </div>
       <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-1">
         {children}
       </div>
-    </div>
+    </Card>
   )
 }
 
