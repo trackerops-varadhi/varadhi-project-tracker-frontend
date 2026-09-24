@@ -608,7 +608,7 @@ const isEmployee =
                 action. Approve/reject stay manager-gated as before. */}
             <button
               onClick={openApplyModal}
-              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary"
             >
               <Plus size={17} />
 
@@ -754,7 +754,7 @@ const isEmployee =
                     setSearch(event.target.value)
                   }
                   placeholder="Search employee..."
-                  className="w-[210px] rounded-xl border py-2 pl-9 pr-3 text-sm outline-none transition focus:border-indigo-500"
+                  className="w-[210px] rounded-xl border py-2 pl-9 pr-3 text-sm outline-none transition focus:border-primary"
                 />
 
               </div>
@@ -813,7 +813,7 @@ const isEmployee =
                   selectedIds.length === pendingRequests.length
                 }
                 onChange={selectAllPending}
-                className="h-4 w-4 accent-indigo-600"
+                className="h-4 w-4 accent-primary"
               />
 
               Select all pending
@@ -943,7 +943,7 @@ const isEmployee =
                             onChange={() =>
                               toggleSelect(request.id)
                             }
-                            className="h-4 w-4 accent-indigo-600"
+                            className="h-4 w-4 accent-primary"
                           />
 
                         ) : (
@@ -962,7 +962,7 @@ const isEmployee =
 
                         <div className="flex items-center gap-3">
 
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                             {getInitials(request.employee)}
                           </div>
 
@@ -986,7 +986,7 @@ const isEmployee =
 
                       <td className="px-4 py-3">
 
-                        <span className="rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-700">
+                        <span className="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium text-primary">
                           {request.leaveType}
                         </span>
 
@@ -1163,7 +1163,7 @@ const isEmployee =
 
               <div className="flex items-center gap-3">
 
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-700">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
                   {getInitials(
                     selectedRequest.employee
                   )}
@@ -1501,7 +1501,7 @@ const isEmployee =
                 value={applyForm.leaveType}
                 onChange={(event) => updateApplyField('leaveType', event.target.value)}
                 disabled={isSubmitting}
-                className="w-full rounded-xl border bg-white px-4 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-xl border bg-white px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               >
                 {LEAVE_TYPES.map((type) => (
                   <option key={type.value} value={type.value}>
@@ -1530,7 +1530,7 @@ const isEmployee =
                   className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-2 ${
                     applyErrors.fromDate
                       ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                      : 'focus:border-indigo-500 focus:ring-indigo-100'
+                      : 'focus:border-primary focus:ring-primary/20'
                   }`}
                 />
                 {applyErrors.fromDate && (
@@ -1555,7 +1555,7 @@ const isEmployee =
                   className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-2 ${
                     applyErrors.toDate
                       ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                      : 'focus:border-indigo-500 focus:ring-indigo-100'
+                      : 'focus:border-primary focus:ring-primary/20'
                   }`}
                 />
                 {applyErrors.toDate && (
@@ -1579,7 +1579,7 @@ const isEmployee =
                     disabled={isSubmitting}
                     className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
                       applyForm.dayType === option.value
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                        ? 'border-primary bg-primary/10 text-primary'
                         : 'bg-white text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -1615,7 +1615,7 @@ const isEmployee =
                 className={`w-full resize-none rounded-xl border px-4 py-3 text-sm outline-none transition focus:ring-2 ${
                   applyErrors.reason
                     ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                    : 'focus:border-indigo-500 focus:ring-indigo-100'
+                    : 'focus:border-primary focus:ring-primary/20'
                 }`}
               />
               {applyErrors.reason && (
@@ -1643,7 +1643,7 @@ const isEmployee =
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
+                className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary disabled:opacity-60"
               >
                 {isSubmitting ? 'Applying...' : 'Apply Leave'}
               </button>
@@ -1832,7 +1832,7 @@ function ReportCard({
       className="flex w-full items-center gap-4 rounded-xl border p-4 text-left transition hover:bg-slate-50 disabled:cursor-default disabled:hover:bg-transparent"
     >
 
-      <div className="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+      <div className="rounded-xl bg-primary p-3 text-primary">
         {icon}
       </div>
 

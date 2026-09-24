@@ -1,0 +1,130 @@
+[1mdiff --git a/src/app/leave-management/page.jsx b/src/app/leave-management/page.jsx[m
+[1mindex 5829a96..9354e51 100644[m
+[1m--- a/src/app/leave-management/page.jsx[m
+[1m+++ b/src/app/leave-management/page.jsx[m
+[36m@@ -608,7 +608,7 @@[m [mconst isEmployee =[m
+                 action. Approve/reject stay manager-gated as before. */}[m
+             <button[m
+               onClick={openApplyModal}[m
+[31m-              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"[m
+[32m+[m[32m              className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary"[m
+             >[m
+               <Plus size={17} />[m
+ [m
+[36m@@ -754,7 +754,7 @@[m [mconst isEmployee =[m
+                     setSearch(event.target.value)[m
+                   }[m
+                   placeholder="Search employee..."[m
+[31m-                  className="w-[210px] rounded-xl border py-2 pl-9 pr-3 text-sm outline-none transition focus:border-indigo-500"[m
+[32m+[m[32m                  className="w-[210px] rounded-xl border py-2 pl-9 pr-3 text-sm outline-none transition focus:border-primary"[m
+                 />[m
+ [m
+               </div>[m
+[36m@@ -813,7 +813,7 @@[m [mconst isEmployee =[m
+                   selectedIds.length === pendingRequests.length[m
+                 }[m
+                 onChange={selectAllPending}[m
+[31m-                className="h-4 w-4 accent-indigo-600"[m
+[32m+[m[32m                className="h-4 w-4 accent-primary"[m
+               />[m
+ [m
+               Select all pending[m
+[36m@@ -943,7 +943,7 @@[m [mconst isEmployee =[m
+                             onChange={() =>[m
+                               toggleSelect(request.id)[m
+                             }[m
+[31m-                            className="h-4 w-4 accent-indigo-600"[m
+[32m+[m[32m                            className="h-4 w-4 accent-primary"[m
+                           />[m
+ [m
+                         ) : ([m
+[36m@@ -962,7 +962,7 @@[m [mconst isEmployee =[m
+ [m
+                         <div className="flex items-center gap-3">[m
+ [m
+[31m-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">[m
+[32m+[m[32m                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">[m
+                             {getInitials(request.employee)}[m
+                           </div>[m
+ [m
+[36m@@ -986,7 +986,7 @@[m [mconst isEmployee =[m
+ [m
+                       <td className="px-4 py-3">[m
+ [m
+[31m-                        <span className="rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-700">[m
+[32m+[m[32m                        <span className="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium text-primary">[m
+                           {request.leaveType}[m
+                         </span>[m
+ [m
+[36m@@ -1163,7 +1163,7 @@[m [mconst isEmployee =[m
+ [m
+               <div className="flex items-center gap-3">[m
+ [m
+[31m-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-700">[m
+[32m+[m[32m                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">[m
+                   {getInitials([m
+                     selectedRequest.employee[m
+                   )}[m
+[36m@@ -1501,7 +1501,7 @@[m [mconst isEmployee =[m
+                 value={applyForm.leaveType}[m
+                 onChange={(event) => updateApplyField('leaveType', event.target.value)}[m
+                 disabled={isSubmitting}[m
+[31m-                className="w-full rounded-xl border bg-white px-4 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"[m
+[32m+[m[32m                className="w-full rounded-xl border bg-white px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"[m
+               >[m
+                 {LEAVE_TYPES.map((type) => ([m
+                   <option key={type.value} value={type.value}>[m
+[36m@@ -1530,7 +1530,7 @@[m [mconst isEmployee =[m
+                   className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-2 ${[m
+                     applyErrors.fromDate[m
+                       ? 'border-red-400 focus:border-red-500 focus:ring-red-100'[m
+[31m-                      : 'focus:border-indigo-500 focus:ring-indigo-100'[m
+[32m+[m[32m                      : 'focus:border-primary focus:ring-primary/20'[m
+                   }`}[m
+                 />[m
+                 {applyErrors.fromDate && ([m
+[36m@@ -1555,7 +1555,7 @@[m [mconst isEmployee =[m
+                   className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-2 ${[m
+                     applyErrors.toDate[m
+                       ? 'border-red-400 focus:border-red-500 focus:ring-red-100'[m
+[31m-                      : 'focus:border-indigo-500 focus:ring-indigo-100'[m
+[32m+[m[32m                      : 'focus:border-primary focus:ring-primary/20'[m
+                   }`}[m
+                 />[m
+                 {applyErrors.toDate && ([m
+[36m@@ -1579,7 +1579,7 @@[m [mconst isEmployee =[m
+                     disabled={isSubmitting}[m
+                     className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${[m
+                       applyForm.dayType === option.value[m
+[31m-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'[m
+[32m+[m[32m                        ? 'border-primary bg-primary/10 text-primary'[m
+                         : 'bg-white text-slate-600 hover:bg-slate-50'[m
+                     }`}[m
+                   >[m
+[36m@@ -1615,7 +1615,7 @@[m [mconst isEmployee =[m
+                 className={`w-full resize-none rounded-xl border px-4 py-3 text-sm outline-none transition focus:ring-2 ${[m
+                   applyErrors.reason[m
+                     ? 'border-red-400 focus:border-red-500 focus:ring-red-100'[m
+[31m-                    : 'focus:border-indigo-500 focus:ring-indigo-100'[m
+[32m+[m[32m                    : 'focus:border-primary focus:ring-primary/20'[m
+                 }`}[m
+               />[m
+               {applyErrors.reason && ([m
+[36m@@ -1643,7 +1643,7 @@[m [mconst isEmployee =[m
+               <button[m
+                 type="submit"[m
+                 disabled={isSubmitting}[m
+[31m-                className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"[m
+[32m+[m[32m                className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary disabled:opacity-60"[m
+               >[m
+                 {isSubmitting ? 'Applying...' : 'Apply Leave'}[m
+               </button>[m
+[36m@@ -1832,7 +1832,7 @@[m [mfunction ReportCard({[m
+       className="flex w-full items-center gap-4 rounded-xl border p-4 text-left transition hover:bg-slate-50 disabled:cursor-default disabled:hover:bg-transparent"[m
+     >[m
+ [m
+[31m-      <div className="rounded-xl bg-indigo-50 p-3 text-indigo-600">[m
+[32m+[m[32m      <div className="rounded-xl bg-primary p-3 text-primary">[m
+         {icon}[m
+       </div>[m
+ [m
