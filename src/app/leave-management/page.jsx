@@ -562,12 +562,12 @@ const isEmployee =
   ===================================================== */
 
   return (
-<div className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-[#f7f8fc] text-slate-800">
+<div className="flex h-full min-h-0 w-full flex-col overflow-hidden text-slate-800">
 {/* =================================================
           MAIN
       ================================================= */}
 
-      <main className="flex min-h-0 flex-1 flex-col overflow-hidden p-3">
+      <main className="flex min-h-0 flex-1 flex-col p-3">
 
         {/* =================================================
             TITLE
