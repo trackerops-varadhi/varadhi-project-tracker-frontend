@@ -22,21 +22,27 @@ export default function LoginPage() {
           <div className="w-full max-w-md">
 
             {/* Logo & Title */}
-            <div className="text-center mb-8">
+           <div className="text-center mb-8">
 
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 text-white font-bold text-2xl shadow-lg mb-4">
-                V
-              </div>
+  <div className="inline-flex items-center justify-center w-14 h-14 mb-4">
+    <img
+      src='src/app/auth/login/image.png'
+      alt="Varadhi Tracker"
+      className="w-14 h-14 object-contain"
+    />
 
-              <h1 className="text-4xl font-bold text-foreground">
-                Varadhi Tracker
-              </h1>
+   
+  </div>
 
-              <p className="text-muted-foreground mt-2 text-lg">
-                Sign in to your account
-              </p>
+  <h1 className="text-4xl font-bold text-foreground">
+    Varadhi Tracker
+  </h1>
 
-            </div>
+  <p className="text-muted-foreground mt-2 text-lg">
+    Sign in to your account
+  </p>
+
+</div>
 
             {/* Login Card */}
             <div className="bg-card rounded-3xl shadow-xl border border-border p-8">

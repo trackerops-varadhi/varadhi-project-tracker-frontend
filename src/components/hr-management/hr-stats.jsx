@@ -1,4 +1,3 @@
-"use client";
 import { Users, UserCheck, CalendarDays, BriefcaseBusiness } from 'lucide-react'
 
 const MOCK_STATS = {
@@ -47,20 +46,20 @@ export function HRStats({ stats = MOCK_STATS }) {
   ]
 
   return (
-    <section aria-label="HR statistics" className="grid w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <section aria-label="HR statistics" className="grid w-full min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-3">
       {cards.map((card) => {
         const Icon = card.icon
 
         return (
-          <div key={card.title} className="flex min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm transition-shadow hover:shadow-md">
+          <div key={card.title} className="flex min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-xs font-semibold text-slate-700">{card.title}</h2>
               <Icon aria-hidden="true" className={`h-4 w-4 shrink-0 ${card.color}`} />
             </div>
-            <p className="mt-1 break-words text-xl font-bold leading-tight tabular-nums text-slate-900">
+            <p className="mt-2 break-words text-2xl font-bold leading-tight tabular-nums text-slate-900">
               {card.value}
             </p>
-            <p className={`mt-0.5 text-[11px] leading-4 ${card.color}`}>{card.subtitle}</p>
+            <p className={`mt-1 text-xs leading-relaxed ${card.color}`}>{card.subtitle}</p>
           </div>
         )
       })}
