@@ -1070,6 +1070,7 @@ const isEmployee =
                               setSelectedRequest(request)
                             }
                             title="View Leave"
+                             aria-label="View leave request"
                             className="rounded-lg border p-2 text-slate-600 transition hover:bg-slate-100"
                           >
                             <Eye size={15} />
@@ -1082,6 +1083,7 @@ const isEmployee =
         approveLeave(request.id)
       }
       title="Approve Leave"
+      aria-label="Approve leave request"
       className="rounded-lg border border-green-200 p-2 text-green-600 transition hover:bg-green-50"
     >
       <Check size={15} />
@@ -1099,6 +1101,7 @@ const isEmployee =
                                 openRejectModal(request)
                               }
                               title="Reject Leave"
+                              aria-label="Reject leave request"
                               className="rounded-lg border border-red-200 p-2 text-red-600 transition hover:bg-red-50"
                             >
                               <X size={15} />
@@ -1115,6 +1118,7 @@ const isEmployee =
                                 openInformationModal(request)
                               }
                               title="Need More Information"
+                                aria-label="Request more information about leave"
                               className="rounded-lg border border-blue-200 p-2 text-blue-600 transition hover:bg-blue-50"
                             >
                               <Info size={15} />
@@ -1774,6 +1778,7 @@ function Modal({
 
           <button
             onClick={onClose}
+             aria-label={`Close ${title}`}
             className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
           >
             <X size={19} />
