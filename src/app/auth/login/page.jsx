@@ -1,5 +1,8 @@
 import { LoginForm } from '@/components/auth/login-form'
 
+import Image from 'next/image'
+import logo from './image.png'
+
 export const metadata = {
   title: 'Login',
 }
@@ -25,11 +28,13 @@ export default function LoginPage() {
            <div className="text-center mb-8">
 
   <div className="inline-flex items-center justify-center w-14 h-14 mb-4">
-    <img
-      src='src/app/auth/login/image.png'
-      alt="Varadhi Tracker"
-      className="w-14 h-14 object-contain"
-    />
+    <Image
+  src={logo}
+  alt="Varadhi Tracker"
+  width={56}
+  height={56}
+  className="object-contain"
+/>
 
    
   </div>
