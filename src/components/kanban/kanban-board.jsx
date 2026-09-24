@@ -5,11 +5,12 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  KeyboardSensor,
   useSensor,
   useSensors,
   closestCorners,
 } from '@dnd-kit/core'
-import { arrayMove } from '@dnd-kit/sortable'
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { CloudOff, X } from 'lucide-react'
 import { KanbanColumn } from './kanban-column'
 import { KanbanCard } from './kanban-card'
@@ -42,7 +43,7 @@ export function KanbanBoard() {
   async function fetchTasks() {
     try {
       const response = await tasksApi.getAll()
-      setTasks(response.data || [])
+      setTasks(Array.isArray(response) ? response : response?.data || [])
       setLoadFailed(false)
     } catch (err) {
       // Offline with nothing cached, the SW rejects the request and we land
@@ -69,7 +70,8 @@ export function KanbanBoard() {
       activationConstraint: {
         distance: 5,
       },
-    })
+    }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
 
@@ -290,20 +292,20 @@ export function KanbanBoard() {
         </div>
       )}
 
-      {/* Board — horizontal scroll on small screens */}
-<div
-  className="grid gap-5 w-full"
-  style={{
-    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-  }}
->
-        {KANBAN_COLUMNS.map((column) => (
-          <KanbanColumn
-            key={column.id}
-            column={column}
-            tasks={getTasksByStatus(column.id)}
-          />
-        ))}
+      <div
+        className="kanban-board-region"
+        role="region"
+        aria-label="Kanban columns"
+      >
+        <div className="kanban-columns">
+          {KANBAN_COLUMNS.map((column) => (
+            <KanbanColumn
+              key={column.id}
+              column={column}
+              tasks={getTasksByStatus(column.id)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Drag Overlay — shows floating card while dragging */}

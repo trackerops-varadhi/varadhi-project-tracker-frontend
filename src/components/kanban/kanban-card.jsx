@@ -33,7 +33,7 @@ export function KanbanCard({ task }) {
       {...attributes}
       {...listeners}
 className={cn(
-  'bg-card rounded-2xl border-2 p-4 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all',
+  'cursor-grab active:cursor-grabbing min-w-0 break-words bg-card rounded-2xl border-2 p-4 shadow-sm hover:shadow-md transition-all',
 
   task.status === 'todo'
     ? 'border-slate-300'
@@ -69,7 +69,7 @@ className={cn(
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex items-center justify-between gap-2 flex-wrap mt-4">
 
         {/* Due date */}
         {task.dueDate ? (

@@ -14,6 +14,7 @@
  */
 
 const API_BASE = new URL(self.location.href).searchParams.get('api') || ''
+const DEVELOPMENT = new URL(self.location.href).searchParams.get('dev') === '1'
 
 /* ───────────────────────── caching (SF6) ─────────────────────────
  *
@@ -26,7 +27,7 @@ const API_BASE = new URL(self.location.href).searchParams.get('api') || ''
  * Three caches, all prefixed `varadhi-` so lib/offline-cache.js can find and
  * delete them wholesale on logout/401/login, whatever version they carry.
  */
-const SW_VERSION = 'v1.2.1'
+const SW_VERSION = 'v1.2.2'
 const CACHE_PREFIX = 'varadhi-'
 const SHELL_CACHE = `${CACHE_PREFIX}shell-${SW_VERSION}`
 const ASSET_CACHE = `${CACHE_PREFIX}assets-${SW_VERSION}`
@@ -265,6 +266,9 @@ async function notifyClients(message) {
  */
 
 self.addEventListener('fetch', (event) => {
+  // Development chunks change in place; cached modules break hot reload.
+  // Keep push handlers active, but let the dev server handle every request.
+  if (DEVELOPMENT) return
   const { request } = event
 
   // Non-GET is never cacheable (cache.put() rejects it outright) and must never

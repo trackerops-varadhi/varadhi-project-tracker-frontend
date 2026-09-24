@@ -7,12 +7,14 @@ import { getInitials, getAvatarColor, cn } from '@/utils'
 
 function Shell({ children }) {
   return (
-    <div className="bg-card border border-border rounded-xl p-5">
-      <div className="mb-5 flex items-center gap-2">
+    <div className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-3">
+      <div className="mb-3 flex shrink-0 items-center gap-2">
         <Trophy className="h-4 w-4 text-amber-500" />
-        <h3 className="text-lg font-semibold text-foreground">Top Performers</h3>
+        <h3 className="text-xs font-semibold leading-4 text-foreground">Top Performers</h3>
       </div>
-      {children}
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-1">
+        {children}
+      </div>
     </div>
   )
 }
@@ -41,10 +43,10 @@ export function TopPerformersCard() {
   if (isLoading) {
     return (
       <Shell>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {[0, 1, 2].map((i) => (
             <div key={i} className="flex animate-pulse items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-slate-100" />
+              <div className="h-8 w-8 rounded-full bg-slate-100" />
               <div className="h-3 flex-1 rounded bg-slate-100" />
             </div>
           ))}
@@ -73,16 +75,16 @@ export function TopPerformersCard() {
 
   return (
     <Shell>
-      <div className="space-y-4">
+      <div className="space-y-3">
         {performers.map((person, index) => (
-          <div key={person.id} className="flex items-center gap-3">
+          <div key={person.id} className="flex items-start gap-2">
             <span className="w-4 shrink-0 text-xs font-semibold text-slate-400">
               {index + 1}
             </span>
 
             <div
               className={cn(
-                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white',
+                'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white',
                 getAvatarColor(person.name || '?')
               )}
             >
@@ -90,19 +92,16 @@ export function TopPerformersCard() {
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-foreground">
+              <p title={person.name} className="truncate text-[11px] font-medium leading-4 text-foreground">
                 {person.name}
               </p>
-              <p className="truncate text-xs capitalize text-muted-foreground">
+              <p className="truncate text-[10px] leading-4 capitalize text-muted-foreground">
                 {person.role}
               </p>
-            </div>
-
-            <div className="shrink-0 text-right">
-              <p className="text-sm font-semibold text-foreground">
-                {person.completedTasks}
-              </p>
-              <p className="text-xs text-muted-foreground">{person.score}%</p>
+              <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[10px] leading-4 text-muted-foreground">
+                <span>{person.completedTasks} completed</span>
+                <span>{person.score}%</span>
+              </div>
             </div>
           </div>
         ))}

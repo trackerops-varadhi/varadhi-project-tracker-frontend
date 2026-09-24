@@ -24,7 +24,8 @@ const SW_PATH = '/sw.js'
 // Scope is derived from the script PATH, not its query, so this is still
 // scoped to '/'. getRegistration(SW_PATH) below resolves by scope and is
 // unaffected by the query string.
-const SW_URL = `${SW_PATH}?api=${encodeURIComponent(API_BASE_URL)}`
+const DEVELOPMENT = process.env.NODE_ENV === 'development'
+const SW_URL = `${SW_PATH}?api=${encodeURIComponent(API_BASE_URL)}${DEVELOPMENT ? '&dev=1' : ''}`
 
 export function isPushSupported() {
   return (
@@ -57,7 +58,11 @@ async function registerServiceWorker() {
   // browser treats a changed script URL as a new registration.
   if (existing) {
     const current = existing.active || existing.installing || existing.waiting
-    if (current && current.scriptURL.includes(`api=${encodeURIComponent(API_BASE_URL)}`)) {
+    if (
+      current &&
+      current.scriptURL.includes(`api=${encodeURIComponent(API_BASE_URL)}`) &&
+      (new URL(current.scriptURL).searchParams.get('dev') === '1') === DEVELOPMENT
+    ) {
       return existing
     }
   }

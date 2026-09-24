@@ -2,41 +2,34 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Bell, MoreHorizontal } from 'lucide-react'
+import { Bell } from 'lucide-react'
+
 import { notificationsApi } from '@/lib/api/notifications.api'
 
-// Backend priorities are low | normal | high | urgent (see NOTIFICATION_TYPES).
 const PRIORITY_STYLES = {
-  urgent: { label: 'Urgent', text: 'text-red-700', dot: 'bg-red-600' },
-  high: { label: 'High', text: 'text-red-600', dot: 'bg-red-500' },
-  normal: { label: 'Normal', text: 'text-yellow-600', dot: 'bg-yellow-500' },
-  low: { label: 'Low', text: 'text-green-600', dot: 'bg-green-500' },
-}
+  urgent: {
+    label: 'Urgent',
+    text: 'text-red-700',
+    dot: 'bg-red-600',
+  },
 
-function Shell({ children }) {
-  return (
-    <div
-      className="
-        relative overflow-hidden h-[320px] rounded-3xl border border-white/30
-        bg-gradient-to-br from-violet-100/80 via-purple-50/60 to-blue-100/70
-        backdrop-blur-xl shadow-[0_8px_32px_rgba(139,92,246,0.15)] p-6
-      "
-    >
-      <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-violet-300/20 blur-3xl" />
+  high: {
+    label: 'High',
+    text: 'text-red-600',
+    dot: 'bg-red-500',
+  },
 
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-500">
-            <Bell className="h-4 w-4 text-white" />
-          </div>
-          <h3 className="text-lg font-semibold text-foreground">Notifications</h3>
-        </div>
-        <MoreHorizontal className="h-4 w-4 text-slate-400" />
-      </div>
+  normal: {
+    label: 'Normal',
+    text: 'text-yellow-600',
+    dot: 'bg-yellow-500',
+  },
 
-      {children}
-    </div>
-  )
+  low: {
+    label: 'Low',
+    text: 'text-green-600',
+    dot: 'bg-green-500',
+  },
 }
 
 export function NotificationsCard() {
@@ -46,80 +39,273 @@ export function NotificationsCard() {
 
   useEffect(() => {
     let cancelled = false
+
     async function load() {
       try {
-        // Unread only — a dashboard card showing already-read items is noise.
-        // The backend expects `unreadOnly=true` (notifications.controller.js:54).
-        const { notifications } = await notificationsApi.list({ limit: 3, unreadOnly: true })
-        if (!cancelled) setItems(notifications ?? [])
+        const { notifications } =
+          await notificationsApi.list({
+            limit: 3,
+            unreadOnly: true,
+          })
+
+        if (!cancelled) {
+          setItems(notifications ?? [])
+        }
       } catch {
-        if (!cancelled) setError('Failed to load notifications.')
+        if (!cancelled) {
+          setError('Failed to load notifications.')
+        }
       } finally {
-        if (!cancelled) setIsLoading(false)
+        if (!cancelled) {
+          setIsLoading(false)
+        }
       }
     }
+
     load()
-    return () => { cancelled = true }
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
-  if (isLoading) {
-    return (
-      <Shell>
-        <div className="space-y-3">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-[52px] animate-pulse rounded-2xl border border-white/40 bg-card/70"
-            />
-          ))}
-        </div>
-      </Shell>
-    )
-  }
-
-  if (error) {
-    return (
-      <Shell>
-        <p className="text-sm text-muted-foreground">{error}</p>
-      </Shell>
-    )
-  }
-
-  if (items.length === 0) {
-    return (
-      <Shell>
-        <div className="flex h-[180px] flex-col items-center justify-center gap-1 text-center">
-          <p className="text-sm text-muted-foreground">You&apos;re all caught up.</p>
-          <p className="text-xs text-slate-400">No unread notifications.</p>
-        </div>
-      </Shell>
-    )
-  }
-
   return (
-    <Shell>
-      <div className="space-y-3">
-        {items.map((item) => {
-          const style = PRIORITY_STYLES[item.priority] ?? PRIORITY_STYLES.normal
-          const body = (
-            <div className="flex items-center gap-3 rounded-2xl border border-white/40 bg-card/70 px-4 py-3 backdrop-blur-md">
-              <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${style.dot}`} />
-              <p className="line-clamp-2 text-sm text-foreground">
-                <span className={`font-medium ${style.text}`}>{style.label}:</span>{' '}
-                {item.title || item.message}
-              </p>
-            </div>
-          )
+    <div
+      className="
+        flex
+        h-full
+        min-h-0
+        min-w-0
+        flex-col
+        overflow-hidden
+        rounded-2xl
+        border
+        border-violet-100
+        bg-gradient-to-br
+        from-violet-100/80
+        via-purple-50/60
+        to-blue-100/70
+        px-3
+        py-2
+        shadow-sm
+      "
+    >
+      {/* TITLE */}
+      <div
+        className="
+          flex
+          shrink-0
+          min-w-0
+          items-center
+          gap-1.5
+        "
+      >
+        <div
+          className="
+            flex
+            h-[18px]
+            w-[18px]
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            bg-violet-500
+            sm:h-5
+            sm:w-5
+          "
+        >
+          <Bell
+            className="
+              h-2.5
+              w-2.5
+              text-white
+              sm:h-3
+              sm:w-3
+            "
+          />
+        </div>
 
-          return item.linkTo ? (
-            <Link key={item.id} href={item.linkTo} className="block transition hover:opacity-80">
-              {body}
-            </Link>
-          ) : (
-            <div key={item.id}>{body}</div>
-          )
-        })}
+        <h3
+          className="
+            min-w-0
+            truncate
+            text-[11px]
+            font-semibold
+            text-slate-800
+            sm:text-xs
+          "
+        >
+          Notifications
+        </h3>
       </div>
-    </Shell>
+
+      {/* LOADING */}
+      {isLoading && (
+        <div
+          className="
+            flex
+            min-h-0
+            flex-1
+            items-center
+            justify-center
+          "
+        >
+          <p
+            className="
+              text-[8px]
+              text-slate-400
+              sm:text-[9px]
+            "
+          >
+            Loading...
+          </p>
+        </div>
+      )}
+
+      {/* ERROR */}
+      {!isLoading && error && (
+        <div
+          className="
+            flex
+            min-h-0
+            flex-1
+            items-center
+            justify-center
+          "
+        >
+          <p
+            className="
+              text-[8px]
+              text-slate-500
+              sm:text-[9px]
+            "
+          >
+            {error}
+          </p>
+        </div>
+      )}
+
+      {/* EMPTY */}
+      {!isLoading && !error && items.length === 0 && (
+        <div
+          className="
+            flex
+            min-h-0
+            flex-1
+            items-center
+            justify-center
+          "
+        >
+          <p
+            className="
+              text-[8px]
+              text-slate-400
+              sm:text-[9px]
+            "
+          >
+            No new notifications.
+          </p>
+        </div>
+      )}
+
+      {/* MAIN CONTENT */}
+      {!isLoading && !error && items.length > 0 && (
+        <div
+          className="
+            mt-1.5
+            min-h-0
+            min-w-0
+            flex-1
+            overflow-y-auto
+            overflow-x-hidden
+            overscroll-contain
+            pr-0.5
+          "
+        >
+          <div className="space-y-1">
+            {items.map((item) => {
+              const style =
+                PRIORITY_STYLES[item.priority] ??
+                PRIORITY_STYLES.normal
+
+              const body = (
+                <div
+                  className="
+                    flex
+                    min-w-0
+                    items-start
+                    gap-1.5
+                    rounded-lg
+                    border
+                    border-white/50
+                    bg-white/70
+                    px-1.5
+                    py-1
+                    transition
+                    hover:bg-white/90
+                    sm:px-2
+                    sm:py-1.5
+                  "
+                >
+                  {/* PRIORITY DOT */}
+                  <span
+                    className={`
+                      mt-[3px]
+                      h-1.5
+                      w-1.5
+                      shrink-0
+                      rounded-full
+                      ${style.dot}
+                    `}
+                  />
+
+                  {/* NOTIFICATION TEXT */}
+                  <p
+                    className="
+                      min-w-0
+                      flex-1
+                      line-clamp-2
+                      text-[7px]
+                      leading-[1.25]
+                      text-slate-700
+                      sm:text-[8px]
+                    "
+                    title={item.title || item.message}
+                  >
+                    <span
+                      className={`
+                        font-semibold
+                        ${style.text}
+                      `}
+                    >
+                      {style.label}:
+                    </span>{' '}
+
+                    {item.title || item.message}
+                  </p>
+                </div>
+              )
+
+              return item.linkTo ? (
+                <Link
+                  key={item.id}
+                  href={item.linkTo}
+                  className="block min-w-0"
+                >
+                  {body}
+                </Link>
+              ) : (
+                <div
+                  key={item.id}
+                  className="min-w-0"
+                >
+                  {body}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
