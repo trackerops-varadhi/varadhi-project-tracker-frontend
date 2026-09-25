@@ -101,7 +101,7 @@ function AttendanceSnapshot() {
 
               <div
 
-                className={\`w-full max-w-[36px] bg-indigo-500 rounded-t-md transition-all duration-300 hover:bg-indigo-600 ${item.height}\`}
+                className={`w-full max-w-[36px] bg-indigo-500 rounded-t-md transition-all duration-300 hover:bg-indigo-600 ${item.height}`}
 
               ></div>
 
@@ -879,7 +879,7 @@ function HrModules() {
 
                         <p className="font-semibold text-slate-700">Exit Feedback:</p>
 
-                        <p className="text-slate-600 italic">"{item.exitFeedback}"</p>
+                        <p className="text-slate-600 italic">&quot;{item.exitFeedback}&quot;</p>
 
                       </div>
 
@@ -1079,18 +1079,17 @@ function HrModules() {
 
                       </div>
 
-                      <span className={\`text-xs px-2.5 py-1 rounded-full font-medium ${
-
-                        item.status === 'Selected' ? 'bg-emerald-100 text-emerald-800' : 
-
-                        item.status === 'Hold' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800'
-
-                      }\`}>
-
+                      <span
+                        className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                        item.status === "Selected"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : item.status === "Hold"
+                        ? "bg-amber-100 text-amber-800"
+                        : "bg-rose-100 text-rose-800"
+                        }`}
+                        >
                         {item.status}
-
-                      </span>
-
+                    </span>
                     </div>
 
                     <div className="space-y-2 text-xs text-gray-600 pt-2 border-t border-gray-100">
@@ -1127,7 +1126,7 @@ function HrModules() {
 
                         <p className="font-semibold text-slate-700">Candidate Expectations (Pay / Shift etc):</p>
 
-                        <p className="text-slate-600 italic">"{item.expectations}"</p>
+                        <p className="text-slate-600 italic">&quot;{item.expectations}&quot;</p>
 
                       </div>
 
@@ -1149,7 +1148,7 @@ function HrModules() {
 
                   <input 
 
-                    type="text" placeholder="Candidate Name" value={newInterview\.candidateName} 
+                    type="text" placeholder="Candidate Name" value={newInterview.candidateName} 
 
                     onChange={(e)=>setNewInterview({...newInterview, candidateName: e.target.value})}
 
@@ -1159,7 +1158,7 @@ function HrModules() {
 
                   <input 
 
-                    type="text" placeholder="Role Applied For" value={newInterview\.roleApplied} 
+                    type="text" placeholder="Role Applied For" value={newInterview.roleApplied} 
 
                     onChange={(e)=>setNewInterview({...newInterview, roleApplied: e.target.value})}
 
@@ -1173,7 +1172,7 @@ function HrModules() {
 
                     <input 
 
-                      type="date" value={newInterview\.interviewDate} 
+                      type="date" value={newInterview.interviewDate} 
 
                       onChange={(e)=>setNewInterview({...newInterview, interviewDate: e.target.value})}
 
@@ -1185,7 +1184,7 @@ function HrModules() {
 
                   <select 
 
-                    value={newInterview\.status} 
+                    value={newInterview.status} 
 
                     onChange={(e)=>setNewInterview({...newInterview, status: e.target.value})}
 
@@ -1203,7 +1202,7 @@ function HrModules() {
 
                   <input 
 
-                    type="text" placeholder="Not Selected Reason (if applicable)" value={newInterview\.notSelectedReason} 
+                    type="text" placeholder="Not Selected Reason (if applicable)" value={newInterview.notSelectedReason} 
 
                     onChange={(e)=>setNewInterview({...newInterview, notSelectedReason: e.target.value})}
 
@@ -1213,7 +1212,7 @@ function HrModules() {
 
                   <input 
 
-                    type="text" placeholder="For Future Reference (Yes/No & notes)" value={newInterview\.forFutureReference} 
+                    type="text" placeholder="For Future Reference (Yes/No & notes)" value={newInterview.forFutureReference} 
 
                     onChange={(e)=>setNewInterview({...newInterview, forFutureReference: e.target.value})}
 
@@ -1223,7 +1222,7 @@ function HrModules() {
 
                   <input 
 
-                    type="text" placeholder="Candidate Expectations to improve organization (e.g. Pay / Shift)" value={newInterview\.expectations} 
+                    type="text" placeholder="Candidate Expectations to improve organization (e.g. Pay / Shift)" value={newInterview.expectations} 
 
                     onChange={(e)=>setNewInterview({...newInterview, expectations: e.target.value})}
 

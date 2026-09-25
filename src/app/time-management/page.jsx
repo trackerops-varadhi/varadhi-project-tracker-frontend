@@ -804,7 +804,7 @@ export default function TimeManagementPage() {
 
                            disabled:text-slate-400"
 
-              \>
+              >
 
                 <LogIn size={18} />
 
@@ -866,7 +866,7 @@ export default function TimeManagementPage() {
 
                            disabled:text-slate-400"
 
-              \>
+              >
 
                 <LogOut size={18} />
 
@@ -1046,7 +1046,7 @@ export default function TimeManagementPage() {
 
                     className="border-t hover:bg-slate-50"
 
-                  \>
+                  >
 
                     <td className="px-5 py-4">
 
