@@ -95,9 +95,7 @@
 import { format, isAfter, isValid, parseISO, toDate } from 'date-fns'
 
 // ─── Tailwind class merging ────────────────────────────────────────────────────
-export function cn(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+export { cn } from '@/lib/utils'
 
 // ─── Date utils ───────────────────────────────────────────────────────────────
 
