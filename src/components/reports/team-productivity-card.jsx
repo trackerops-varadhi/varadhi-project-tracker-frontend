@@ -8,9 +8,9 @@ const ROLE_META = {
   admin: {
     label: 'Admins',
     icon: ShieldCheck,
-    color: 'bg-violet-600',
+    color: 'bg-primary',
     iconBg: 'bg-violet-100',
-    iconColor: 'text-violet-600',
+    iconColor: 'text-primary',
   },
   manager: {
     label: 'Managers',

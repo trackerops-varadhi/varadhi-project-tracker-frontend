@@ -1,5 +1,7 @@
 "use client";
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState, useMemo } from "react";
 import {
   X,
@@ -16,9 +18,9 @@ function ModalWrapper({ open, onClose, title, subtitle, children }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <KeyboardModal title={title} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden">
-        <div className="flex justify-between items-start bg-gradient-to-r from-violet-600 to-indigo-600 p-6 text-white">
+        <div className="flex justify-between items-start bg-gradient-to-r from-primary to-indigo-600 p-6 text-white">
           <div>
             <h2 className="text-2xl font-bold">{title}</h2>
             <p className="text-sm text-violet-100 mt-1">{subtitle}</p>
@@ -34,7 +36,7 @@ function ModalWrapper({ open, onClose, title, subtitle, children }) {
 
         <div className="p-6">{children}</div>
       </div>
-    </div>
+    </KeyboardModal>
   );
 }
 
@@ -205,8 +207,8 @@ export function ExportModal({ open, onClose, projects = [] }) {
       title="Export Reports"
       subtitle="Download project reports in your desired format"
     >
-      <div className="rounded-2xl  p-5 mb-6 flex gap-4">
-        <div className="bg-violet-600 text-white p-3 rounded-xl shrink-0 h-12 w-12 flex items-center justify-center">
+      <div className="rounded-2xl bg-violet-50 p-5 mb-6 flex gap-4">
+        <div className="bg-primary text-white p-3 rounded-xl shrink-0 h-12 w-12 flex items-center justify-center">
           <Sparkles />
         </div>
 
@@ -229,7 +231,7 @@ export function ExportModal({ open, onClose, projects = [] }) {
           <h4 className="font-semibold text-slate-800">CSV</h4>
           <p className="text-xs text-slate-500 mt-0.5">Standard comma-separated spreadsheet</p>
 
-          <span className="mt-4 flex items-center text-violet-600 font-medium text-sm">
+          <span className="mt-4 flex items-center text-primary font-medium text-sm">
             {loadingType === "csv" ? (
               <Loader2 className="animate-spin mr-2" size={16} />
             ) : (
@@ -318,7 +320,7 @@ export function AnalyticsModal({ open, onClose, projects = [] }) {
       <div className="grid grid-cols-3 gap-4">
         <div className="rounded-xl border border-violet-100 bg-violet-50 p-4">
           <p className="text-sm font-medium text-slate-500">Total Projects</p>
-          <h2 className="text-2xl font-bold text-violet-600 mt-1">{total}</h2>
+          <h2 className="text-2xl font-bold text-primary mt-1">{total}</h2>
         </div>
 
         <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
@@ -336,12 +338,12 @@ export function AnalyticsModal({ open, onClose, projects = [] }) {
       <div className="mt-6">
         <div className="flex justify-between mb-2">
           <span className="text-sm font-medium text-slate-700">Overall Progress</span>
-          <span className="text-sm font-semibold text-violet-700">{completion}%</span>
+          <span className="text-sm font-semibold text-primary-hover">{completion}%</span>
         </div>
 
         <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-violet-600 rounded-full transition-all duration-500"
+            className="h-full bg-primary rounded-full transition-all duration-500"
             style={{ width: `${completion}%` }}
           />
         </div>
@@ -450,7 +452,7 @@ export function TeamMembersModal({ open, onClose, members = [], projects = [] })
               className="flex items-center justify-between rounded-2xl border border-slate-100 p-4 hover:bg-slate-50/80 transition"
             >
               <div className="flex items-center gap-3.5">
-                <div className="h-10 w-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shrink-0">
                   {member.name?.charAt(0).toUpperCase()}
                 </div>
 
@@ -463,7 +465,7 @@ export function TeamMembersModal({ open, onClose, members = [], projects = [] })
               </div>
 
               <div className="text-right">
-                <span className="inline-block rounded-lg bg-violet-50 border border-violet-100 px-2.5 py-1 text-xs text-violet-700 font-medium">
+                <span className="inline-block rounded-lg bg-violet-50 border border-violet-100 px-2.5 py-1 text-xs text-primary-hover font-medium">
                   {member.role}
                 </span>
 
@@ -486,7 +488,7 @@ export function TeamMembersModal({ open, onClose, members = [], projects = [] })
       <div className="mt-6 text-right">
         <button
           onClick={onClose}
-          className="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition"
+          className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition"
         >
           Close
         </button>

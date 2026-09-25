@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/layout/topbar'
 import { Suspense } from 'react'
 
 import { UsersList } from '@/components/users/users-list'
@@ -13,9 +14,9 @@ export const metadata = {
 
 export default function UsersPage() {
   return (
-    <div className="users-page flex w-full min-w-0 flex-col gap-3 pb-3">
+    <div className="users-page mx-auto max-w-[1500px] flex w-full min-w-0 flex-col gap-3 pb-3">
       <header>
-        <h2 className="text-[18px] font-bold tracking-tight text-foreground">Team Members</h2>
+        <PageHeader>Team Members</PageHeader>
         <p className="mt-0.5 text-[11px] text-muted-foreground">
           Manage your team roles, permissions and invites.
         </p>
@@ -58,14 +59,21 @@ export default function UsersPage() {
         .users-directory { height: 100%; }
         @container (max-width: 850px) {
           .users-columns { height: auto; }
-          .users-directory { height: 520px; }
+          .users-directory { height: auto; min-height: 400px; }
           .users-left { grid-template-rows: auto auto; }
-          .users-right { grid-template-rows: 240px; }
+          .users-right { grid-template-rows: auto; }
           .users-columns { grid-template-columns: minmax(180px, 1fr) minmax(0, 3fr); }
           .users-right { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
         @container (max-width: 640px) {
           .users-columns, .users-right { grid-template-columns: minmax(0, 1fr); }
+          .users-left > div, .users-right > div { height:auto; overflow:visible; }
+          .users-directory table { min-width:700px; }
+          .users-directory table td { padding-top:10px; padding-bottom:10px; }
+          .users-right > div > div { overflow:visible; }
+          .users-directory > div { flex-wrap:wrap; }
+          .users-directory input { min-width:0; }
+
           .users-right { grid-template-rows: none; grid-auto-rows: auto; }
         }
       `}</style>

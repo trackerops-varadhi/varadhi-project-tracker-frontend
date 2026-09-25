@@ -266,7 +266,7 @@ export default function WebhookList({ webhooks = [], eventTypes = [], onChanged 
                           onChange={(e) =>
                             handleToggleEvent(webhook, et.value, e.target.checked)
                           }
-                          className="h-4 w-4 rounded border-input accent-violet-600"
+                          className="h-4 w-4 rounded border-input accent-primary"
                         />
                         <span className={checked ? "" : "text-muted-foreground"}>
                           {et.label}

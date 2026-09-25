@@ -1,5 +1,7 @@
 'use client'
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState } from 'react'
 import { X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -56,7 +58,7 @@ export function EditProjectModal({ project, onClose, onSuccess }) {
   }
 
   return (
-    <div
+    <KeyboardModal title={"Edit Project"} onClose={onClose}
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
@@ -206,7 +208,7 @@ export function EditProjectModal({ project, onClose, onSuccess }) {
             </Button>
             <Button
               type="submit"
-              className="bg-violet-600 hover:bg-violet-700"
+              className="bg-primary hover:bg-primary-hover"
               disabled={isLoading}
             >
               {isLoading
@@ -218,6 +220,6 @@ export function EditProjectModal({ project, onClose, onSuccess }) {
 
         </form>
       </div>
-    </div>
+    </KeyboardModal>
   )
 }

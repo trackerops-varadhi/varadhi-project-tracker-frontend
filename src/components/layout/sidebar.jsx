@@ -4,10 +4,26 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 import {
-  LayoutDashboard, FolderOpen, FolderKanban, ListChecks,
-  Kanban, KanbanSquare, Files, BarChart3, Users, Settings,
-  LogOut, ChevronLeft, ChevronRight, Bell,
-  CalendarSync, MessageSquare, CalendarDays, Clock3,CalendarCheck2,
+  LayoutDashboard,
+  FolderOpen,
+  FolderKanban,
+  ListChecks,
+  Kanban,
+  KanbanSquare,
+  Files,
+  BarChart3,
+  Users,
+  Settings,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Bell,
+  X,
+  CalendarSync,
+  MessageSquare,
+  CalendarDays,
+  Clock3,
+  CalendarCheck2,
 } from 'lucide-react'
 
 import { useState } from 'react'
@@ -39,7 +55,12 @@ const ICON_MAP = {
   Clock3,
 }
 
-export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedProp }) {
+export function Sidebar({
+  collapsed: collapsedProp,
+  setCollapsed: setCollapsedProp,
+  mobileDrawer = false,
+  onNavigate,
+}) {
   const pathname = usePathname()
   const router = useRouter()
   const { user, clearAuth } = useAuthStore()
@@ -58,8 +79,10 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
 
   async function handleLogout() {
     const uid = user?.id
+
     if (uid) {
       const queued = await countForUser(uid).catch(() => 0)
+
       if (queued > 0 && !pendingLogout) {
         setPendingLogout({ count: queued })
         return
@@ -81,14 +104,17 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
       // Ignore logout API error
     } finally {
       clearAuth()
+
       document.cookie =
         'varadhi_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+
       await clearOfflineCaches()
 
       if (uid) {
         await clearForUser(uid).catch(() => {})
         releaseReplayLock(uid)
       }
+
       useOutboxStore.getState().reset()
 
       router.push('/auth/login')
@@ -98,54 +124,76 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
   // Prevent rendering mismatched markup until mounted on client
   if (!mounted) {
     return (
-      <aside className="fixed left-0 top-0 h-screen w-60 bg-white border-r border-slate-200 flex flex-col z-30" />
+      <aside className="fixed left-0 top-0 z-30 flex h-screen w-60 flex-col border-r border-slate-200 bg-white" />
     )
   }
 
   return (
     <aside
       className={cn(
-        'fixed rounded-r-2xl left-0 top-0 h-screen bg-white border-r border-slate-200 flex flex-col z-30 transition-all duration-300 ease-in-out',
-        collapsed ? 'w-16' : 'w-60'
+        'flex flex-col rounded-r-2xl border-r border-slate-200 bg-white transition-all duration-300 ease-in-out',
+        mobileDrawer
+          ? 'relative h-full w-full'
+          : 'fixed left-0 top-0 z-30 h-dvh',
+        !mobileDrawer && (collapsed ? 'w-16' : 'w-60')
       )}
     >
       {/* Logo Section */}
-      <div className="flex items-center pl-1 pr-4 py-5 border-b border-slate-100">
-        <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 select-none">
+      <div className="flex items-center border-b border-slate-100 py-5 pl-1 pr-4">
+        <div className="flex h-10 w-10 flex-shrink-0 select-none items-center justify-center">
           <img
             src="/projectlogo-removebg-preview.png"
             alt="Varadhi Logo"
-            className="w-full h-full object-contain pointer-events-none mb-2"
+            className="pointer-events-none mb-2 h-full w-full object-contain"
           />
         </div>
 
         {!collapsed && (
           <div>
-            <p className="text-base font-semibold text-slate-800 leading-tight">
+            <p className="text-base font-semibold leading-tight text-slate-800">
               Varadhi
             </p>
-            <p className="text-xs text-slate-500 font-medium">Project Tracker 2.0</p>
+
+            <p className="text-xs font-medium text-slate-500">
+              Project Tracker 2.0
+            </p>
           </div>
         )}
 
         <button
           type="button"
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="ml-auto flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition-all duration-200 hover:bg-slate-100 hover:text-slate-600"
+          onClick={
+            mobileDrawer
+              ? onNavigate
+              : () => setCollapsed(!collapsed)
+          }
+          aria-label={
+            mobileDrawer
+              ? 'Close navigation'
+              : collapsed
+                ? 'Expand sidebar'
+                : 'Collapse sidebar'
+          }
+          className="ml-auto mr-2 flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition-all duration-200 hover:bg-slate-100 hover:text-slate-600 md:h-4 md:w-4"
         >
-          {collapsed ? (
-            <ChevronRight className="w-4 h-4" />
+          {mobileDrawer ? (
+            <X className="h-5 w-5" />
+          ) : collapsed ? (
+            <ChevronRight className="h-4 w-4" />
           ) : (
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="h-4 w-4" />
           )}
         </button>
-      </div> 
+      </div>
 
       {/* Nav Items */}
-      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+      <nav
+        aria-label="Main navigation"
+        className="min-h-0 flex-1 space-y-1 overflow-y-auto px-2 py-4"
+      >
         {filteredNav.map((item) => {
           const Icon = ICON_MAP[item.icon]
+
           const isActive =
             pathname === item.href ||
             pathname.startsWith(item.href + '/')
@@ -154,10 +202,13 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all relative',
+                'relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all md:min-h-0',
                 isActive
-                  ? 'bg-violet-50 text-violet-700'
+                  ? 'bg-primary/10 text-primary'
                   : 'text-muted-foreground hover:bg-background hover:text-foreground'
               )}
             >
@@ -165,7 +216,7 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
                 <Icon
                   strokeWidth={isActive ? 2.2 : 1.8}
                   className={cn(
-                    'w-[18px] h-[18px] flex-shrink-0 transition-all duration-200',
+                    'h-[18px] w-[18px] flex-shrink-0 transition-all duration-200',
                     isActive
                       ? 'text-primary'
                       : 'text-muted-foreground group-hover:text-foreground'
@@ -173,12 +224,10 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
                 />
               )}
 
-              {!collapsed && (
-                <span>{item.label}</span>
-              )}
+              {!collapsed && <span>{item.label}</span>}
 
               {collapsed && isActive && (
-                <span className="absolute left-0 w-1 h-6 bg-violet-600 rounded-r-full" />
+                <span className="absolute left-0 h-6 w-1 rounded-r-full bg-primary" />
               )}
             </Link>
           )
@@ -186,24 +235,29 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
       </nav>
 
       {/* User + Logout */}
-      <div className="border-t border-slate-100 p-3 space-y-1">
-        <div className={cn(
-          'flex items-center gap-3 px-2 py-2 rounded-lg',
-          collapsed ? 'justify-center' : ''
-        )}>
-          <div className={cn(
-            'w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0',
-            getAvatarColor(user?.name || 'U')
-          )}>
+      <div className="space-y-1 border-t border-slate-100 p-3">
+        <div
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-2 py-2',
+            collapsed ? 'justify-center' : ''
+          )}
+        >
+          <div
+            className={cn(
+              'flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white',
+              getAvatarColor(user?.name || 'U')
+            )}
+          >
             {getInitials(user?.name || 'User')}
           </div>
 
           {!collapsed && (
             <div className="min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">
+              <p className="truncate text-xs font-medium text-foreground">
                 {user?.name}
               </p>
-              <p className="text-xs text-muted-foreground truncate capitalize">
+
+              <p className="truncate text-xs capitalize text-muted-foreground">
                 {user?.role}
               </p>
             </div>
@@ -215,11 +269,11 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
           onClick={handleLogout}
           disabled={isLoggingOut}
           className={cn(
-            'w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-muted-foreground transition-all duration-200 hover:bg-red-50 hover:text-red-600',
+            'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-muted-foreground transition-all duration-200 hover:bg-red-50 hover:text-red-600',
             collapsed ? 'justify-center' : ''
           )}
         >
-          <LogOut className="w-4 h-4 flex-shrink-0" />
+          <LogOut className="h-4 w-4 flex-shrink-0" />
           {!collapsed && <span>Logout</span>}
         </button>
 
@@ -233,10 +287,12 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
               {pendingLogout.count} unsynced change
               {pendingLogout.count === 1 ? '' : 's'}
             </p>
+
             <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
-              These were made offline and haven&apos;t reached the server. If you
-              log out now they will be <strong>permanently lost</strong>.
+              These were made offline and haven&apos;t reached the server. If
+              you log out now they will be <strong>permanently lost</strong>.
             </p>
+
             <div className="mt-2 flex items-center gap-2">
               <button
                 onClick={handleLogout}
@@ -244,6 +300,7 @@ export function Sidebar({ collapsed: collapsedProp, setCollapsed: setCollapsedPr
               >
                 Discard &amp; log out
               </button>
+
               <button
                 onClick={() => setPendingLogout(null)}
                 className="rounded-md border border-slate-200 px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50"

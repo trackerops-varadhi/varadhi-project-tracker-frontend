@@ -3,9 +3,11 @@
 // getAll() keeps its OLD return shape so Kanban and other modules
 // that expect an ARRAY are not disturbed.
 
-import apiClient from '@/lib/api-client'
+import apiClient, { fetchAllPages } from '@/lib/api-client'
 
 export const tasksApi = {
+  getAllPages: (filters = {}) => fetchAllPages((page) => tasksApi.getAll(filters, page, 100)),
+
   // =========================================================
   // GET ALL TASKS
   // KEEP THIS RETURN VALUE AS AN ARRAY.

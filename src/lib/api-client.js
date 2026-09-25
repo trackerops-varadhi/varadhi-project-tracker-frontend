@@ -1,12 +1,16 @@
 import axios from 'axios'
-import { API_BASE_URL } from '@/constants'
 import { clearOfflineCaches } from '@/lib/offline-cache'
 import { clearAll as clearAllOutbox } from '@/lib/outbox'
 import { useConnectivityStore } from '@/store/connectivity.store'
 import { getFromStorage, removeFromStorage } from '@/utils'
 
 // Ensure we have a full backend URL at runtime. Prefer NEXT_PUBLIC_API_URL.
-const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+const configuredBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+// Phones cannot reach the laptop through localhost. In local development,
+// Next.js forwards these same-origin requests to the configured backend.
+const useLocalProxy = process.env.NODE_ENV === 'development' &&
+  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?=[:/]|$)/i.test(configuredBase)
+const BASE = useLocalProxy ? '/api' : configuredBase
 
 console.debug('API base URL:', BASE)
 
@@ -39,7 +43,9 @@ apiClient.interceptors.response.use(
     return response
   },
   (error) => {
-    if (error.response?.status === 401) {
+    // A rejected sign-in must stay on the form so its error remains visible.
+    // Protected requests still clear an expired session and redirect.
+    if (error.response?.status === 401 && !error.config?.skipAuthRedirect) {
       // Token expired → clear and redirect to login
       removeFromStorage('varadhi_token')
       removeFromStorage('varadhi_user')
@@ -78,3 +84,18 @@ apiClient.interceptors.response.use(
 )
 
 export default apiClient
+// Collect paginated resources for boards and selectors that need the complete list.
+export async function fetchAllPages(fetchPage) {
+  const items = []
+  let page = 1
+  while (true) {
+    const result = await fetchPage(page)
+    if (!result || !Array.isArray(result.data) || !Number.isFinite(Number(result.totalPages))) {
+      throw new Error('Invalid paginated response')
+    }
+    items.push(...result.data)
+    if (page >= Number(result.totalPages)) return items
+    if (result.data.length === 0) throw new Error('Incomplete paginated response')
+    page += 1
+  }
+}

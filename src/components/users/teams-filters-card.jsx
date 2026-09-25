@@ -187,7 +187,7 @@ export function TeamsFiltersCard() {
 
                 ${
                   isActive
-                    ? 'bg-violet-50 text-violet-700'
+                    ? 'bg-violet-50 text-primary-hover'
                     : 'hover:bg-background'
                 }
               `}

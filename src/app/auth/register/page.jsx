@@ -11,12 +11,17 @@ export default function RegisterPage() {
 
         {/* Logo & Title */}
         <div className="text-center mb-8">
+<<<<<<< HEAD
            <div className="inline-flex items-center justify-center w-14 h-14  mb-4">
             <img 
               src={logoImg.src} 
               alt="Varadhi Logo" 
               className="w-8 h-8 object-contain" 
             />
+=======
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-white font-bold text-xl mb-4">
+            V
+>>>>>>> origin/feature/ui-shiva
           </div>
           <h1 className="text-2xl font-semibold text-foreground">
             Create Account

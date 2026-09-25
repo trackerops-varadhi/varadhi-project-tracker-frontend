@@ -11,7 +11,34 @@ const PUBLIC_ROUTES = [
 
 export function proxy(request) {
   const { pathname } = request.nextUrl
+  if (pathname === '/api' || pathname.startsWith('/api/')) {
+    const backend = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+    const isLocalBackend = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?=[:/]|$)/i.test(backend)
+    const origin = request.headers.get('origin')
+    // Only same-origin development requests to our local backend are proxied
+    // without Origin. Cross-origin requests retain the backend's CORS checks.
+    if (process.env.NODE_ENV === 'development' && isLocalBackend && origin) {
+      try {
+        if (new URL(origin).host === request.headers.get('host')) {
+          const headers = new Headers(request.headers)
+          headers.delete('origin')
+          return NextResponse.next({ request: { headers } })
+        }
+      } catch {
+        // Leave malformed origins for the backend to reject.
+      }
+    }
+    return NextResponse.next()
+  }
   const token = request.cookies.get('varadhi_token')?.value
+
+  // Reuse the existing password page while keeping reset links valid.
+  if (pathname === '/auth/reset-password') {
+    const resetUrl = request.nextUrl.clone()
+    resetUrl.pathname = '/auth/forgot-password'
+    resetUrl.searchParams.set('mode', 'reset')
+    return NextResponse.rewrite(resetUrl)
+  }
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) =>
     pathname.startsWith(route)
@@ -53,6 +80,7 @@ export const config = {
   //
   // `offline$` is anchored so a future /offline-report stays auth-protected.
   matcher: [
+    '/api/:path*',
     '/((?!api|_next/static|_next/image|favicon.ico|sw.js|manifest.webmanifest|icons/|apple-touch-icon|offline$|robots.txt|sitemap.xml).*)',
   ],
 }

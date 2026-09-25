@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Card } from '@/components/ui/card'
 
 export function RecruitmentPipeline() {
   const stages = [
@@ -11,22 +12,47 @@ export function RecruitmentPipeline() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between h-full">
-      <div>
-        <div className="flex justify-between items-center mb-1">
-          <h3 className="text-lg font-bold text-gray-900">Recruitment Pipeline</h3>
-        </div>
-        <p className="text-xs text-gray-400 mb-6">Candidates by current stage</p>
-      </div>
+    <Card asChild layout="custom">
+      <section
+        aria-labelledby="recruitment-pipeline-title"
+        className="flex h-full min-w-0 flex-col rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm"
+      >
+        <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <h2
+              id="recruitment-pipeline-title"
+              className="text-xs font-semibold text-slate-900"
+            >
+              Recruitment Pipeline
+            </h2>
 
-      <div className="space-y-4 my-auto">
-        {stages.map((stage, index) => (
-          <div key={index} className="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-none">
-            <span className="text-sm text-gray-600 font-medium">{stage.label}</span>
-            <span className="text-sm font-bold text-gray-900">{stage.count}</span>
+            <p className="mt-0.5 text-[11px] leading-4 text-slate-500">
+              Candidates by current status
+            </p>
           </div>
-        ))}
-      </div>
-    </div>
-  );
+
+          <p className="text-xs text-gray-400">
+            Candidates by current stage
+          </p>
+        </div>
+
+        <div className="my-auto space-y-4">
+          {stages.map((stage, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between border-b border-gray-50 py-1.5 last:border-none"
+            >
+              <span className="text-sm font-medium text-gray-600">
+                {stage.label}
+              </span>
+
+              <span className="text-sm font-bold text-gray-900">
+                {stage.count}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </Card>
+  )
 }

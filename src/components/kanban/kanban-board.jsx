@@ -42,7 +42,7 @@ export function KanbanBoard() {
   // reconcile the board with the backend after a status update.
   async function fetchTasks() {
     try {
-      const response = await tasksApi.getAll()
+      const response = await tasksApi.getAllPages()
       setTasks(Array.isArray(response) ? response : response?.data || [])
       setLoadFailed(false)
     } catch (err) {

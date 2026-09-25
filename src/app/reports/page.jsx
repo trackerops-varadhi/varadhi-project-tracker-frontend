@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/layout/topbar'
 import { SummaryCards } from '@/components/reports/summary-cards'
 import { TaskStatusChart } from '@/components/reports/task-status-chart'
 import { BurndownChart } from '@/components/reports/burndown-chart'
@@ -18,9 +19,7 @@ export default function ReportsPage() {
     <div className="space-y-6">
 
       <div>
-        <h2 className="text-xl font-semibold text-foreground">
-          Reports & Analytics
-        </h2>
+        <PageHeader>Reports & Analytics</PageHeader>
         <p className="text-sm text-muted-foreground mt-0.5">
           Track team performance, sprint progress and project health.
         </p>

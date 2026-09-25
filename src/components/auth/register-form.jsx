@@ -193,7 +193,7 @@ export function RegisterForm() {
       {/* Submit */}
       <Button
         type="submit"
-        className="w-full bg-violet-600 hover:bg-violet-700"
+        className="w-full bg-primary hover:bg-primary-hover"
         disabled={isLoading}
       >
         {isLoading
@@ -207,7 +207,7 @@ export function RegisterForm() {
         Already have an account?{' '}
         <Link
           href="/auth/login"
-          className="text-violet-600 font-medium hover:underline"
+          className="text-primary font-medium hover:underline"
         >
           Sign in
         </Link>

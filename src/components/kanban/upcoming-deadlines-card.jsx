@@ -9,7 +9,7 @@ function Shell({ children }) {
     <div className="bg-card rounded-xl border border-border p-5 h-full">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="font-semibold text-foreground">Upcoming Deadlines</h3>
-        <Link href="/tasks" className="text-xs text-violet-600 hover:underline">
+        <Link href="/tasks" className="text-xs text-primary hover:underline">
           View All
         </Link>
       </div>
@@ -59,7 +59,7 @@ export function UpcomingDeadlinesCard() {
             className="flex items-center gap-3 rounded-lg p-2 transition hover:bg-slate-50"
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50">
-              <Calendar className="h-4 w-4 text-violet-600" />
+              <Calendar className="h-4 w-4 text-primary" />
             </div>
 
             <div className="min-w-0 flex-1">

@@ -1,5 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Allow phone testing through this laptop's LAN address in development.
+  allowedDevOrigins: ['192.168.1.4'],
+  async rewrites() {
+    const backend = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+    const isLocalBackend = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?=[:/]|$)/i.test(backend)
+    if (process.env.NODE_ENV !== 'development' || !isLocalBackend) return []
+
+    return [{
+      source: '/api/:path*',
+      destination: `${backend.replace(/\/$/, '')}/:path*`,
+    }]
+  },
   async headers() {
     return [
       {

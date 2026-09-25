@@ -6,12 +6,12 @@ import { useUpcomingDeadlines, formatDueLabel, priorityBadgeClass } from '@/lib/
 function Shell({ children }) {
   return (
     <Card
-      className='flex h-full min-h-0 min-w-0 flex-col gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm'>
-      <div className='mb-1.5 flex shrink-0 items-center justify-between gap-2'>
-        <h3 className='min-w-0 truncate text-sm font-semibold text-slate-800'>Upcoming Deadlines</h3>
-        <Link href='/tasks' className='shrink-0 whitespace-nowrap text-xs font-medium text-violet-600 hover:underline'>View All</Link>
+      className='flex h-full min-h-0 min-w-0 flex-col gap-2 overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm'>
+      <div className='mb-1 flex shrink-0 flex-wrap items-center justify-between gap-2'>
+        <h3 className='min-w-0 text-xs font-semibold text-slate-800'>Upcoming Deadlines</h3>
+        <Link href='/tasks' className='shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline'>View All</Link>
       </div>
-      <div className='deadline-content min-h-0 min-w-0 flex-1'>
+      <div className='deadline-content min-h-0 min-w-0 flex-1 overflow-y-auto'>
         {children}
       </div>
     </Card>

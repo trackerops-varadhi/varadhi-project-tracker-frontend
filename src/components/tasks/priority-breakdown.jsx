@@ -36,12 +36,12 @@ const TILES = [{
 function Shell({ children }) {
   return (
     <Card
-      className='flex h-full min-h-0 min-w-0 flex-col gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm'>
-      <div className='mb-1.5 flex shrink-0 items-center justify-between gap-2'>
-        <h3 className='min-w-0 truncate text-sm font-semibold text-slate-800'>Priority Breakdown</h3>
-        <Link href='/tasks' className='shrink-0 whitespace-nowrap text-xs font-medium text-violet-600 hover:underline'>View Details</Link>
+      className='priority-breakdown flex min-w-0 flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm'>
+      <div className='flex shrink-0 flex-wrap items-center justify-between gap-2'>
+        <h3 className='min-w-0 text-xs font-semibold text-slate-800'>Priority Breakdown</h3>
+        <Link href='/tasks' className='shrink-0 whitespace-nowrap text-[11px] font-medium text-primary hover:underline'>View Details</Link>
       </div>
-      <div className='min-h-0 min-w-0 flex-1 overflow-auto custom-scrollbar'>
+      <div className='min-w-0'>
         {children}
       </div>
     </Card>
@@ -88,8 +88,8 @@ export function PriorityBreakdown() {
   if (isLoading) {
     return (
       <Shell>
-        <div className='grid h-full min-w-0 grid-cols-3 gap-1.5'>
-          {[0, 1, 2].map(i => (<div key={i} className='h-full min-h-[100px] animate-pulse rounded-lg bg-slate-100' />))}
+        <div className='grid min-w-0 grid-cols-3 gap-1.5'>
+          {[0, 1, 2].map(i => (<div key={i} className='h-full min-h-[72px] animate-pulse rounded-lg bg-slate-100' />))}
         </div>
       </Shell>
     );
@@ -134,7 +134,7 @@ export function PriorityBreakdown() {
 
   return (
     <Shell>
-      <div className='grid h-full min-h-0 min-w-0 grid-cols-3 gap-1.5'>
+      <div className='grid min-w-0 grid-cols-3 gap-1.5'>
         {TILES.map(tile => {
           const count = tile.includes.reduce((sum, level) => sum + (byPriority[level]?.count ?? 0), 0);
           const percent = total > 0 ? Math.round((count / total) * 100) : 0;
@@ -143,17 +143,17 @@ export function PriorityBreakdown() {
             <Link
               key={tile.key}
               href={tile.href}
-              className={`flex min-h-[100px] min-w-0 flex-col justify-between overflow-hidden rounded-lg border px-2 py-1.5 transition hover:brightness-95 ${tile.wrapper}`}>
+              className={`flex min-h-[72px] min-w-0 flex-col justify-between overflow-hidden rounded-lg border px-2 py-1.5 transition hover:brightness-95 ${tile.wrapper}`}>
               <div className='flex min-w-0 items-center gap-1'>
                 <span
                   className={`h-1.5 w-1.5 shrink-0 rounded-full ${tile.dot}`} />
                 <p
-                  className={`min-w-0 truncate text-xs font-medium ${tile.labelText}`}>
+                  className={`min-w-0 text-[11px] font-medium ${tile.labelText}`}>
                   {tile.label}
                 </p>
               </div>
               <div className='flex min-w-0 flex-wrap items-end justify-between gap-1'>
-                <h4 className='min-w-0 truncate text-[18px] font-bold leading-none text-slate-800 sm:text-[20px]'>
+                <h4 className='min-w-0 truncate text-[18px] font-bold leading-none text-slate-800 '>
                   {count}
                 </h4>
                 <p

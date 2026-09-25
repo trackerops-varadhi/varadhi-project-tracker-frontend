@@ -38,7 +38,7 @@ export function ProjectProgress() {
 
         <Link
           href="/projects"
-          className="text-[8px] font-medium text-violet-600 hover:underline"
+          className="text-[8px] font-medium text-primary hover:underline"
         >
           View all
         </Link>

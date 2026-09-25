@@ -1,9 +1,11 @@
 'use client';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Table } from '@/components/ui/table'
+import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Search, Calendar, AlertTriangle, MoreHorizontal, Eye, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TaskTabs } from './task-tabs';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreateTaskModal } from './create-task-modal';
 import { StatusBadge, PriorityBadge, TypeBadge } from './task-badge';
 import { useAuthStore } from '@/store/auth.store';
@@ -14,28 +16,22 @@ const TASKS_PER_PAGE = 10;
 
 function TaskFilter({ label, value, onChange, options }) {
   return (
-    <div
-      role='group'
-      aria-label={label}
-      className='tasks-filterOptions shrink-0 rounded-lg border border-slate-200 bg-white'
-    >
-      {options.map(([optionValue, text]) => (
-        <button
-          key={optionValue}
-          type='button'
-          aria-pressed={value === optionValue}
-          onClick={() => onChange(optionValue)}
-          className={cn(
-            'block h-[26px] w-full snap-start cursor-pointer whitespace-nowrap px-2 text-left text-xs font-medium transition-colors hover:bg-violet-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400',
-            value === optionValue
-              ? 'bg-violet-100 font-semibold text-violet-700'
-              : 'text-slate-600'
-          )}
-        >
-          {text}
-        </button>
-      ))}
-    </div>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger
+        size='sm'
+        aria-label={label}
+        className='min-w-[120px] shrink-0 border-slate-200 bg-white text-xs font-medium text-slate-700'
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align='start'>
+        {options.map(([optionValue, text]) => (
+          <SelectItem key={optionValue} value={optionValue} className='text-xs'>
+            {text}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
@@ -309,7 +305,7 @@ export function TasksList() {
   return (
     <div className='flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden'>
       <div
-        className='task-list-toolbar mb-2 flex min-h-10 w-full min-w-0 shrink-0 items-center gap-2 py-1 rounded-2xl border border-slate-200 bg-white px-2.5 shadow-sm [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300'>
+        className='task-list-toolbar mb-2 flex flex-wrap min-h-10 w-full min-w-0 shrink-0 items-center gap-2 py-1 rounded-2xl border border-slate-200 bg-white px-2.5 shadow-sm [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300'>
         <TaskTabs
           active={scope}
           onChange={next => {
@@ -317,7 +313,7 @@ export function TasksList() {
             setCurrentPage(1);
           }} />
         <div className='min-w-2 flex-1' />
-        <div className='ml-auto flex min-w-0 items-center gap-2'>
+        <div className='ml-auto flex flex-wrap min-w-0 items-center gap-2'>
           <TaskFilter
             label='Filter by status'
             value={statusFilter}
@@ -344,7 +340,7 @@ export function TasksList() {
           {canCreateTask && (<Button
             type='button'
             onClick={() => setShowCreateModal(true)}
-            className='h-7 shrink-0 gap-1 rounded-lg bg-violet-600 px-2.5 text-xs font-semibold text-white hover:bg-violet-700'>
+            className='h-7 shrink-0 gap-1 rounded-lg bg-primary px-2.5 text-xs font-semibold text-white hover:bg-primary-hover'>
             <Plus className='h-3 w-3' />
             {'New Task'}
           </Button>)}
@@ -358,11 +354,11 @@ export function TasksList() {
       <div
         className='task-table-card overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm'>
         <div
-          className='min-h-0 min-w-0 flex-1 overflow-hidden'
+          className='min-h-0 min-w-0 flex-1 overflow-x-auto'
           tabIndex={0}
           role='region'
           aria-label='Tasks table'>
-          <table className='w-full table-fixed border-collapse'>
+          <Table scrollable={false} className='w-full table-fixed border-collapse'>
             <colgroup>
               <col
                 style={{
@@ -482,7 +478,7 @@ export function TasksList() {
                 </td>
               </tr>)}
             </tbody>
-          </table>
+          </Table>
         </div>
         <nav className="task-pagination" aria-label="Task pagination">
           <p className="min-w-0 flex-1 truncate text-[10px] text-slate-500" aria-live="polite">
@@ -530,73 +526,7 @@ export function TasksList() {
   );
 }
 
-// Keep the entire desktop arrangement visible when browser zoom reduces space.
+// Keep content at its natural size so smaller screens can scroll.
 export function TaskViewport({ children, className }) {
-  const viewportRef = useRef(null)
-  const [size, setSize] = useState(null)
-
-  useLayoutEffect(() => {
-    const viewport = viewportRef.current
-    let frame
-
-    function measure() {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const { width, top } = viewport.getBoundingClientRect()
-        // Use the document position so an existing page scroll cannot make
-        // the measured space larger than the screen. Leave a bottom gutter.
-        const height = Math.max(1, Math.floor(window.innerHeight - top - window.scrollY - 28))
-        const scale = Math.min(1, width / 980, height / 560)
-        if (width > 0) setSize({ width, height, scale })
-      })
-    }
-
-    const observer = new ResizeObserver(measure)
-    observer.observe(viewport)
-    observer.observe(viewport.parentElement)
-    window.addEventListener('resize', measure)
-    measure()
-
-    return () => {
-      cancelAnimationFrame(frame)
-      observer.disconnect()
-      window.removeEventListener('resize', measure)
-    }
-  }, [])
-
-  return (
-    <div
-      ref={viewportRef}
-      className="relative w-full min-w-0 overflow-hidden"
-      style={{ height: size?.height ?? 'calc(100dvh - 104px)' }}
-    >
-      <div
-        className={className}
-        style={{
-          display: 'grid',
-          gridTemplateRows: '88px minmax(0, 1fr)',
-          width: '100%',
-          height: '100%',
-          minWidth: 0,
-          minHeight: 0,
-          gap: 10,
-          paddingBottom: 3,
-          overflow: 'hidden',
-          ...(size
-            ? {
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: Math.floor(size.width / size.scale),
-                height: Math.floor(size.height / size.scale),
-                transform: `scale(${size.scale})`,
-                transformOrigin: 'top left',
-              }
-            : {}),
-        }}
-      >
-        {children}
-      </div>
-    </div>
-  )
+  return <div className={className}>{children}</div>
 }

@@ -147,7 +147,7 @@ export function NotificationBell() {
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllAsRead}
-              className="text-xs font-medium text-violet-600 hover:text-violet-700 flex items-center gap-1"
+              className="text-xs font-medium text-primary hover:text-primary-hover flex items-center gap-1"
             >
               <Check className="w-3 h-3" />
               Mark all as read
@@ -258,7 +258,7 @@ export function NotificationBell() {
 
         <button
           onClick={handleViewAll}
-          className="w-full text-center px-3 py-2 text-xs font-medium text-violet-600 hover:text-violet-700 hover:bg-slate-50 border-t border-slate-100 transition-colors"
+          className="w-full text-center px-3 py-2 text-xs font-medium text-primary hover:text-primary-hover hover:bg-slate-50 border-t border-slate-100 transition-colors"
         >
           View all notifications
         </button>

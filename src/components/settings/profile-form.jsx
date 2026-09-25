@@ -120,7 +120,7 @@ export function ProfileForm() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="absolute -bottom-1 -right-1 w-6 h-6 bg-violet-600 rounded-full flex items-center justify-center text-white hover:bg-violet-700 transition-colors"
+            className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary-hover transition-colors"
           >
             <Camera className="w-3 h-3" />
           </button>
@@ -139,7 +139,7 @@ export function ProfileForm() {
           <p className="text-xs text-slate-400 mt-0.5">
             {user?.email}
           </p>
-          <span className="inline-block mt-1.5 text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-md font-medium capitalize">
+          <span className="inline-block mt-1.5 text-xs bg-violet-100 text-primary-hover px-2 py-0.5 rounded-md font-medium capitalize">
             {USER_ROLE_LABELS[user?.role] || user?.role}
           </span>
         </div>
@@ -195,7 +195,7 @@ export function ProfileForm() {
         </div>
 
         <div className="flex justify-end pt-2">
-          <Button type="submit" className="bg-violet-600 hover:bg-violet-700" disabled={isLoading}>
+          <Button type="submit" className="bg-primary hover:bg-primary-hover" disabled={isLoading}>
             {isLoading ? (
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
             ) : (

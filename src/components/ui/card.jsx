@@ -1,18 +1,22 @@
 import * as React from "react"
+import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
 function Card({
   className,
   size = "default",
+  asChild = false,
+  layout = "default",
   ...props
 }) {
+  const Comp = asChild ? Slot.Root : "div"
   return (
-    <div
+    <Comp
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-2xl bg-card py-4 text-sm text-card-foreground shadow-sm hover:shadow-md transition-all duration-300 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-2xl *:[img:last-child]:rounded-b-2xl",
+        layout === "custom" ? "group/card rounded-2xl bg-card text-card-foreground shadow-sm" : "group/card flex flex-col gap-4 overflow-hidden rounded-2xl bg-card py-4 text-sm text-card-foreground shadow-sm hover:shadow-md transition-all duration-300 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-2xl *:[img:last-child]:rounded-b-2xl",
         className
       )}
       {...props} />

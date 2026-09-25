@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/layout/topbar'
 import { StatsCards, DashboardPeriodSelector } from '@/components/dashboard/stats-cards'
 import { RecentActivity } from '@/components/dashboard/recent-activity'
 import { ProjectProgress } from '@/components/dashboard/project-progress'
@@ -16,35 +17,12 @@ export const metadata = {
 export default function DashboardPage() {
   return (
     <div className="dashboard-page bg-slate-50">
-      <input
-        className="dashboard-panel-choice"
-        type="radio"
-        name="dashboard-panel"
-        id="dashboard-overview"
-        defaultChecked
-      />
-      <input
-        className="dashboard-panel-choice"
-        type="radio"
-        name="dashboard-panel"
-        id="dashboard-activity"
-      />
-      <input
-        className="dashboard-panel-choice"
-        type="radio"
-        name="dashboard-panel"
-        id="dashboard-timeline"
-      />
-      <div className="dashboard-mobile-navigation" role="group" aria-label="Dashboard sections">
-        <label htmlFor="dashboard-overview">Overview</label>
-        <label htmlFor="dashboard-activity">Activity</label>
-        <label htmlFor="dashboard-timeline">Timeline</label>
-      </div>
       {/* =====================================================
           TOP FILTER
       ====================================================== */}
 
       <div className="dashboard-filter">
+        <PageHeader>Dashboard</PageHeader>
         <DashboardPeriodSelector />
       </div>
 
@@ -105,160 +83,51 @@ export default function DashboardPage() {
       </section>
 
       <style>{`
-
-        .dashboard-shell > div > header {
-          flex-shrink: 0;
-        }
-
         .dashboard-page {
-          box-sizing: border-box;
+          width: 100%;
+          min-width: 0;
+          max-width: 1500px;
+          margin: 0 auto;
           display: flex;
           flex-direction: column;
-          width: 100%;
-          max-width: 1500px;
-          height: 100%;
-          min-height: 0;
-          margin: 0 auto;
-          padding: 0 16px 8px;
-          overflow: hidden;
+          gap: 16px;
         }
-
-        .dashboard-filter {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          height: 28px;
-          flex-shrink: 0;
-          margin-bottom: 6px;
-        }
-
-        .dashboard-stats {
-          flex: 0 0 76px;
-          min-width: 0;
-          min-height: 0;
-          margin-bottom: 8px;
-          overflow: hidden;
-        }
-
-        .dashboard-stats > div {
-          height: 100%;
-          grid-template-columns: repeat(6, minmax(0, 1fr));
-        }
-
-        .dashboard-row-one,
-        .dashboard-row-two {
+        .dashboard-filter { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .dashboard-stats { min-width: 0; }
+        .dashboard-stats > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .dashboard-row-one, .dashboard-row-two {
           display: grid;
-          gap: 8px;
-          flex: 1 1 0;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 16px;
           min-width: 0;
-          min-height: 0;
-          margin-bottom: 8px;
         }
-
-        .dashboard-row-one {
-          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.7fr);
+        .dashboard-card-slot { min-width: 0; min-height: 240px; }
+        .dashboard-card-slot > div { min-height: 240px; }
+        .dashboard-gantt { min-width: 0; min-height: 240px; }
+        .dashboard-gantt > div { min-height: 240px; }
+        @media (min-width: 640px) {
+          .dashboard-stats > div { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+          .dashboard-row-one, .dashboard-row-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .dashboard-deadlines { grid-column: 1 / -1; }
         }
-
-        .dashboard-row-two {
-          grid-template-columns: repeat(4, minmax(0, 1fr));
+        @media (min-width: 1280px) {
+          .dashboard-stats > div { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+          .dashboard-row-one { grid-template-columns: 1fr 1fr 1.7fr; }
+          .dashboard-row-two { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+          .dashboard-deadlines { grid-column: auto; }
         }
-
-        .dashboard-card-slot {
-          width: 100%;
-          height: 100%;
-          min-width: 0;
-          min-height: 0;
-          overflow: hidden;
-        }
-
-        .dashboard-gantt {
-          flex: 0.9 1 0;
-          min-width: 0;
-          min-height: 105px;
-          overflow: hidden;
-        }
-
-        .dashboard-panel-choice,
-        .dashboard-mobile-navigation {
-          display: none;
-        }
-
-        .dashboard-canvas[data-mobile="true"] .dashboard-page {
-          padding: 0 0 4px;
-        }
-
-        .dashboard-canvas[data-mobile="true"] .dashboard-panel-choice {
-          display: block;
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          clip-path: inset(50%);
-          overflow: hidden;
-        }
-
-        .dashboard-canvas[data-mobile="true"] .dashboard-mobile-navigation {
-          display: flex;
-          flex-shrink: 0;
-          gap: 4px;
-          margin-bottom: 8px;
-        }
-
-        .dashboard-mobile-navigation label {
-          flex: 1;
-          padding: 8px 4px;
-          border-radius: 8px;
-          background: white;
-          color: #475569;
-          text-align: center;
-          font-size: 12px;
-          cursor: pointer;
-        }
-
-        #dashboard-overview:checked ~ .dashboard-mobile-navigation label[for="dashboard-overview"],
-        #dashboard-activity:checked ~ .dashboard-mobile-navigation label[for="dashboard-activity"],
-        #dashboard-timeline:checked ~ .dashboard-mobile-navigation label[for="dashboard-timeline"] {
-          background: #ede9fe;
-          color: #6d28d9;
-          font-weight: 600;
-        }
-
-        .dashboard-panel-choice:focus-visible ~ .dashboard-mobile-navigation {
-          outline: 2px solid #7c3aed;
-          outline-offset: 2px;
-        }
-
-        .dashboard-canvas[data-mobile="true"] .dashboard-stats {
-          flex-basis: 152px;
-        }
-
-        .dashboard-canvas[data-mobile="true"] .dashboard-stats > div {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          grid-template-rows: repeat(2, minmax(0, 1fr));
-        }
-
-        .dashboard-canvas[data-mobile="true"] .dashboard-row-one,
-        .dashboard-canvas[data-mobile="true"] .dashboard-row-two {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          grid-template-rows: repeat(2, minmax(0, 1fr));
-          margin-bottom: 0;
-        }
-
-        .dashboard-canvas[data-mobile="true"] .dashboard-deadlines {
-          grid-column: 1 / -1;
-        }
-
-        .dashboard-canvas[data-mobile="true"] #dashboard-overview:not(:checked) ~ .dashboard-row-one,
-        .dashboard-canvas[data-mobile="true"] #dashboard-activity:not(:checked) ~ .dashboard-row-two,
-        .dashboard-canvas[data-mobile="true"] #dashboard-timeline:not(:checked) ~ .dashboard-gantt {
-          display: none;
-        }
-
-        @media (max-width: 767px) {
-          .dashboard-shell > div > header {
-            gap: 8px;
-            padding-left: 8px;
-            padding-right: 8px;
-          }
+        @media (min-width: 1024px) {
+          .dashboard-page { flex: 1; min-height: 0; height: 100%; gap: 10px; }
+          .dashboard-filter { flex: 0 0 28px; }
+          .dashboard-stats { flex: 0 0 76px; min-height: 0; }
+          .dashboard-stats > div { height: 100%; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+          .dashboard-row-one, .dashboard-row-two { flex: 1 1 0; min-height: 0; gap: 10px; }
+          .dashboard-row-one { grid-template-columns: 1fr 1fr 1.7fr; }
+          .dashboard-row-two { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+          .dashboard-deadlines { grid-column: auto; }
+          .dashboard-card-slot, .dashboard-card-slot > div { height: 100%; min-height: 0; }
+          .dashboard-gantt { flex: 0.9 1 0; min-height: 0; }
+          .dashboard-gantt > div { height: 100%; min-height: 0; }
         }
       `}</style>
     </div>

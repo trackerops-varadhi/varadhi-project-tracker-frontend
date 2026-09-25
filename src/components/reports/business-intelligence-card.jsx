@@ -8,7 +8,7 @@ function Shell({ children }) {
   return (
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="mb-4 flex items-center gap-2">
-        <BarChart3 className="h-4 w-4 text-violet-600" />
+        <BarChart3 className="h-4 w-4 text-primary" />
         <div>
           <h3 className="font-semibold text-foreground">Business Intelligence</h3>
           <p className="text-xs text-muted-foreground">Last 30 days vs prior 30</p>

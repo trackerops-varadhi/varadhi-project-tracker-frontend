@@ -74,7 +74,7 @@ export function ProjectHealth() {
   ]
 
   return (
-    <Card className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
+    <Card className="project-health-card flex h-full min-h-0 min-w-0 flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
 
       {/* TITLE - SAME CARD */}
       <h3 className="shrink-0 truncate text-[11px] font-semibold text-slate-800 sm:text-xs">
@@ -83,8 +83,8 @@ export function ProjectHealth() {
 
       {/* LOADING - SAME CARD */}
       {loading && (
-        <div className="flex min-h-0 min-w-0 flex-1 items-center gap-2">
-          <div className="h-[68px] w-[68px] shrink-0 animate-pulse rounded-full bg-slate-100 sm:h-[76px] sm:w-[76px]" />
+        <div className="flex min-h-0 min-w-0 items-center gap-2">
+          <div className="h-16 w-16 shrink-0 animate-pulse rounded-full bg-slate-100" />
 
           <div className="min-w-0 flex-1 space-y-1.5">
             <div className="h-2 w-full rounded bg-slate-100" />
@@ -97,7 +97,7 @@ export function ProjectHealth() {
       {/* ERROR - SAME CARD */}
       {!loading && error && (
         <div className="flex min-h-0 flex-1 items-center justify-center">
-          <p className="text-[8px] text-slate-500">
+          <p className="text-xs text-slate-500">
             {error}
           </p>
         </div>
@@ -105,10 +105,10 @@ export function ProjectHealth() {
 
       {/* MAIN CONTENT - SAME CARD */}
       {!loading && !error && (
-        <div className="flex min-h-0 min-w-0 flex-1 items-center gap-2">
+        <div className="flex min-h-0 min-w-0 items-center gap-2">
 
           {/* DONUT */}
-          <div className="h-[68px] w-[68px] shrink-0 sm:h-[76px] sm:w-[76px] lg:h-[82px] lg:w-[82px]">
+          <div className="h-16 w-16 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <RadialBarChart
                 data={chartData}
@@ -155,7 +155,7 @@ export function ProjectHealth() {
 
           {/* PROJECT INFORMATION */}
           <div className="min-w-0 flex-1">
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {projects.map((project) => {
                 const style =
                   HEALTH_STYLES[project.health] ??
@@ -172,7 +172,7 @@ export function ProjectHealth() {
                       />
 
                       <span
-                        className="min-w-0 truncate text-[8px] font-medium text-slate-600 sm:text-[9px]"
+                        className="min-w-0 truncate text-[10px] leading-4 font-medium text-slate-600"
                         title={project.name}
                       >
                         {project.name}
@@ -180,7 +180,7 @@ export function ProjectHealth() {
                     </div>
 
                     <span
-                      className={`shrink-0 whitespace-nowrap text-[7px] font-medium sm:text-[8px] ${style.text}`}
+                      className={`shrink-0 whitespace-nowrap text-[9px] leading-4 font-medium ${style.text}`}
                     >
                       {style.label}
                     </span>

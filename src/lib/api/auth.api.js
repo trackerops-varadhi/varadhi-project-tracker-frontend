@@ -5,7 +5,9 @@ import apiClient from '@/lib/api-client'
 export const authApi = {
   // Login with email & password
   login: async (credentials) => {
-    const { data } = await apiClient.post('/auth/login', credentials)
+    const { data } = await apiClient.post('/auth/login', credentials, {
+      skipAuthRedirect: true,
+    })
     return data.data
   },
 
@@ -31,8 +33,8 @@ export const authApi = {
   },
 
   // Get currently logged in user
-  getMe: async () => {
-    const { data } = await apiClient.get('/auth/me')
+  getMe: async (config = {}) => {
+    const { data } = await apiClient.get('/auth/me', config)
     return data.data
   },
 
