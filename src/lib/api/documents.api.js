@@ -10,10 +10,10 @@ export const documentsApi = {
   },
 
   // Get documents for a project
-  getByProject: async (projectId) => {
+  /*getByProject: async (projectId) => {
     const { data } = await apiClient.get(`/projects/${projectId}/documents`)
     return data.data
-  },
+  },*/
 
   // Upload document
   upload: async (formData, onUploadProgress) => {

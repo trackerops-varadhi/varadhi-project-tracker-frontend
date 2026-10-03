@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/layout/topbar'
 import { Suspense } from 'react'
 import { ProjectsList } from '@/components/projects/projects-list'
 
@@ -11,9 +12,7 @@ export default function ProjectsPage() {
 
       {/* Page Header */}
       <div>
-        <h2 className="text-xl font-semibold text-slate-800">
-          Projects
-        </h2>
+        <PageHeader>Projects</PageHeader>
         <p className="text-sm text-slate-500 mt-0.5">
           Manage and track all your team projects.
         </p>

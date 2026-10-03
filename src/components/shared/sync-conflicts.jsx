@@ -116,7 +116,7 @@ export function SyncConflicts({ className }) {
                         <td className="py-1.5 pr-3 text-slate-500">
                           {FIELD_LABELS[f] || f}
                         </td>
-                        <td className="py-1.5 pr-3 font-medium text-violet-700">
+                        <td className="py-1.5 pr-3 font-medium text-primary-hover">
                           {display(m.payload?.[f] ?? m.conflict?.attempted?.[f])}
                         </td>
                         <td className="py-1.5 font-medium text-slate-700">

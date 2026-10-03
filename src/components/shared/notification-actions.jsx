@@ -61,7 +61,7 @@ const ACTIONED_LABEL = {
 const ACTIONED_STYLE = {
   approve: 'text-emerald-600',
   reject: 'text-amber-600',
-  accept: 'text-violet-600',
+  accept: 'text-primary',
   snooze: 'text-slate-500',
   resolved: 'text-slate-500',
 }

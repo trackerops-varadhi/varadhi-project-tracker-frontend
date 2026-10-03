@@ -1,5 +1,6 @@
 'use client'
 
+import { Table } from '@/components/ui/table'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 
@@ -71,7 +72,7 @@ const STATUS_CONFIG = {
    USERS LIST
 ========================================================= */
 
-export function UsersList() {
+export function UsersList({ leftColumn, rightColumn }) {
   const { user: currentUser } = useAuthStore()
   const searchParams = useSearchParams()
 
@@ -345,6 +346,9 @@ export function UsersList() {
         ))}
       </div>
 
+      <div className="users-columns">
+        <aside className="users-left">{leftColumn}</aside>
+        <div className="users-directory flex min-h-0 min-w-0 flex-col rounded-xl border border-border bg-card p-3">
       {/* ===================================================
           COMPACT TOOLBAR
       ==================================================== */}
@@ -467,7 +471,7 @@ export function UsersList() {
 
                 ${
                   roleFilter === role.value
-                    ? 'bg-violet-600 text-white'
+                    ? 'bg-primary text-white'
                     : 'bg-white text-slate-700 hover:bg-slate-100'
                 }
               `}
@@ -489,12 +493,12 @@ export function UsersList() {
               shrink-0
               gap-1.5
               rounded-lg
-              bg-violet-600
+              bg-primary
               px-3
               text-[10px]
               font-semibold
               text-white
-              hover:bg-violet-700
+              hover:bg-primary-hover
             "
           >
             <UserPlus className="h-3.5 w-3.5" />
@@ -525,10 +529,10 @@ export function UsersList() {
             h-full
             w-full
             min-w-0
-            overflow-hidden
+            overflow-auto
           "
         >
-          <table className="w-full table-fixed">
+          <Table scrollable={false} className="w-full table-fixed">
 
             {/* HEADER */}
 
@@ -663,7 +667,7 @@ export function UsersList() {
                                   py-0.5
                                   text-[8px]
                                   font-medium
-                                  text-violet-600
+                                  text-primary
                                 "
                               >
                                 You
@@ -863,7 +867,7 @@ export function UsersList() {
                                       `,
                                       member.role ===
                                         role
-                                        ? 'font-medium text-violet-600'
+                                        ? 'font-medium text-primary'
                                         : 'text-foreground'
                                     )}
                                   >
@@ -932,7 +936,7 @@ export function UsersList() {
                 )
               })}
             </tbody>
-          </table>
+          </Table>
 
           {/* =================================================
               EMPTY STATE
@@ -967,6 +971,10 @@ export function UsersList() {
               </div>
             )}
         </div>
+      </div>
+
+        </div>
+        <aside className="users-right">{rightColumn}</aside>
       </div>
 
       {/* ===================================================

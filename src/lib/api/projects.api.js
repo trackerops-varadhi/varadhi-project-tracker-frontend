@@ -1,7 +1,9 @@
 // These handle all backend API calls. When  backend is ready, everything connects from here.
-import apiClient from '@/lib/api-client'
+import apiClient, { fetchAllPages } from '@/lib/api-client'
 
 export const projectsApi = {
+  getAllPages: (filters = {}) => fetchAllPages((page) => projectsApi.getAll(filters, page, 100)),
+
   // Get all projects (with optional filters)
   getAll: async (filters = {}, page = 1, limit = 10) => {
     const { data } = await apiClient.get('/projects', {

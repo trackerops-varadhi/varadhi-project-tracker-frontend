@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/layout/topbar'
 import { ProfileForm } from '@/components/settings/profile-form'
 import { ChangePasswordForm } from '@/components/settings/change-password-form'
 import NotificationPreferences from "@/components/settings/notification-preferences";
@@ -13,9 +14,7 @@ export default function SettingsPage() {
 
       {/* Page Header */}
       <div>
-        <h2 className="text-xl font-semibold text-foreground">
-          Settings
-        </h2>
+        <PageHeader>Settings</PageHeader>
         <p className="text-sm text-muted-foreground mt-0.5">
           Manage your profile and account settings.
         </p>

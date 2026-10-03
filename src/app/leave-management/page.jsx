@@ -127,6 +127,14 @@ export default function ManagerLeavePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { user } = useAuthStore()
+  const userRole = user?.role?.toLowerCase()
+
+const canManageLeave =
+  userRole === 'admin' ||
+  userRole === 'manager'
+
+const isEmployee =
+  userRole === 'employee'
 
   const [rejectReason, setRejectReason] = useState('')
 
@@ -554,31 +562,12 @@ export default function ManagerLeavePage() {
   ===================================================== */
 
   return (
-    <div className="h-full w-full overflow-hidden bg-[#f7f8fc] text-slate-800">
-
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
-      <header className="flex h-[64px] shrink-0 items-center border-b bg-white px-5">
-
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">
-            Leave Management
-          </h1>
-
-          <p className="text-xs text-slate-500">
-            Review and manage leave requests from your team
-          </p>
-        </div>
-
-      </header>
-
-      {/* =================================================
+<div className="flex h-full min-h-0 w-full flex-col overflow-hidden text-slate-800">
+{/* =================================================
           MAIN
       ================================================= */}
 
-      <main className="h-[calc(100vh-64px)] overflow-y-auto overflow-x-hidden p-4 lg:p-5">
+      <main className="flex min-h-0 flex-1 flex-col p-3">
 
         {/* =================================================
             TITLE
@@ -587,32 +576,39 @@ export default function ManagerLeavePage() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
-              Team Leave Requests
-            </h2>
+           <div>
+  <h2 className="text-lg font-bold text-slate-900">
+    {canManageLeave
+      ? 'Team Leave Requests'
+      : 'My Leave Requests'}
+  </h2>
 
-            <p className="text-xs text-slate-500">
-              Review, approve or reject employee leave requests
-            </p>
+  <p className="text-xs text-slate-500">
+    {canManageLeave
+      ? 'Review, approve or reject employee leave requests'
+      : 'View and manage your leave requests'}
+  </p>
+</div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
 
-            <button
-              onClick={() => setShowReports(true)}
-              className="flex items-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-medium shadow-sm transition hover:bg-slate-50"
-            >
-              <Download size={17} />
-
-              Leave Reports
-            </button>
+            {canManageLeave && (
+  <button
+    onClick={() => setShowReports(true)}
+    className="flex items-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-medium shadow-sm transition hover:bg-slate-50"
+  >
+    <Download size={17} />
+    Leave Reports
+  </button>
+)}
 
             {/* Anyone signed in can apply for their own leave — the backend
                 takes user_id from the token, so this is not a privileged
                 action. Approve/reject stay manager-gated as before. */}
             <button
               onClick={openApplyModal}
-              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary"
             >
               <Plus size={17} />
 
@@ -626,7 +622,7 @@ export default function ManagerLeavePage() {
         {/* =================================================
             STATISTICS
         ================================================= */}
-
+{canManageLeave && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
 
           <StatCard
@@ -675,12 +671,13 @@ export default function ManagerLeavePage() {
           />
 
         </div>
+)}
 
         {/* =================================================
             CONFLICT ALERT
         ================================================= */}
 
-        {conflicts.length > 0 && (
+        {canManageLeave && conflicts.length > 0 && (
           <div className="mt-4 rounded-xl border border-orange-200 bg-orange-50 p-4">
 
             <div className="flex items-start gap-3">
@@ -725,13 +722,17 @@ export default function ManagerLeavePage() {
 
             <div>
 
-              <h3 className="font-semibold text-slate-900">
-                Leave Requests
-              </h3>
+            <h3 className="font-semibold text-slate-900">
+  {canManageLeave
+    ? 'Leave Requests'
+    : 'My Leave Requests'}
+</h3>
 
-              <p className="text-xs text-slate-500">
-                {pendingRequests.length} requests waiting for approval
-              </p>
+<p className="text-xs text-slate-500">
+  {canManageLeave
+    ? `${pendingRequests.length} requests waiting for approval`
+    : 'Track the status of your leave applications'}
+</p>
 
             </div>
 
@@ -753,7 +754,7 @@ export default function ManagerLeavePage() {
                     setSearch(event.target.value)
                   }
                   placeholder="Search employee..."
-                  className="w-[210px] rounded-xl border py-2 pl-9 pr-3 text-sm outline-none transition focus:border-indigo-500"
+                  className="w-[210px] rounded-xl border py-2 pl-9 pr-3 text-sm outline-none transition focus:border-primary"
                 />
 
               </div>
@@ -800,7 +801,7 @@ export default function ManagerLeavePage() {
           {/* =================================================
               BULK ACTION
           ================================================= */}
-
+{canManageLeave && (
           <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-slate-50 px-4 py-3">
 
             <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600">
@@ -812,7 +813,7 @@ export default function ManagerLeavePage() {
                   selectedIds.length === pendingRequests.length
                 }
                 onChange={selectAllPending}
-                className="h-4 w-4 accent-indigo-600"
+                className="h-4 w-4 accent-primary"
               />
 
               Select all pending
@@ -833,6 +834,7 @@ export default function ManagerLeavePage() {
             )}
 
           </div>
+)}
 
           {/* =================================================
               TABLE
@@ -931,7 +933,7 @@ export default function ManagerLeavePage() {
 
                       <td className="px-4 py-3">
 
-                        {request.status === 'Pending' ? (
+{canManageLeave && request.status === 'Pending' ? (
 
                           <input
                             type="checkbox"
@@ -941,7 +943,7 @@ export default function ManagerLeavePage() {
                             onChange={() =>
                               toggleSelect(request.id)
                             }
-                            className="h-4 w-4 accent-indigo-600"
+                            className="h-4 w-4 accent-primary"
                           />
 
                         ) : (
@@ -960,7 +962,7 @@ export default function ManagerLeavePage() {
 
                         <div className="flex items-center gap-3">
 
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                             {getInitials(request.employee)}
                           </div>
 
@@ -984,7 +986,7 @@ export default function ManagerLeavePage() {
 
                       <td className="px-4 py-3">
 
-                        <span className="rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-700">
+                        <span className="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium text-primary">
                           {request.leaveType}
                         </span>
 
@@ -1068,36 +1070,38 @@ export default function ManagerLeavePage() {
                               setSelectedRequest(request)
                             }
                             title="View Leave"
+                             aria-label="View leave request"
                             className="rounded-lg border p-2 text-slate-600 transition hover:bg-slate-100"
                           >
                             <Eye size={15} />
                           </button>
 
-                          {/* APPROVE */}
-
-                          {request.status === 'Pending' && (
-
-                            <button
-                              onClick={() =>
-                                approveLeave(request.id)
-                              }
-                              title="Approve Leave"
-                              className="rounded-lg border border-green-200 p-2 text-green-600 transition hover:bg-green-50"
-                            >
-                              <Check size={15} />
-                            </button>
-
-                          )}
+{canManageLeave &&
+  request.status === 'Pending' && (
+    <button
+      onClick={() =>
+        approveLeave(request.id)
+      }
+      title="Approve Leave"
+      aria-label="Approve leave request"
+      className="rounded-lg border border-green-200 p-2 text-green-600 transition hover:bg-green-50"
+    >
+      <Check size={15} />
+    </button>
+  )}
+                        
 
                           {/* REJECT */}
 
-                          {request.status === 'Pending' && (
+                          {canManageLeave &&
+  request.status === 'Pending' && (
 
                             <button
                               onClick={() =>
                                 openRejectModal(request)
                               }
                               title="Reject Leave"
+                              aria-label="Reject leave request"
                               className="rounded-lg border border-red-200 p-2 text-red-600 transition hover:bg-red-50"
                             >
                               <X size={15} />
@@ -1114,6 +1118,7 @@ export default function ManagerLeavePage() {
                                 openInformationModal(request)
                               }
                               title="Need More Information"
+                                aria-label="Request more information about leave"
                               className="rounded-lg border border-blue-200 p-2 text-blue-600 transition hover:bg-blue-50"
                             >
                               <Info size={15} />
@@ -1162,7 +1167,7 @@ export default function ManagerLeavePage() {
 
               <div className="flex items-center gap-3">
 
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-700">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
                   {getInitials(
                     selectedRequest.employee
                   )}
@@ -1239,7 +1244,8 @@ export default function ManagerLeavePage() {
 
               {/* ACTIONS */}
 
-              {selectedRequest.status === 'Pending' && (
+              {canManageLeave &&
+  selectedRequest.status === 'Pending' && (
 
                 <div className="flex gap-2 pt-2">
 
@@ -1499,7 +1505,7 @@ export default function ManagerLeavePage() {
                 value={applyForm.leaveType}
                 onChange={(event) => updateApplyField('leaveType', event.target.value)}
                 disabled={isSubmitting}
-                className="w-full rounded-xl border bg-white px-4 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-xl border bg-white px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               >
                 {LEAVE_TYPES.map((type) => (
                   <option key={type.value} value={type.value}>
@@ -1528,7 +1534,7 @@ export default function ManagerLeavePage() {
                   className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-2 ${
                     applyErrors.fromDate
                       ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                      : 'focus:border-indigo-500 focus:ring-indigo-100'
+                      : 'focus:border-primary focus:ring-primary/20'
                   }`}
                 />
                 {applyErrors.fromDate && (
@@ -1553,7 +1559,7 @@ export default function ManagerLeavePage() {
                   className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition focus:ring-2 ${
                     applyErrors.toDate
                       ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                      : 'focus:border-indigo-500 focus:ring-indigo-100'
+                      : 'focus:border-primary focus:ring-primary/20'
                   }`}
                 />
                 {applyErrors.toDate && (
@@ -1577,7 +1583,7 @@ export default function ManagerLeavePage() {
                     disabled={isSubmitting}
                     className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
                       applyForm.dayType === option.value
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                        ? 'border-primary bg-primary/10 text-primary'
                         : 'bg-white text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -1613,7 +1619,7 @@ export default function ManagerLeavePage() {
                 className={`w-full resize-none rounded-xl border px-4 py-3 text-sm outline-none transition focus:ring-2 ${
                   applyErrors.reason
                     ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                    : 'focus:border-indigo-500 focus:ring-indigo-100'
+                    : 'focus:border-primary focus:ring-primary/20'
                 }`}
               />
               {applyErrors.reason && (
@@ -1641,7 +1647,7 @@ export default function ManagerLeavePage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60"
+                className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary disabled:opacity-60"
               >
                 {isSubmitting ? 'Applying...' : 'Apply Leave'}
               </button>
@@ -1772,6 +1778,7 @@ function Modal({
 
           <button
             onClick={onClose}
+             aria-label={`Close ${title}`}
             className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
           >
             <X size={19} />
@@ -1830,7 +1837,7 @@ function ReportCard({
       className="flex w-full items-center gap-4 rounded-xl border p-4 text-left transition hover:bg-slate-50 disabled:cursor-default disabled:hover:bg-transparent"
     >
 
-      <div className="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+      <div className="rounded-xl bg-primary p-3 text-primary">
         {icon}
       </div>
 

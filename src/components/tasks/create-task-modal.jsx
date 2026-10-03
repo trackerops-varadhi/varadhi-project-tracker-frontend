@@ -1,6 +1,10 @@
 'use client'
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { useHasMounted } from '@/hooks/use-has-mounted'
 import { X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +17,7 @@ import { usersApi } from '@/lib/api/users.api'
 
 
 export function CreateTaskModal({ onClose, onSuccess }) {
+  const mounted = useHasMounted()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -42,7 +47,7 @@ export function CreateTaskModal({ onClose, onSuccess }) {
     setProjectsLoading(true)
     setProjectsError(false)
     try {
-      const response = await projectsApi.getAll()
+      const response = await projectsApi.getAllPages()
       // Defensive: works whether getAll returns the array directly or { data: [...] }
       const list = response?.data ?? response ?? []
       setProjects(Array.isArray(list) ? list : [])
@@ -115,8 +120,11 @@ export function CreateTaskModal({ onClose, onSuccess }) {
     }
   }
 
-return (
-  <div
+if (!mounted) return null
+
+// Render outside the scaled task layout so the backdrop covers the viewport.
+return createPortal(
+  <KeyboardModal title={"Create Task"} onClose={onClose}
     className="
       fixed inset-0 z-50
       flex items-center justify-center
@@ -565,8 +573,8 @@ return (
             type="submit"
             disabled={isLoading}
             className="
-              bg-violet-600
-              hover:bg-violet-700
+              bg-primary
+              hover:bg-primary-hover
             "
           >
             {isLoading ? (
@@ -581,6 +589,7 @@ return (
         </div>
       </form>
     </div>
-  </div>
+  </KeyboardModal>,
+  document.body
 )
 }

@@ -87,6 +87,7 @@ export const NAV_ITEMS = [
   // syncing their own deadlines needs this as much as a manager does.
   { label: 'Calendar',   href: '/calendar',    icon: 'CalendarSync',    roles: ['admin', 'manager', 'employee'] },
   { label: 'Documents',  href: '/documents',   icon: 'Files',           roles: ['admin', 'manager', 'employee'] },
+  { label: 'HR Management', href: '/hr-management', icon: 'Users', roles: ['admin', 'manager', 'employee'] },
   { label: 'Leave',      href: '/leave-management', icon: 'CalendarDays', roles: ['admin', 'manager', 'employee'] },
   { label: 'Time',       href: '/time-management', icon: 'Clock3', roles: ['admin', 'manager', 'employee'] },
   { label: 'Reports',    href: '/reports',     icon: 'BarChart3',       roles: ['admin', 'manager'] },

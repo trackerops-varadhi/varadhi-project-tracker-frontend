@@ -4,18 +4,13 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Table({
-  className,
-  ...props
-}) {
-  return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
-      <table
-        data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
-        {...props} />
-    </div>
-  );
+function Table({ className, scrollable = true, ...props }) {
+  const table = (
+    <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props} />
+  )
+  // Existing page scroll regions keep ownership of scrolling during migration.
+  if (!scrollable) return table
+  return <div data-slot="table-container" className="relative w-full overflow-x-auto">{table}</div>
 }
 
 function TableHeader({

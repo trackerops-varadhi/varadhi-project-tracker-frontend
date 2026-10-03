@@ -1,5 +1,7 @@
 'use client'
 
+import { KeyboardModal } from '@/components/ui/dialog'
+
 import { useState, useRef, useEffect } from 'react'
 import { X, Upload, File, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -33,7 +35,7 @@ async function loadProjects() {
   setProjectsLoading(true)
   setProjectsError(false)
   try {
-    const response = await projectsApi.getAll()
+    const response = await projectsApi.getAllPages()
 
 
     const list = response?.data ?? response ?? []
@@ -152,7 +154,7 @@ if (!allowedExtensions.includes(ext)) {
   }
 
   return (
-    <div
+    <KeyboardModal title={"Upload Document"} onClose={onClose} preventClose={isUploading}
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && !isUploading && onClose()}
     >
@@ -208,7 +210,7 @@ if (!allowedExtensions.includes(ext)) {
               <Upload className="w-8 h-8 text-slate-300 mx-auto mb-3" />
               <p className="text-sm font-medium text-muted-foreground mb-1">
                 Drop your file here or{' '}
-                <span className="text-violet-600">browse</span>
+                <span className="text-primary">browse</span>
               </p>
               <p className="text-xs text-slate-400">
                 PDF, DOC, XLS, PNG, JPG, ZIP · Max 10MB
@@ -300,7 +302,7 @@ if (!allowedExtensions.includes(ext)) {
 
   {projectsError && (
     <p className="text-amber-600 text-xs">
-      Couldn't load projects.{' '}
+      Couldn&apos;t load projects.{' '}
       <button
         type="button"
         onClick={loadProjects}
@@ -374,7 +376,7 @@ if (!allowedExtensions.includes(ext)) {
             <Button
               onClick={handleUpload}
               disabled={!selectedFile || isUploading || isSuccess}
-              className="bg-violet-600 hover:bg-violet-700"
+              className="bg-primary hover:bg-primary-hover"
             >
               {isUploading ? (
                 <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
@@ -388,6 +390,6 @@ if (!allowedExtensions.includes(ext)) {
 
         </div>
       </div>
-    </div>
+    </KeyboardModal>
   )
 }

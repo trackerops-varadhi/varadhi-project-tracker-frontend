@@ -10,7 +10,7 @@ function Shell({ children }) {
     <div className="bg-card rounded-xl border border-border p-5 h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-foreground">Team Workload</h3>
-        <Link href="/users" className="text-xs text-violet-600 hover:underline">
+        <Link href="/users" className="text-xs text-primary hover:underline">
           View All
         </Link>
       </div>
@@ -95,7 +95,7 @@ export function TeamWorkloadCard() {
       <div className="space-y-4">
         {members.map((member) => (
           <div key={member.name} className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-semibold text-violet-700">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-semibold text-primary-hover">
               {getInitials(member.name || '?')}
             </div>
 

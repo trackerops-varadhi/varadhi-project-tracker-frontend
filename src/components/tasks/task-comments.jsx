@@ -40,7 +40,7 @@ function CommentBody({ content, mentionableLocalParts }) {
         const isMention =
           part.startsWith('@') && mentionableLocalParts.has(part.slice(1).toLowerCase())
         return isMention ? (
-          <span key={i} className="font-medium text-violet-600">
+          <span key={i} className="font-medium text-primary">
             {part}
           </span>
         ) : (

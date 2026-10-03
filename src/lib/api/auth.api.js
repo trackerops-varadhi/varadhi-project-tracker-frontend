@@ -12,7 +12,9 @@ import apiClient from '@/lib/api-client'
 export const authApi = {
   // Returns { user }. Cookies arrive in the response headers.
   login: async (credentials) => {
-    const { data } = await apiClient.post('/auth/login', credentials)
+    const { data } = await apiClient.post('/auth/login', credentials, {
+      skipAuthRedirect: true,
+    })
     return data.data
   },
 
@@ -34,8 +36,11 @@ export const authApi = {
     return data
   },
 
-  getMe: async () => {
-    const { data } = await apiClient.get('/auth/me')
+  // Get currently logged in user. Accepts extra axios config (e.g.
+  // { skipAuthRedirect: true }) for callers that need to probe without
+  // triggering the interceptor's forced sign-out on a 401.
+  getMe: async (config = {}) => {
+    const { data } = await apiClient.get('/auth/me', config)
     return data.data
   },
 

@@ -57,7 +57,7 @@ export function ForgotPasswordForm() {
         </p>
         <Link
           href="/auth/login"
-          className="block text-sm text-violet-600 font-medium hover:underline mt-2"
+          className="block text-sm text-primary font-medium hover:underline mt-2"
         >
           Back to Sign in
         </Link>
@@ -96,7 +96,7 @@ export function ForgotPasswordForm() {
       {/* Submit */}
       <Button
         type="submit"
-        className="w-full bg-violet-600 hover:bg-violet-700"
+        className="w-full bg-primary hover:bg-primary-hover"
         disabled={isLoading}
       >
         {isLoading
@@ -110,7 +110,7 @@ export function ForgotPasswordForm() {
         Remember your password?{' '}
         <Link
           href="/auth/login"
-          className="text-violet-600 font-medium hover:underline"
+          className="text-primary font-medium hover:underline"
         >
           Back to Sign in
         </Link>
@@ -119,3 +119,78 @@ export function ForgotPasswordForm() {
     </form>
   )
 }
+
+export function ResetPasswordForm({ token }) {
+  const [password, setPassword] = useState('')
+  const [confirmation, setConfirmation] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    if (isLoading || !token) return
+    setError('')
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.')
+      return
+    }
+    if (password !== confirmation) {
+      setError('Passwords do not match.')
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      await authApi.resetPassword(token, password)
+      setPassword('')
+      setConfirmation('')
+      setIsSuccess(true)
+    } catch (err) {
+      setError(err.response?.data?.message || 'Unable to reset your password. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isSuccess) {
+    return (
+      <div className="space-y-4 text-center">
+        <p role="status" className="text-sm text-green-700">Your password has been reset successfully.</p>
+        <Link href="/auth/login" className="text-sm font-medium text-primary hover:underline">Sign in with your new password</Link>
+      </div>
+    )
+  }
+
+  if (!token) {
+    return (
+      <div className="space-y-4 text-center">
+        <p role="alert" className="text-sm text-red-600">This reset link is missing its token. Please request a new link.</p>
+        <Link href="/auth/forgot-password" className="text-sm font-medium text-primary hover:underline">Request a new reset link</Link>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
+      <div className="space-y-1.5">
+        <Label htmlFor="new-password">New password</Label>
+        <Input id="new-password" name="password" type="password" autoComplete="new-password" required minLength={6} disabled={isLoading} value={password} onChange={event => setPassword(event.target.value)} aria-describedby="password-help" />
+        <p id="password-help" className="text-xs text-muted-foreground">Use at least 6 characters.</p>
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="confirm-password">Confirm password</Label>
+        <Input id="confirm-password" name="confirmation" type="password" autoComplete="new-password" required minLength={6} disabled={isLoading} value={confirmation} onChange={event => setConfirmation(event.target.value)} />
+      </div>
+      <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary-hover">
+        {isLoading ? 'Resetting password...' : 'Reset password'}
+      </Button>
+      <div className="space-y-2 text-center text-sm">
+        <Link href="/auth/forgot-password" className="block text-primary hover:underline">Request a new reset link</Link>
+        <Link href="/auth/login" className="block text-muted-foreground hover:underline">Back to sign in</Link>
+      </div>
+    </form>
+  )
+}
+

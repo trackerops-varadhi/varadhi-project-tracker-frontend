@@ -52,7 +52,7 @@ function SummaryCard({
         <div className="h-4 bg-violet-400 rounded flex-1"></div>
         <div className="h-6 bg-violet-500 rounded flex-1"></div>
         <div className="h-5 bg-violet-400 rounded flex-1"></div>
-        <div className="h-8 bg-violet-600 rounded flex-1"></div>
+        <div className="h-8 bg-primary rounded flex-1"></div>
       </div>
     </div>
   )
@@ -99,7 +99,7 @@ export function SummaryCards() {
         label="Completion Rate"
         value={`${completionRate}%`}
         sub="Across all tasks"
-        color="text-violet-600"
+        color="text-primary"
         loading={loading}
       />
       <SummaryCard

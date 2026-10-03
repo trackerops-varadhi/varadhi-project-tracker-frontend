@@ -46,7 +46,7 @@ export function BurndownChart() {
     let active = true
     async function loadProjects() {
       try {
-        const res = await projectsApi.getAll()
+        const res = await projectsApi.getAllPages()
         const list = res?.data ?? res ?? []
         const arr = Array.isArray(list) ? list : []
         if (active) {

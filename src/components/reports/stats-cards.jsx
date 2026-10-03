@@ -77,7 +77,7 @@ export function StatsCards() {
                 <p className="text-sm text-muted-foreground">{item.title}</p>
                 <h2 className="mt-2 text-3xl font-bold">{item.value}</h2>
               </div>
-              <Icon className="h-10 w-10 text-violet-600" />
+              <Icon className="h-10 w-10 text-primary" />
             </div>
           </div>
         )

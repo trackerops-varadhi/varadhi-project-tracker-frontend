@@ -19,6 +19,7 @@ export function ProfileForm() {
     name: '',
     email: '',
   })
+  const [avatarFile, setAvatarFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [mounted, setMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -35,9 +36,10 @@ export function ProfileForm() {
     }
   }, [user])
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setAvatarFile(file)
     setPreview(URL.createObjectURL(file))
   }
 
@@ -68,6 +70,13 @@ export function ProfileForm() {
 
     setIsLoading(true)
     try {
+      // Package file into FormData and upload to backend (Fixes H-04)
+      if (avatarFile) {
+        const formDataPayload = new FormData()
+        formDataPayload.append('avatar', avatarFile)
+        await usersApi.uploadAvatar(formDataPayload)
+      }
+
       const updatedUser = await usersApi.updateProfile(formData)
       // setUser, not setAuth: this is a profile edit, not a new sign-in. It
       // merges into the cached user and leaves session state alone. (The old
@@ -77,6 +86,10 @@ export function ProfileForm() {
       // too, instead of going stale until the next reload.
       broadcastUserUpdate(updatedUser)
       setIsSuccess(true)
+      setAvatarFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     } catch (err) {
       setErrors({
         general: err.response?.data?.message || 'Failed to update profile. Try again.',
@@ -97,12 +110,12 @@ export function ProfileForm() {
       <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
         <div className="relative">
           <div className={cn(
-            'w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-semibold',
+            'w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-semibold overflow-hidden',
             getAvatarColor(user?.name || 'U')
           )}>
-            {preview ? (
+            {preview || user?.avatarUrl || user?.avatar ? (
               <img
-                src={preview}
+                src={preview || user?.avatarUrl || user?.avatar}
                 alt="Profile"
                 className="w-full h-full object-cover rounded-full"
               />
@@ -113,7 +126,7 @@ export function ProfileForm() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="absolute -bottom-1 -right-1 w-6 h-6 bg-violet-600 rounded-full flex items-center justify-center text-white hover:bg-violet-700 transition-colors"
+            className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary-hover transition-colors"
           >
             <Camera className="w-3 h-3" />
           </button>
@@ -132,7 +145,7 @@ export function ProfileForm() {
           <p className="text-xs text-slate-400 mt-0.5">
             {user?.email}
           </p>
-          <span className="inline-block mt-1.5 text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-md font-medium capitalize">
+          <span className="inline-block mt-1.5 text-xs bg-violet-100 text-primary-hover px-2 py-0.5 rounded-md font-medium capitalize">
             {USER_ROLE_LABELS[user?.role] || user?.role}
           </span>
         </div>
@@ -188,7 +201,7 @@ export function ProfileForm() {
         </div>
 
         <div className="flex justify-end pt-2">
-          <Button type="submit" className="bg-violet-600 hover:bg-violet-700" disabled={isLoading}>
+          <Button type="submit" className="bg-primary hover:bg-primary-hover" disabled={isLoading}>
             {isLoading ? (
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
             ) : (

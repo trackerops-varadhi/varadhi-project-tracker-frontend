@@ -115,7 +115,7 @@ export function InstallPrompt({ className }) {
         className
       )}
     >
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-600 text-white">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-white">
         <Download className="h-4 w-4" />
       </span>
 
@@ -129,11 +129,11 @@ export function InstallPrompt({ className }) {
         {showIosHelp && (
           <ol className="mt-2 space-y-1 text-xs text-slate-600">
             <li className="flex items-center gap-1.5">
-              <Share className="h-3 w-3 shrink-0 text-violet-600" />
+              <Share className="h-3 w-3 shrink-0 text-primary" />
               Tap the Share button in Safari&apos;s toolbar
             </li>
             <li className="flex items-center gap-1.5">
-              <Plus className="h-3 w-3 shrink-0 text-violet-600" />
+              <Plus className="h-3 w-3 shrink-0 text-primary" />
               Choose &ldquo;Add to Home Screen&rdquo;
             </li>
           </ol>

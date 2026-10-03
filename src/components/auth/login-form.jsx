@@ -102,6 +102,7 @@ export function LoginForm() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (isLoading) return
     setError('')
 
     if (!formData.email || !formData.password) {
@@ -110,38 +111,38 @@ export function LoginForm() {
     }
 
     setIsLoading(true)
- try {
-  const { user } = await authApi.login(formData)
+    try {
+      const { user } = await authApi.login(formData)
 
-  // Drop any cached responses belonging to whoever used this browser last —
-  // otherwise the new user can briefly see the previous user's data from the
-  // service worker cache.
-  await clearOfflineCaches().catch(() => {})
+      // Drop any cached responses belonging to whoever used this browser last —
+      // otherwise the new user can briefly see the previous user's data from the
+      // service worker cache.
+      await clearOfflineCaches().catch(() => {})
 
-  // Stores the user object in localStorage (shared by every tab) and sets the
-  // route-gate hint cookie. No token is involved: login already set httpOnly
-  // access and refresh cookies that JavaScript cannot read.
-  setAuth(user)
+      // Stores the user object in localStorage (shared by every tab) and sets the
+      // route-gate hint cookie. No token is involved: login already set httpOnly
+      // access and refresh cookies that JavaScript cannot read.
+      setAuth(user)
 
-  // This tab is signed in again, so a later visit to the login page should
-  // probe normally rather than skipping straight to the form.
-  clearSignedOutFlag()
+      // This tab is signed in again, so a later visit to the login page should
+      // probe normally rather than skipping straight to the form.
+      clearSignedOutFlag()
 
-  router.push('/dashboard')
-  router.refresh()
-} catch (err) {
-  if (!err.response) {
-    setError("Can't reach the server. Check your connection and try again.")
-  } else {
-    setError(
-      err.response?.data?.message ||
-      'Invalid email or password. Try again.'
-    )
+      router.push('/dashboard')
+      router.refresh()
+    } catch (err) {
+      if (!err.response) {
+        setError("Can't reach the server. Check your connection and try again.")
+      } else {
+        setError(
+          err.response?.data?.message ||
+          'Invalid email or password. Try again.'
+        )
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
-} finally {
-  setIsLoading(false)
-}
-}
 
   // Session probe still in flight. Showing the password fields here and then
   // yanking them away on a successful recovery is worse than a brief, honest
@@ -164,7 +165,7 @@ export function LoginForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
+        <div role="alert" className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
           {error}
         </div>
       )}
@@ -188,7 +189,7 @@ export function LoginForm() {
           <Label htmlFor="password">Password</Label>
           <Link
             href="/auth/forgot-password"
-            className="text-xs text-violet-600 hover:underline"
+            className="text-xs text-primary hover:underline"
           >
             Forgot password?
           </Link>
@@ -220,7 +221,7 @@ export function LoginForm() {
 
       <Button
         type="submit"
-        className="w-full bg-violet-600 hover:bg-violet-700"
+        className="w-full bg-primary hover:bg-primary-hover"
         disabled={isLoading}
       >
         {isLoading
@@ -233,7 +234,7 @@ export function LoginForm() {
         Don&apos;t have an account?{' '}
         <Link
           href="/auth/register"
-          className="text-violet-600 font-medium hover:underline"
+          className="text-primary font-medium hover:underline"
         >
           Contact your admin
         </Link>

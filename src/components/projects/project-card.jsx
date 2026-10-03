@@ -33,7 +33,7 @@ export function ProjectCard({ project, onUpdated }) {
 </span>
           </div>
           <Link href={`/projects/${project.id}`}>
-            <h3 className="text-sm font-semibold text-foreground hover:text-violet-600 transition-colors truncate">
+            <h3 className="text-sm font-semibold text-foreground hover:text-primary transition-colors truncate">
               {project.name}
             </h3>
           </Link>

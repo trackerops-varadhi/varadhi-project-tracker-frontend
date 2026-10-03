@@ -32,7 +32,7 @@ export function KanbanStats() {
 
   if (isLoading) {
     return (
-      <div className="grid w-full min-w-0 grid-cols-4 gap-2 lg:gap-3">
+      <div className="grid w-full min-w-0 grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
@@ -64,7 +64,7 @@ export function KanbanStats() {
           : 'Across all projects',
       icon: ClipboardList,
       iconBg: 'bg-violet-100',
-      iconColor: 'text-violet-600',
+      iconColor: 'text-primary',
     },
     {
       title: 'In Progress',
@@ -98,7 +98,7 @@ return (
       grid
       w-full
       min-w-0
-      grid-cols-4
+      grid-cols-2 md:grid-cols-4
       gap-2
       lg:gap-3
     "

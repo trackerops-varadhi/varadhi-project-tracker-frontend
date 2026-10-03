@@ -1,5 +1,6 @@
 'use client'
 
+import { PageHeader } from '@/components/layout/topbar'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Bell, Check, ChevronLeft, ChevronRight, Loader2, X } from 'lucide-react'
@@ -153,7 +154,7 @@ export default function NotificationsPage() {
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-slate-800">Notifications</h2>
+          <PageHeader>Notifications</PageHeader>
           <p className="text-sm text-slate-500 mt-0.5">
             Everything the tracker has sent you, in one place.
           </p>
@@ -171,7 +172,7 @@ export default function NotificationsPage() {
           onClick={() => setUnreadOnly(false)}
           className={cn(
             'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-            !unreadOnly ? 'bg-violet-100 text-violet-700' : 'text-slate-500 hover:bg-slate-100'
+            !unreadOnly ? 'bg-violet-100 text-primary-hover' : 'text-slate-500 hover:bg-slate-100'
           )}
         >
           All
@@ -180,7 +181,7 @@ export default function NotificationsPage() {
           onClick={() => setUnreadOnly(true)}
           className={cn(
             'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-            unreadOnly ? 'bg-violet-100 text-violet-700' : 'text-slate-500 hover:bg-slate-100'
+            unreadOnly ? 'bg-violet-100 text-primary-hover' : 'text-slate-500 hover:bg-slate-100'
           )}
         >
           Unread

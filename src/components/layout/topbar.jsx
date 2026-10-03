@@ -85,7 +85,7 @@ import { getInitials, getAvatarColor, cn } from '@/utils'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 import { NotificationBell } from './notification-bell'
 
-export function Topbar() {
+export function Topbar({ menuButton }) {
   const pathname = usePathname()
   const router = useRouter()
   const { user } = useAuthStore()
@@ -117,11 +117,13 @@ export function Topbar() {
   const displayRole = mounted ? user?.role : undefined
 
   return (
-    <header className="h-14 bg-card border-b border-border flex items-center px-6 gap-5 sticky top-0 z-10 rounded-tl-[1.5rem] rounded-bl-[1.5rem] overflow-hidden">
+    <header className="min-h-14 shrink-0 bg-card border-b border-border flex items-center px-3 gap-2 md:px-6 md:gap-5 sticky top-0 z-10 md:rounded-tl-[1.5rem] md:rounded-bl-[1.5rem]">
+
+      {menuButton}
 
       {/* Page Title */}
-      <div className="flex-1">
-        <h1 className="text-sm font-semibold text-foreground">{pageTitle}</h1>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold text-foreground">{pageTitle}</p>
         <p className="text-xs text-slate-400 capitalize">
           {displayRole ? `${displayRole} · ` : ''}Varadhi Club
         </p>
@@ -149,7 +151,7 @@ export function Topbar() {
       <NotificationBell />
 
       {/* User Avatar */}
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <div className={cn(
           'w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold',
           getAvatarColor(displayName || 'U')
@@ -166,4 +168,9 @@ export function Topbar() {
 
     </header>
   )
+}
+
+// Shared content heading for tracker pages; the topbar is a navigation label.
+export function PageHeader({ children }) {
+  return <h1 className="text-xl font-semibold leading-7 tracking-tight text-slate-900">{children}</h1>
 }

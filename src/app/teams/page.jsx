@@ -1,5 +1,6 @@
 'use client'
 
+import { PageHeader } from '@/components/layout/topbar'
 import { useCallback, useEffect, useState } from 'react'
 import { ShieldCheck } from 'lucide-react'
 
@@ -51,13 +52,13 @@ export default function TeamsPage() {
     load()
   }, [mounted, canConfigure, load])
 
-  if (!mounted) return null
+  if (!mounted) return <PageHeader>Microsoft Teams</PageHeader>
 
   if (!canConfigure) {
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-xl font-semibold text-slate-800">Microsoft Teams</h2>
+          <PageHeader>Microsoft Teams</PageHeader>
         </div>
         <p className="rounded-lg bg-muted p-4 text-sm text-muted-foreground">
           Teams integration is managed by administrators and project managers.
@@ -69,7 +70,7 @@ export default function TeamsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-slate-800">Microsoft Teams</h2>
+        <PageHeader>Microsoft Teams</PageHeader>
         <p className="mt-0.5 text-sm text-slate-500">
           Receive updates, take action and collaborate with your team without
           leaving Microsoft Teams.

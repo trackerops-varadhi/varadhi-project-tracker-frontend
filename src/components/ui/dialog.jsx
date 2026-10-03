@@ -151,3 +151,29 @@ export {
   DialogTitle,
   DialogTrigger,
 }
+
+// Adds dialog keyboard behavior to existing custom modal layouts.
+export function KeyboardModal({ title, onClose, preventClose = false, children, ...props }) {
+  const returnFocus = React.useRef(null)
+  return (
+    <DialogPrimitive.Root open onOpenChange={(open) => { if (!open && !preventClose) onClose() }}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Content
+          asChild
+          aria-describedby={undefined}
+          onOpenAutoFocus={() => { returnFocus.current = document.activeElement }}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault()
+            if (returnFocus.current?.isConnected) returnFocus.current.focus()
+          }}
+          onEscapeKeyDown={(event) => { if (preventClose) event.preventDefault() }}
+        >
+          <div {...props}>
+            <DialogPrimitive.Title className="sr-only">{title}</DialogPrimitive.Title>
+            {children}
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
+  )
+}

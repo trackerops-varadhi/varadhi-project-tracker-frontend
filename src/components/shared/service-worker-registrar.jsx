@@ -31,8 +31,8 @@ import { useNotificationStore } from '@/store/notification.store'
 // and makes "which SW is live" visible in DevTools.
 // Keep in step with SW_VERSION inside public/sw.js — that constant names the
 // caches, this one busts the registration URL.
-const SW_VERSION = 'v1.2.1'
-const SW_URL = `/sw.js?api=${encodeURIComponent(API_BASE_URL)}&v=${SW_VERSION}`
+const SW_VERSION = 'v1.2.2'
+const SW_URL = `/sw.js?api=${encodeURIComponent(API_BASE_URL)}&v=${SW_VERSION}${process.env.NODE_ENV === 'development' ? '&dev=1' : ''}`
 
 export function ServiceWorkerRegistrar() {
   const applyActionResult = useNotificationStore((s) => s.applyActionResult)

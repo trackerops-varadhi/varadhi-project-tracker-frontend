@@ -56,8 +56,8 @@ export function TaskTabs({
 
               ${
                 selected
-                  ? 'text-violet-600'
-                  : 'text-slate-600 hover:text-violet-600'
+                  ? 'text-primary'
+                  : 'text-slate-600 hover:text-primary'
               }
             `}
           >
@@ -72,7 +72,7 @@ export function TaskTabs({
                   right-2
                   h-[3px]
                   rounded-full
-                  bg-violet-600
+                  bg-primary
                 "
               />
             )}

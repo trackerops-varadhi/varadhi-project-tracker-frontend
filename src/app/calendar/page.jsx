@@ -1,5 +1,6 @@
 'use client'
 
+import { PageHeader } from '@/components/layout/topbar'
 import { Suspense, useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { CheckCircle2, ShieldCheck, TriangleAlert } from 'lucide-react'
@@ -45,9 +46,12 @@ function callbackMessage(status, detail) {
  */
 export default function CalendarPage() {
   return (
-    <Suspense fallback={<CalendarSkeleton />}>
-      <CalendarPageInner />
-    </Suspense>
+    <div className="space-y-1">
+      <PageHeader>Calendar Sync</PageHeader>
+      <Suspense fallback={<CalendarSkeleton />}>
+        <CalendarPageInner />
+      </Suspense>
+    </div>
   )
 }
 
@@ -55,7 +59,6 @@ function CalendarSkeleton() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-slate-800">Calendar Sync</h2>
         <p className="mt-0.5 text-sm text-slate-500">
           Seamlessly sync your tasks, due dates, meetings and milestones with
           Google Calendar and Outlook Calendar.
@@ -111,7 +114,6 @@ function CalendarPageInner() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-slate-800">Calendar Sync</h2>
         <p className="mt-0.5 text-sm text-slate-500">
           Seamlessly sync your tasks, due dates, meetings and milestones with
           Google Calendar and Outlook Calendar.

@@ -44,7 +44,7 @@ export function SyncStatus({ className }) {
       <span
         className={cn(
           'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white',
-          failed.length ? 'bg-amber-500' : 'bg-violet-600'
+          failed.length ? 'bg-amber-500' : 'bg-primary'
         )}
       >
         {isSyncing ? (
@@ -74,7 +74,7 @@ export function SyncStatus({ className }) {
       {!isOffline && !isSyncing && (
         <button
           onClick={syncNow}
-          className="shrink-0 text-xs font-medium text-violet-700 transition-colors hover:text-violet-900"
+          className="shrink-0 text-xs font-medium text-primary-hover transition-colors hover:text-violet-900"
         >
           Retry now
         </button>
