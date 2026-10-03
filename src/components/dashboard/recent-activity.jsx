@@ -28,39 +28,39 @@ export function RecentActivity() {
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
       {/* FIXED HEADER */}
-      <div className="flex h-[30px] shrink-0 items-center border-b border-slate-100 px-3">
-        <h3 className="text-[11px] font-semibold text-slate-800">
+      <div className="flex h-[44px] shrink-0 items-center border-b border-slate-100 px-4">
+        <h3 className="text-[13px] font-semibold text-slate-800 sm:text-sm">
           Recent Activity
         </h3>
       </div>
 
       {isLoading ? (
         <div className="flex min-h-0 flex-1 items-center justify-center">
-          <p className="text-[9px] text-slate-400">
+          <p className="text-[12px] text-slate-400">
             Loading...
           </p>
         </div>
       ) : activity.length === 0 ? (
         <div className="flex min-h-0 flex-1 items-center justify-center">
-          <p className="text-[9px] text-slate-400">
+          <p className="text-[12px] text-slate-400">
             No recent activity yet.
           </p>
         </div>
       ) : (
         /* ONLY CONTENT SCROLLS */
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-          <div className="divide-y divide-slate-100">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-2">
+          <div className="flex flex-col gap-3">
             {activity.map((item) => (
               <div
                 key={item.id}
-                className="flex items-start gap-2 px-3 py-1.5 hover:bg-slate-50"
+                className="flex items-center gap-2.5"
               >
                 <div
                   className={cn(
                     `
-                      mt-0.5 flex h-5 w-5
+                      flex h-8 w-8
                       shrink-0 items-center justify-center
-                      rounded-full text-[7px]
+                      rounded-full text-[11px]
                       font-semibold text-white
                     `,
                     getAvatarColor(item.user.name)
@@ -69,19 +69,17 @@ export function RecentActivity() {
                   {getInitials(item.user.name)}
                 </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-[8px] leading-[1.2] text-slate-600">
-                    <span className="font-semibold text-slate-800">
-                      {item.user.name}
-                    </span>{' '}
-                    {item.message}
-                  </p>
+                <p className="min-w-0 flex-1 truncate text-[12px] leading-4 text-slate-600">
+                  <span className="font-semibold text-slate-800">
+                    {item.user.name}
+                  </span>{' '}
+                  {item.message}
+                </p>
 
-                  <RelativeTime
-                    date={item.createdAt}
-                    className="mt-0.5 block text-[7px] text-slate-400"
-                  />
-                </div>
+                <RelativeTime
+                  date={item.createdAt}
+                  className="shrink-0 whitespace-nowrap text-[11px] text-slate-400"
+                />
               </div>
             ))}
           </div>

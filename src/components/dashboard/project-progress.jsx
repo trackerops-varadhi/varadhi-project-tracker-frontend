@@ -31,22 +31,22 @@ export function ProjectProgress() {
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
       {/* FIXED HEADER */}
-      <div className="flex h-[30px] shrink-0 items-center justify-between border-b border-slate-100 px-3">
-        <h3 className="text-[11px] font-semibold text-slate-800">
+      <div className="flex h-[44px] shrink-0 items-center justify-between border-b border-slate-100 px-4">
+        <h3 className="text-[13px] font-semibold text-slate-800 sm:text-sm">
           Project Progress
         </h3>
 
         <Link
           href="/projects"
-          className="text-[8px] font-medium text-primary hover:underline"
+          className="text-[11px] font-medium text-primary hover:underline"
         >
           View all
         </Link>
       </div>
 
       {/* SCROLL BODY */}
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="divide-y divide-slate-100">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-2">
+        <div className="flex flex-col gap-3">
           {items.map((project) => {
             const progress = calcProgress(
               project.completedTasksCount,
@@ -54,20 +54,17 @@ export function ProjectProgress() {
             )
 
             return (
-              <div
-                key={project.id}
-                className="px-3 py-1.5 hover:bg-slate-50"
-              >
+              <div key={project.id}>
                 <div className="flex items-center justify-between gap-2">
 
                   <div className="flex min-w-0 items-center gap-1.5">
-                    <p className="truncate text-[9px] font-medium text-slate-700">
+                    <p className="truncate text-[12px] font-medium text-slate-700">
                       {project.name}
                     </p>
 
                     <span
                       className={cn(
-                        'shrink-0 rounded px-1 py-[1px] text-[7px] font-medium',
+                        'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium',
                         PROJECT_STATUS_COLORS[project.status]
                       )}
                     >
@@ -75,12 +72,12 @@ export function ProjectProgress() {
                     </span>
                   </div>
 
-                  <span className="shrink-0 text-[8px] font-semibold text-slate-500">
+                  <span className="shrink-0 text-[12px] font-semibold text-slate-500">
                     {progress}%
                   </span>
                 </div>
 
-                <div className="mt-1 h-[4px] overflow-hidden rounded-full bg-slate-100">
+                <div className="mt-1.5 h-[6px] overflow-hidden rounded-full bg-slate-100">
                   <div
                     className={cn(
                       'h-full rounded-full',
@@ -99,11 +96,11 @@ export function ProjectProgress() {
                 </div>
 
                 <div className="mt-1 flex items-center justify-between">
-                  <p className="truncate text-[7px] text-slate-400">
+                  <p className="truncate text-[10px] text-slate-400">
                     {project.manager_name}
                   </p>
 
-                  <p className="text-[7px] text-slate-400">
+                  <p className="shrink-0 text-[10px] text-slate-400">
                     {project.completedTasksCount}/
                     {project.tasksCount} tasks
                   </p>

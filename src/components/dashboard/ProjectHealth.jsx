@@ -74,27 +74,26 @@ export function ProjectHealth() {
   ]
 
   return (
-    <Card className="project-health-card flex h-full min-h-0 min-w-0 flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
+    <Card className="project-health-card flex h-full min-h-0 min-w-0 flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
 
-      {/* TITLE - SAME CARD */}
-      <h3 className="shrink-0 truncate text-[11px] font-semibold text-slate-800 sm:text-xs">
+      {/* TITLE */}
+      <h3 className="shrink-0 truncate text-[13px] font-semibold text-slate-800 sm:text-sm">
         Project Health Overview
       </h3>
 
-      {/* LOADING - SAME CARD */}
+      {/* LOADING */}
       {loading && (
-        <div className="flex min-h-0 min-w-0 items-center gap-2">
-          <div className="h-16 w-16 shrink-0 animate-pulse rounded-full bg-slate-100" />
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3">
+          <div className="h-24 w-24 shrink-0 animate-pulse rounded-full bg-slate-100" />
 
-          <div className="min-w-0 flex-1 space-y-1.5">
+          <div className="w-full space-y-1.5">
             <div className="h-2 w-full rounded bg-slate-100" />
             <div className="h-2 w-5/6 rounded bg-slate-100" />
-            <div className="h-2 w-4/6 rounded bg-slate-100" />
           </div>
         </div>
       )}
 
-      {/* ERROR - SAME CARD */}
+      {/* ERROR */}
       {!loading && error && (
         <div className="flex min-h-0 flex-1 items-center justify-center">
           <p className="text-xs text-slate-500">
@@ -103,91 +102,91 @@ export function ProjectHealth() {
         </div>
       )}
 
-      {/* MAIN CONTENT - SAME CARD */}
+      {/* MAIN CONTENT — donut on top, legend below in two columns, matching
+          the reference's vertical layout rather than a side-by-side split. */}
       {!loading && !error && (
-        <div className="flex min-h-0 min-w-0 items-center gap-2">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col items-center gap-3">
 
-          {/* DONUT */}
-          <div className="h-16 w-16 shrink-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadialBarChart
-                data={chartData}
-                innerRadius="68%"
-                outerRadius="88%"
-                startAngle={90}
-                endAngle={-270}
-                barSize={7}
-              >
-                <PolarAngleAxis
-                  type="number"
-                  domain={[0, 100]}
-                  tick={false}
-                />
-
-                <RadialBar
-                  dataKey="value"
-                  background={{ fill: '#ECEEF3' }}
-                  cornerRadius={20}
-                />
-
-                <text
-                  x="50%"
-                  y="42%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="fill-slate-500 text-[6px]"
+          {/* DONUT — the wrapper takes the leftover height (flex-1, no
+              fixed px) and centers a capped-size square inside it, so it
+              scales with whatever room the card actually has instead of a
+              hardcoded size that only looks right at one card height. The
+              230px ceiling is a sanity cap for very tall cards, not the
+              normal size — on a typical row it still shrinks to fit. */}
+          <div className="flex min-h-0 w-full flex-1 items-center justify-center py-1">
+            <div className="aspect-square h-full max-h-[230px] w-auto max-w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadialBarChart
+                  data={chartData}
+                  innerRadius="72%"
+                  outerRadius="92%"
+                  startAngle={90}
+                  endAngle={-270}
+                  barSize={10}
                 >
-                  Health
-                </text>
+                  <PolarAngleAxis
+                    type="number"
+                    domain={[0, 100]}
+                    tick={false}
+                  />
 
-                <text
-                  x="50%"
-                  y="59%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="fill-slate-900 text-[13px] font-bold sm:text-[14px]"
-                >
-                  {overall}%
-                </text>
-              </RadialBarChart>
-            </ResponsiveContainer>
+                  <RadialBar
+                    dataKey="value"
+                    background={{ fill: '#ECEEF3' }}
+                    cornerRadius={20}
+                  />
+
+                  <text
+                    x="50%"
+                    y="43%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="fill-slate-500 text-[10px]"
+                  >
+                    Overall Health
+                  </text>
+
+                  <text
+                    x="50%"
+                    y="62%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="fill-slate-900 text-[24px] font-bold"
+                  >
+                    {overall}%
+                  </text>
+                </RadialBarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
-          {/* PROJECT INFORMATION */}
-          <div className="min-w-0 flex-1">
-            <div className="space-y-0.5">
-              {projects.map((project) => {
-                const style =
-                  HEALTH_STYLES[project.health] ??
-                  HEALTH_STYLES.on_track
+          {/* LEGEND — one row per project, name on the left and that same
+              project's status on the right, as in the reference. */}
+          <div className="flex w-full shrink-0 flex-col gap-1.5">
+            {projects.map((project) => {
+              const style = HEALTH_STYLES[project.health] ?? HEALTH_STYLES.on_track
 
-                return (
-                  <div
-                    key={project.id}
-                    className="flex min-w-0 items-center justify-between gap-1.5"
-                  >
-                    <div className="flex min-w-0 flex-1 items-center gap-1.5">
-                      <span
-                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot}`}
-                      />
-
-                      <span
-                        className="min-w-0 truncate text-[10px] leading-4 font-medium text-slate-600"
-                        title={project.name}
-                      >
-                        {project.name}
-                      </span>
-                    </div>
-
+              return (
+                <div key={project.id} className="flex min-w-0 items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-1.5">
+                    <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot}`} />
                     <span
-                      className={`shrink-0 whitespace-nowrap text-[9px] leading-4 font-medium ${style.text}`}
+                      className="min-w-0 truncate text-[12px] leading-4 font-medium text-slate-600"
+                      title={project.name}
                     >
+                      {project.name}
+                    </span>
+                  </div>
+
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot}`} />
+                    <span className={`whitespace-nowrap text-[12px] leading-4 font-medium ${style.text}`}>
                       {style.label}
                     </span>
                   </div>
-                )
-              })}
-            </div>
+                </div>
+              )
+            })}
           </div>
 
         </div>

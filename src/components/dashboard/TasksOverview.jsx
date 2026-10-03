@@ -33,28 +33,50 @@ export function TasksOverview() {
   ]
 
   return (
-    <Card className="task-overview-card flex h-full min-h-0 min-w-0 flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
-      <h3 className="text-xs font-semibold leading-4 text-slate-800">Tasks Overview</h3>
+    <Card className="task-overview-card flex h-full min-h-0 min-w-0 flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+      <h3 className="shrink-0 text-[13px] font-semibold leading-4 text-slate-800 sm:text-sm">Tasks Overview</h3>
       {isLoading ? (
         <div role="status" aria-label="Loading task overview" className="h-16 animate-pulse rounded-lg bg-slate-100" />
       ) : error ? (
-        <p role="status" className="text-xs text-slate-500">{error}</p>
+        <p role="status" className="text-sm text-slate-500">{error}</p>
       ) : !stats || stats.total === 0 ? (
-        <p className="text-xs text-slate-500">No tasks yet.</p>
+        <p className="text-sm text-slate-500">No tasks yet.</p>
       ) : (
-        <div className="min-w-0 space-y-2">
-          <div className="flex items-center justify-between gap-2 text-[10px] leading-4 text-slate-600">
-            <span>Total tasks <strong className="tabular-nums text-slate-900">{stats.total}</strong></span>
-            <span className="shrink-0 font-medium text-primary">{progress}% done</span>
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-center gap-3">
+          <div className="min-w-0">
+            <p className="text-[15px] leading-5 text-slate-700">
+              Total tasks{' '}
+              <span className="font-bold tabular-nums text-slate-900">{stats.total}</span>
+            </p>
+
+            {typeof stats.completedThisWeek === 'number' && (
+              <p className="mt-0.5 text-[12px] leading-4 text-slate-500">
+                {stats.completedThisWeek} completed this week
+              </p>
+            )}
           </div>
-          <div role="progressbar" aria-label="Tasks completed" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} className="h-1.5 rounded-full bg-slate-100">
-            <div className="h-full rounded-full bg-violet-500" style={{ width: `${Math.min(100, Math.max(0, progress))}%` }} />
+
+          <div
+            role="progressbar"
+            aria-label="Tasks completed"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            className="h-7 overflow-hidden rounded-full bg-slate-100"
+          >
+            <div
+              className="flex h-full items-center justify-end rounded-full bg-gradient-to-r from-primary to-purple-500 px-3"
+              style={{ width: `${Math.max(14, Math.min(100, progress))}%` }}
+            >
+              <span className="text-[12px] font-semibold text-white">{progress}%</span>
+            </div>
           </div>
+
           <dl className="grid grid-cols-3 gap-2">
             {breakdown.map(item => (
               <div key={item.label} className="min-w-0">
-                <dt className="text-[10px] leading-4 text-slate-500">{item.label}</dt>
-                <dd className="text-base font-semibold leading-5 tabular-nums text-slate-800">{item.value}</dd>
+                <dt className="truncate text-[12px] leading-4 text-slate-500">{item.label}</dt>
+                <dd className="mt-1 text-[22px] font-semibold leading-none tabular-nums text-slate-800">{item.value}</dd>
               </div>
             ))}
           </dl>

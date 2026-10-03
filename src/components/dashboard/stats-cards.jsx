@@ -66,22 +66,23 @@ function StatSkeleton() {
         border
         border-slate-200
         bg-white
-        px-2.5
-        py-2
+        px-4
+        py-4
         shadow-sm
         animate-pulse
-        sm:px-3
+        sm:px-5
       "
     >
       <div className="flex min-w-0 items-center justify-between gap-2">
-        <div className="h-2 w-14 rounded bg-slate-100 sm:w-16" />
+        <div className="h-2.5 w-20 rounded bg-slate-100 sm:w-24" />
 
-        <div className="h-3.5 w-3.5 shrink-0 rounded bg-slate-100" />
+        <div className="h-4 w-4 shrink-0 rounded bg-slate-100" />
       </div>
 
-      <div className="mt-2 h-5 w-9 rounded bg-slate-100 sm:h-6 sm:w-10" />
-
-      <div className="mt-1.5 h-2 w-16 rounded bg-slate-100 sm:w-20" />
+      <div className="mt-3 flex items-end justify-between gap-2">
+        <div className="h-7 w-12 rounded bg-slate-100 sm:h-8 sm:w-14" />
+        <div className="h-2.5 w-16 rounded bg-slate-100" />
+      </div>
     </div>
   )
 }
@@ -129,7 +130,7 @@ export function StatsCards() {
           w-full
           min-w-0
           grid-cols-1
-          gap-2
+          gap-3
 
           min-[500px]:grid-cols-2
           min-[850px]:grid-cols-3
@@ -165,7 +166,7 @@ export function StatsCards() {
         w-full
         min-w-0
         grid-cols-1
-        gap-2
+        gap-3
 
         min-[500px]:grid-cols-2
         min-[850px]:grid-cols-3
@@ -192,8 +193,8 @@ export function StatsCards() {
 
               bg-white
 
-              px-2.5
-              py-2
+              px-4
+              py-4
 
               shadow-sm
 
@@ -202,7 +203,7 @@ export function StatsCards() {
 
               hover:shadow-md
 
-              sm:px-3
+              sm:px-5
             "
           >
             {/* HEADER */}
@@ -212,7 +213,7 @@ export function StatsCards() {
                 min-w-0
                 items-center
                 justify-between
-                gap-1.5
+                gap-2
               "
             >
               <p
@@ -221,13 +222,10 @@ export function StatsCards() {
                   flex-1
                   truncate
 
-                  text-[8px]
+                  text-[13px]
                   font-semibold
                   leading-none
                   text-slate-700
-
-                  sm:text-[9px]
-                  lg:text-[10px]
                 "
                 title={stat.label}
               >
@@ -236,54 +234,51 @@ export function StatsCards() {
 
               <Icon
                 className="
-                  h-3
-                  w-3
+                  h-4
+                  w-4
                   shrink-0
                   text-slate-400
-
-                  sm:h-3.5
-                  sm:w-3.5
                 "
               />
             </div>
 
-            {/* VALUE */}
-            <p
-              className="
-                mt-1.5
-                min-w-0
-                truncate
+            {/* VALUE + TREND, same baseline. The number is shrink-0 — it must
+                never truncate (a clipped "18" reading as "1…" is far worse
+                than the trend label giving up space first), so only the
+                trend text is allowed to shrink/ellipsize when the card is
+                narrow. */}
+            <div className="mt-3 flex min-w-0 items-end justify-between gap-2">
+              <p
+                className="
+                  shrink-0
 
-                text-[18px]
-                font-bold
-                leading-none
-                text-slate-900
+                  text-[26px]
+                  font-bold
+                  leading-none
+                  tracking-tight
+                  text-slate-900
 
-                sm:text-[21px]
-                lg:text-[24px]
-              "
-            >
-              {stats[stat.key]}
-            </p>
+                  sm:text-[28px]
+                  lg:text-[30px]
+                "
+              >
+                {stats[stat.key]}
+              </p>
 
-            {/* DESCRIPTION */}
-            <p
-              className="
-                mt-1
-                min-w-0
-                truncate
+              <p
+                className="
+                  min-w-0
+                  truncate
 
-                text-[7px]
-                leading-none
-                text-slate-500
-
-                sm:text-[8px]
-                lg:text-[9px]
-              "
-              title={stat.trend}
-            >
-              {stat.trend}
-            </p>
+                  text-[11px]
+                  leading-none
+                  text-slate-500
+                "
+                title={stat.trend}
+              >
+                {stat.trend}
+              </p>
+            </div>
           </div>
         )
       })}

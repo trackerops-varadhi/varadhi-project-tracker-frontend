@@ -1,0 +1,6 @@
+/* design-sync stylesheet source: the app's real globals.css (tokens, theme,
+   base layer) compiled against the whole app's class vocabulary, so the
+   design agent can use any utility the app itself uses. */
+@import "../src/app/globals.css";
+@source "../src";
+@source "./previews";

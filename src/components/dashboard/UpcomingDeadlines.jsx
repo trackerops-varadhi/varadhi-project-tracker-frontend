@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 
@@ -10,8 +11,14 @@ import {
   priorityLabel,
 } from '@/lib/deadline-format'
 
+const RANGES = [
+  { label: '7d', days: 7 },
+  { label: '30d', days: 30 },
+]
+
 export function UpcomingDeadlines() {
-  const { tasks, isLoading, error } = useUpcomingDeadlines({ limit: 5, days: 30 })
+  const [days, setDays] = useState(30)
+  const { tasks, isLoading, error } = useUpcomingDeadlines({ limit: 5, days })
 
   return (
     <Card
@@ -26,24 +33,51 @@ export function UpcomingDeadlines() {
         border
         border-slate-200
         bg-white
-        px-3
-        py-2
+        px-4
+        py-3
         shadow-sm
       "
     >
-      {/* TITLE */}
-      <h3
-        className="
-          shrink-0
-          truncate
-          text-[11px]
-          font-semibold
-          text-slate-800
-          sm:text-xs
-        "
-      >
-        Upcoming Deadlines
-      </h3>
+      {/* HEADER — title + 7d/30d range toggle */}
+      <div className="flex shrink-0 items-center justify-between gap-2">
+        <h3
+          className="
+            min-w-0
+            truncate
+            text-[13px]
+            font-semibold
+            text-slate-800
+            sm:text-sm
+          "
+        >
+          Upcoming Deadlines
+        </h3>
+
+        <div
+          role="group"
+          aria-label="Deadline range"
+          className="flex shrink-0 items-center gap-0.5 rounded-full bg-slate-100 p-0.5"
+        >
+          {RANGES.map((range) => (
+            <button
+              key={range.days}
+              type="button"
+              aria-pressed={days === range.days}
+              onClick={() => setDays(range.days)}
+              className={`
+                rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors
+                ${
+                  days === range.days
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700'
+                }
+              `}
+            >
+              {range.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* LOADING */}
       {isLoading && (
@@ -75,7 +109,7 @@ export function UpcomingDeadlines() {
       {/* ERROR */}
       {!isLoading && error && (
         <div className="flex min-h-0 flex-1 items-center justify-center">
-          <p className="text-[8px] text-slate-500 sm:text-[9px]">
+          <p className="text-[11px] text-slate-500 sm:text-[12px]">
             {error}
           </p>
         </div>
@@ -84,7 +118,7 @@ export function UpcomingDeadlines() {
       {/* EMPTY */}
       {!isLoading && !error && tasks.length === 0 && (
         <div className="flex min-h-0 flex-1 items-center justify-center">
-          <p className="text-[8px] text-slate-400 sm:text-[9px]">
+          <p className="text-[11px] text-slate-400 sm:text-[12px]">
             No upcoming deadlines.
           </p>
         </div>
@@ -122,12 +156,12 @@ export function UpcomingDeadlines() {
                 {/* DUE DATE */}
                 <div
                   className={`
-                    w-[54px]
+                    w-[64px]
                     shrink-0
                     truncate
-                    text-[7px]
-                    sm:w-[62px]
-                    sm:text-[8px]
+                    text-[10px]
+                    sm:w-[74px]
+                    sm:text-[11px]
                     ${
                       task.isOverdue
                         ? 'font-medium text-red-600'
@@ -146,33 +180,37 @@ export function UpcomingDeadlines() {
                 </div>
 
                 {/* TASK DETAILS */}
-                <div className="min-w-0 flex-1">
-                  <p
-                    className="
-                      truncate
-                      text-[8px]
-                      font-medium
-                      text-slate-800
-                      sm:text-[9px]
-                    "
-                    title={task.title}
-                  >
-                    {task.title}
-                  </p>
+                <div className="flex min-w-0 flex-1 items-start gap-1.5">
+                  <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-slate-300" />
 
-                  {task.projectName && (
+                  <div className="min-w-0 flex-1">
                     <p
                       className="
                         truncate
-                        text-[7px]
-                        text-slate-400
-                        sm:text-[8px]
+                        text-[11px]
+                        font-medium
+                        text-slate-800
+                        sm:text-[12px]
                       "
-                      title={task.projectName}
+                      title={task.title}
                     >
-                      {task.projectName}
+                      {task.title}
                     </p>
-                  )}
+
+                    {task.projectName && (
+                      <p
+                        className="
+                          truncate
+                          text-[10px]
+                          text-slate-400
+                          sm:text-[11px]
+                        "
+                        title={task.projectName}
+                      >
+                        {task.projectName}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* PRIORITY */}
@@ -183,10 +221,10 @@ export function UpcomingDeadlines() {
                     rounded-full
                     px-1.5
                     py-0.5
-                    text-[7px]
+                    text-[10px]
                     font-medium
                     sm:px-2
-                    sm:text-[8px]
+                    sm:text-[11px]
                     ${priorityBadgeClass(task.priority)}
                   `}
                 >

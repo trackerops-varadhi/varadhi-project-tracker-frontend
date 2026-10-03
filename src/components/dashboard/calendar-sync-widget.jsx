@@ -5,22 +5,17 @@ import Link from 'next/link'
 import {
   CalendarSync,
   CircleCheck,
-  CircleDashed,
   ChevronRight,
-  TriangleAlert,
 } from 'lucide-react'
+import { addDays, format, isSameDay, isToday, startOfWeek } from 'date-fns'
 
 import { calendarApi } from '@/lib/api/calendar.api'
-import { formatDate, formatRelativeTime } from '@/utils'
-
-const PRIORITY_BAR = {
-  critical: 'bg-red-400',
-  high: 'bg-orange-400',
-  medium: 'bg-amber-400',
-  low: 'bg-slate-300',
-}
+import { formatRelativeTime } from '@/utils'
 
 const MAX_ROWS = 5
+const WEEK_DAYS = Array.from({ length: 7 }, (_, i) =>
+  addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), i)
+)
 
 export function CalendarSyncWidget() {
   const [data, setData] = useState(null)
@@ -68,32 +63,33 @@ export function CalendarSyncWidget() {
       ========================================== */}
       <div
         className="
-          flex h-[32px] shrink-0
+          flex h-[44px] shrink-0
           items-center justify-between
           border-b border-slate-100
-          px-3
+          px-4
         "
       >
-        <div className="flex min-w-0 items-center gap-1.5">
+        <div className="flex min-w-0 items-center gap-2">
           <div
             className="
-              flex h-5 w-5 shrink-0
+              flex h-6 w-6 shrink-0
               items-center justify-center
               rounded-full
               bg-violet-50
             "
           >
-            <CalendarSync className="h-3 w-3 text-primary" />
+            <CalendarSync className="h-3.5 w-3.5 text-primary" />
           </div>
 
           <div className="min-w-0">
             <h3
               className="
                 truncate
-                text-[10px]
+                text-[13px]
                 font-semibold
                 leading-none
                 text-slate-700
+                sm:text-sm
               "
             >
               Calendar Sync
@@ -103,7 +99,7 @@ export function CalendarSyncWidget() {
               <p
                 className="
                   mt-0.5 truncate
-                  text-[7px]
+                  text-[10px]
                   leading-none
                   text-slate-400
                 "
@@ -119,7 +115,7 @@ export function CalendarSyncWidget() {
           className="
             flex shrink-0
             items-center gap-0.5
-            text-[8px]
+            text-[11px]
             font-medium
             text-primary
             hover:text-primary-hover
@@ -161,7 +157,7 @@ export function CalendarSyncWidget() {
             px-3 text-center
           "
         >
-          <p className="text-[8px] text-red-500">
+          <p className="text-[11px] text-red-500">
             Couldn&apos;t load calendar sync.{' '}
 
             <button
@@ -204,11 +200,11 @@ export function CalendarSyncWidget() {
             <CalendarSync className="h-3.5 w-3.5 text-violet-500" />
           </div>
 
-          <p className="text-[9px] font-medium text-slate-600">
+          <p className="text-[12px] font-medium text-slate-600">
             No calendar connected
           </p>
 
-          <p className="mt-0.5 text-[7px] text-slate-400">
+          <p className="mt-0.5 text-[10px] text-slate-400">
             Connect Google or Outlook
           </p>
 
@@ -219,7 +215,7 @@ export function CalendarSyncWidget() {
               rounded-md
               bg-primary
               px-2 py-1
-              text-[7px]
+              text-[10px]
               font-medium
               text-white
               hover:bg-primary-hover
@@ -245,143 +241,78 @@ export function CalendarSyncWidget() {
         >
           <CircleCheck className="mb-1.5 h-5 w-5 text-emerald-500" />
 
-          <p className="text-[9px] font-medium text-slate-600">
+          <p className="text-[12px] font-medium text-slate-600">
             Everything is up to date
           </p>
 
-          <p className="mt-0.5 text-[7px] text-slate-400">
+          <p className="mt-0.5 text-[10px] text-slate-400">
             Nothing due in the next two weeks.
           </p>
         </div>
       ) : (
-        <>
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-4 py-3">
+
           {/* =====================================
-              EVENT LIST
-              ONLY THIS AREA SCROLLS
+              MINI WEEK GRID — real dates, days with
+              a synced event highlighted in purple.
           ====================================== */}
-          <div
-            className="
-              min-h-0 flex-1
-              overflow-y-auto
-              overscroll-contain
-              px-2.5 py-1.5
-            "
-          >
-            <div className="space-y-1">
+          <div className="grid shrink-0 grid-cols-7 gap-1">
+            {WEEK_DAYS.map((day) => (
+              <span
+                key={`dow-${day.toISOString()}`}
+                className="text-center text-[10px] font-medium text-slate-400"
+              >
+                {format(day, 'EEEEE')}
+              </span>
+            ))}
+
+            {WEEK_DAYS.map((day) => {
+              const hasEvent = events.some((event) =>
+                event.dueDate && isSameDay(new Date(event.dueDate), day)
+              )
+
+              return (
+                <span
+                  key={day.toISOString()}
+                  className={`
+                    flex h-7 items-center justify-center rounded-lg text-[11px] font-medium
+                    ${
+                      hasEvent
+                        ? 'bg-primary text-white'
+                        : isToday(day)
+                        ? 'bg-violet-50 text-primary'
+                        : 'text-slate-500'
+                    }
+                  `}
+                >
+                  {format(day, 'd')}
+                </span>
+              )
+            })}
+          </div>
+
+          {/* =====================================
+              EVENT LIST — condensed "date: title"
+              pairs, two columns. Only this scrolls.
+          ====================================== */}
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            <div className="grid grid-cols-1 gap-x-3 gap-y-1.5 sm:grid-cols-2">
               {events.slice(0, MAX_ROWS).map((event) => (
                 <Link
                   key={event.sourceId}
                   href={event.link}
-                  className="
-                    flex h-[25px]
-                    items-center gap-2
-                    rounded-lg
-                    border border-slate-100
-                    bg-slate-50/60
-                    px-2
-                    transition-colors
-                    hover:bg-slate-50
-                  "
+                  className="min-w-0 truncate text-[11px] leading-5 text-slate-600 hover:text-primary"
+                  title={event.title}
                 >
-                  {/* PRIORITY */}
-                  <span
-                    className={`
-                      h-4 w-[3px]
-                      shrink-0
-                      rounded-full
-                      ${
-                        PRIORITY_BAR[event.priority] ||
-                        PRIORITY_BAR.low
-                      }
-                    `}
-                  />
-
-                  {/* EVENT */}
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="
-                        truncate
-                        text-[8px]
-                        font-medium
-                        leading-none
-                        text-slate-700
-                      "
-                    >
-                      {event.title}
-                    </p>
-
-                    <p
-                      className="
-                        mt-0.5 truncate
-                        text-[6.5px]
-                        leading-none
-                        text-slate-400
-                      "
-                    >
-                      {formatDate(
-                        event.dueDate,
-                        'EEE, MMM dd'
-                      )}
-
-                      {event.projectName
-                        ? ` · ${event.projectName}`
-                        : ''}
-                    </p>
-                  </div>
-
-                  {/* SYNC STATUS */}
-                  <div
-                    className="shrink-0"
-                    title={
-                      event.synced
-                        ? `Synced to ${event.provider}`
-                        : 'Queued for next sync'
-                    }
-                  >
-                    {event.synced ? (
-                      <CircleCheck className="h-3 w-3 text-emerald-500" />
-                    ) : (
-                      <CircleDashed className="h-3 w-3 text-slate-300" />
-                    )}
-                  </div>
+                  <span className="font-semibold text-slate-800">
+                    {event.dueDate ? format(new Date(event.dueDate), 'd MMM') : '—'}:
+                  </span>{' '}
+                  {event.title}
                 </Link>
               ))}
             </div>
           </div>
-
-          {/* =====================================
-              FIXED BOTTOM STATUS
-          ====================================== */}
-          {data?.providers?.length > 0 && (
-            <div
-              className="
-                flex h-[24px] shrink-0
-                items-center gap-1.5
-                border-t border-slate-100
-                px-3
-              "
-            >
-              {events.some((event) => !event.synced) ? (
-                <>
-                  <TriangleAlert className="h-3 w-3 shrink-0 text-amber-500" />
-
-                  <p className="truncate text-[7px] text-slate-400">
-                    Some items are waiting for sync.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <CircleCheck className="h-3 w-3 shrink-0 text-emerald-500" />
-
-                  <p className="truncate text-[7px] text-slate-400">
-                    Everything is up to date on{' '}
-                    {data.providers.join(' and ')}.
-                  </p>
-                </>
-              )}
-            </div>
-          )}
-        </>
+        </div>
       )}
     </div>
   )
