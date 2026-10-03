@@ -11,6 +11,61 @@ const BACKEND_ORIGIN =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Allow phone testing through this laptop's LAN address in development.
+  allowedDevOrigins: ['192.168.1.4'],
+
+  /*
+   * SAME-ORIGIN API PROXY — this is what makes authentication work at all.
+   *
+   * THE PROBLEM IT SOLVES
+   * The frontend is served from *.vercel.app and the API from *.onrender.com.
+   * Those are different registrable domains, so an auth cookie set by the API
+   * is a THIRD-PARTY cookie from the browser's point of view. Safari (iOS and
+   * macOS) has blocked all third-party cookies by default since 2020, Chrome
+   * blocks them on Android/incognito and under common privacy settings, and
+   * managed corporate browsers usually block them by policy.
+   *
+   * The server was doing everything correctly — HttpOnly, Secure,
+   * SameSite=None, correct CORS, no Domain attribute. It made no difference:
+   * SameSite=None makes a cookie ELIGIBLE to be sent cross-site, it does not
+   * make a browser willing to STORE it. Login returned 200, the browser threw
+   * the Set-Cookie away, the next request had no credential, and the user was
+   * bounced back to the login page. It appeared to work only in browsers that
+   * still permit third-party cookies.
+   *
+   * Cookie-attribute tuning cannot fix this, and neither can a shared parent
+   * domain: vercel.app and onrender.com are both on the Public Suffix List, so
+   * Domain=.vercel.app is forbidden and there is no common ancestor.
+   *
+   * HOW THIS FIXES IT
+   * Requests go to /api/* on THIS origin; Vercel proxies them to the backend
+   * server-side. The browser sees one origin, so the auth cookies are
+   * first-party and every browser stores them normally. Nothing about the
+   * security model changes: still HttpOnly, still Secure, same rotation,
+   * revocation and CSRF guard.
+   *
+   * NOTE: `proxy.js`'s matcher already excludes /api, so Next middleware does
+   * not intercept these.
+   *
+   * REGRESSION HISTORY: this entire function was silently dropped by an
+   * auto-merge of origin/feature/ui-suhailar (merge commit 72a6c87) — that
+   * branch's next.config.mjs never had it, git's 3-way merge saw no
+   * line-level overlap with HEAD's version and resolved the file without a
+   * conflict, and the result was a net deletion with nothing flagged for
+   * review. Caught by diffing the merged tree against the incoming branch
+   * file-by-file, not by the conflict markers (there were none). If this
+   * block disappears again, every API call in production will silently 404
+   * (same-origin requests to /api/* with no rewrite to the real backend).
+   */
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${BACKEND_ORIGIN}/api/:path*`,
+      },
+    ]
+  },
+
   async headers() {
     return [
       {
