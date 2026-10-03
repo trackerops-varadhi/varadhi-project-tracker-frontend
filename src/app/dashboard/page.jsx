@@ -1,4 +1,5 @@
-import { StatsCards } from '@/components/dashboard/stats-cards'
+import { PageHeader } from '@/components/layout/topbar'
+import { StatsCards, DashboardPeriodSelector } from '@/components/dashboard/stats-cards'
 import { RecentActivity } from '@/components/dashboard/recent-activity'
 import { ProjectProgress } from '@/components/dashboard/project-progress'
 import { CalendarSyncWidget } from '@/components/dashboard/calendar-sync-widget'
@@ -8,7 +9,6 @@ import { UpcomingDeadlines } from '@/components/dashboard/UpcomingDeadlines'
 import { NotificationsCard } from '@/components/dashboard/NotificationsCard'
 import { GanttPreview } from '@/components/dashboard/GanttPreview'
 
-import { ChevronDown } from 'lucide-react'
 
 export const metadata = {
   title: 'Dashboard',
@@ -16,116 +16,120 @@ export const metadata = {
 
 export default function DashboardPage() {
   return (
-    <main className="w-full min-w-0 bg-slate-50">
-      <div className="mx-auto w-full max-w-[1800px] min-w-0 px-5 py-6 lg:px-6 xl:px-7">
+    <div className="dashboard-page bg-slate-50">
+      {/* =====================================================
+          TOP FILTER
+      ====================================================== */}
 
-        {/* =====================================================
-            DASHBOARD HEADER
-        ===================================================== */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-[30px] font-semibold leading-tight tracking-tight text-slate-900">
-              Project Dashboard
-            </h1>
+      <div className="dashboard-filter">
+        <PageHeader>Dashboard</PageHeader>
+        <DashboardPeriodSelector />
+      </div>
 
-            <p className="mt-1 text-[16px] text-slate-500">
-              Welcome back, Varadhi Team
-            </p>
-          </div>
+      {/* =====================================================
+          STATS
+      ====================================================== */}
 
-          <button
-            type="button"
-            className="
-              flex h-11 items-center gap-2
-              rounded-xl border border-slate-200
-              bg-white px-5
-              text-[14px] font-medium text-slate-700
-              shadow-sm
-              transition
-              hover:bg-slate-50
-            "
-          >
-            This week
-            <ChevronDown className="h-5 w-5" />
-          </button>
+      <section className="dashboard-stats">
+        <StatsCards />
+      </section>
+
+      {/* =====================================================
+          ROW 1
+      ====================================================== */}
+
+      <section className="dashboard-row-one">
+        <div className="dashboard-card-slot">
+          <ProjectHealth />
         </div>
 
-        {/* =====================================================
-            STATS
-        ===================================================== */}
-        <section className="mb-6 w-full">
-          <StatsCards />
-        </section>
+        <div className="dashboard-card-slot">
+          <TasksOverview />
+        </div>
 
-        {/* =====================================================
-            ROW 1
-            Project Health / Tasks / Upcoming Deadlines
-        ===================================================== */}
-        <section
-          className="
-            mb-6
-            grid
-            w-full
-            min-w-0
-            gap-5
-            lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.7fr)]
-          "
-        >
-          <div className="min-w-0 min-h-[300px] h-[300px]">
-            <ProjectHealth />
-          </div>
+        <div className="dashboard-card-slot dashboard-deadlines">
+          <UpcomingDeadlines />
+        </div>
+      </section>
 
-          <div className="min-w-0 min-h-[300px] h-[300px]">
-            <TasksOverview />
-          </div>
+      {/* =====================================================
+          ROW 2
+      ====================================================== */}
 
-          <div className="min-w-0 min-h-[300px] h-[300px]">
-            <UpcomingDeadlines />
-          </div>
-        </section>
+      <section className="dashboard-row-two">
+        <div className="dashboard-card-slot">
+          <RecentActivity />
+        </div>
 
-        {/* =====================================================
-            ROW 2
-            Recent Activity / Project Progress /
-            Notifications / Calendar Sync
-        ===================================================== */}
-        <section
-          className="
-            mb-6
-            grid
-            w-full
-            min-w-0
-            gap-5
-            lg:grid-cols-4
-          "
-        >
-          <div className="min-w-0 min-h-[330px]">
-            <RecentActivity />
-          </div>
+        <div className="dashboard-card-slot">
+          <ProjectProgress />
+        </div>
 
-          <div className="min-w-0 min-h-[330px]">
-            <ProjectProgress />
-          </div>
+        <div className="dashboard-card-slot">
+          <NotificationsCard />
+        </div>
 
-          <div className="min-w-0 min-h-[330px]">
-            <NotificationsCard />
-          </div>
+        <div className="dashboard-card-slot">
+          <CalendarSyncWidget />
+        </div>
+      </section>
 
-          <div className="min-w-0 min-h-[330px]">
-            <CalendarSyncWidget />
-          </div>
-        </section>
+      {/* =====================================================
+          ROW 3
+      ====================================================== */}
 
-        {/* =====================================================
-            GANTT TIMELINE
-        ===================================================== */}
-        <section className="mb-6 w-full min-w-0">
-          <div className="min-h-[330px] w-full min-w-0">
-            <GanttPreview />
-          </div>
-        </section>
+      <section className="dashboard-gantt">
+        <GanttPreview />
+      </section>
 
-      </div>
-    </main>
+      <style>{`
+        .dashboard-page {
+          width: 100%;
+          min-width: 0;
+          max-width: 1500px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .dashboard-filter { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .dashboard-stats { min-width: 0; }
+        .dashboard-stats > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .dashboard-row-one, .dashboard-row-two {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 16px;
+          min-width: 0;
+        }
+        .dashboard-card-slot { min-width: 0; min-height: 240px; }
+        .dashboard-card-slot > div { min-height: 240px; }
+        .dashboard-gantt { min-width: 0; min-height: 240px; }
+        .dashboard-gantt > div { min-height: 240px; }
+        @media (min-width: 640px) {
+          .dashboard-stats > div { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+          .dashboard-row-one, .dashboard-row-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .dashboard-deadlines { grid-column: 1 / -1; }
+        }
+        @media (min-width: 1280px) {
+          .dashboard-stats > div { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+          .dashboard-row-one { grid-template-columns: 1fr 1fr 1.7fr; }
+          .dashboard-row-two { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+          .dashboard-deadlines { grid-column: auto; }
+        }
+        @media (min-width: 1024px) {
+          .dashboard-page { flex: 1; min-height: 0; height: 100%; gap: 10px; }
+          .dashboard-filter { flex: 0 0 28px; }
+          .dashboard-stats { flex: 0 0 76px; min-height: 0; }
+          .dashboard-stats > div { height: 100%; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+          .dashboard-row-one, .dashboard-row-two { flex: 1 1 0; min-height: 0; gap: 10px; }
+          .dashboard-row-one { grid-template-columns: 1fr 1fr 1.7fr; }
+          .dashboard-row-two { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+          .dashboard-deadlines { grid-column: auto; }
+          .dashboard-card-slot, .dashboard-card-slot > div { height: 100%; min-height: 0; }
+          .dashboard-gantt { flex: 0.9 1 0; min-height: 0; }
+          .dashboard-gantt > div { height: 100%; min-height: 0; }
+        }
+      `}</style>
+    </div>
   )
 }
