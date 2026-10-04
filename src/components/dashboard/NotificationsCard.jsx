@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { ScrollPreview } from './scroll-preview'
 import { Bell, TriangleAlert, RefreshCw, Users } from 'lucide-react'
 
 import { notificationsApi } from '@/lib/api/notifications.api'
@@ -48,7 +49,7 @@ export function NotificationsCard() {
       try {
         const { notifications } =
           await notificationsApi.list({
-            limit: 3,
+            limit: 20,
             unreadOnly: true,
           })
 
@@ -77,6 +78,7 @@ export function NotificationsCard() {
     <div
       className="
         flex
+        dashboard-notifications-card
         h-full
         min-h-0
         min-w-0
@@ -129,10 +131,10 @@ export function NotificationsCard() {
           className="
             min-w-0
             truncate
-            text-[13px]
+            text-[12px]
             font-semibold
             text-slate-800
-            sm:text-sm
+
           "
         >
           Smart Notifications
@@ -153,8 +155,8 @@ export function NotificationsCard() {
           <p
             className="
               text-[11px]
-              text-slate-400
-              sm:text-[12px]
+              text-slate-500
+
             "
           >
             Loading...
@@ -177,7 +179,7 @@ export function NotificationsCard() {
             className="
               text-[11px]
               text-slate-500
-              sm:text-[12px]
+
             "
           >
             {error}
@@ -199,8 +201,8 @@ export function NotificationsCard() {
           <p
             className="
               text-[11px]
-              text-slate-400
-              sm:text-[12px]
+              text-slate-500
+
             "
           >
             No new notifications.
@@ -212,17 +214,16 @@ export function NotificationsCard() {
       {!isLoading && !error && items.length > 0 && (
         <div
           className="
-            mt-1.5
+            dashboard-edge-scroll mt-1.5
             min-h-0
             min-w-0
             flex-1
-            overflow-y-auto
+            overflow-hidden
             overflow-x-hidden
             overscroll-contain
-            pr-0.5
           "
         >
-          <div className="flex flex-col gap-2">
+          <ScrollPreview rowHeight={46} label="notifications" fill>
             {items.map((item) => {
               const style =
                 PRIORITY_STYLES[item.priority] ??
@@ -236,12 +237,12 @@ export function NotificationsCard() {
                     min-w-0
                     items-center
                     gap-2.5
-                    rounded-xl
+                    rounded-full
                     border
                     border-white/50
                     bg-white/70
                     px-3
-                    py-2.5
+                    py-0.5
                     transition
                     hover:bg-white/90
                   "
@@ -267,11 +268,11 @@ export function NotificationsCard() {
                     className="
                       min-w-0
                       flex-1
-                      line-clamp-2
+                      truncate
                       text-[11px]
                       leading-[1.3]
                       text-slate-700
-                      sm:text-[12px]
+
                     "
                     title={item.title || item.message}
                   >
@@ -306,7 +307,7 @@ export function NotificationsCard() {
                 </div>
               )
             })}
-          </div>
+          </ScrollPreview>
         </div>
       )}
     </div>

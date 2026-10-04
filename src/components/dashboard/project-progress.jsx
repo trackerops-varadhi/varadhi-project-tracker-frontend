@@ -12,15 +12,18 @@ import { dashboardApi } from '@/lib/api/dashboard.api'
 
 export function ProjectProgress() {
   const [items, setItems] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     async function loadProjects() {
       try {
         const data = await dashboardApi.getProjects()
-        setItems(data)
-      } catch (err) {
-        console.error(err)
-        setItems([])
+        setItems(Array.isArray(data) ? data : [])
+      } catch {
+        setError(true)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -28,11 +31,11 @@ export function ProjectProgress() {
   }, [])
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div style={{ padding: 0 }} className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
       {/* FIXED HEADER */}
-      <div className="flex h-[44px] shrink-0 items-center justify-between border-b border-slate-100 px-4">
-        <h3 className="text-[13px] font-semibold text-slate-800 sm:text-sm">
+      <div className="flex h-[38px] shrink-0 items-center justify-between border-b border-slate-100 px-4">
+        <h3 className="text-[12px] font-semibold text-slate-800 ">
           Project Progress
         </h3>
 
@@ -45,20 +48,30 @@ export function ProjectProgress() {
       </div>
 
       {/* SCROLL BODY */}
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-2">
-        <div className="flex flex-col gap-3">
-          {items.map((project) => {
+      <div
+        role="region"
+        aria-label="Project progress"
+        tabIndex={0}
+        style={{ padding: '6px 0 0' }}
+        className="dashboard-project-scroll dashboard-scroll-preview min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain focus-visible:outline-2 focus-visible:outline-primary"
+      >
+        {isLoading || error || items.length === 0 ? (
+          <p role="status" className="py-8 text-center text-[11px] text-slate-500">
+            {isLoading ? 'Loading project progress...' : error ? 'Unable to load project progress.' : 'No projects yet.'}
+          </p>
+        ) : items.map((project) => {
             const progress = calcProgress(
               project.completedTasksCount,
               project.tasksCount
             )
 
             return (
-              <div key={project.id}>
+              <div key={project.id} style={{ minHeight: 54, padding: '4px 8px', width: '100%' }} className="dashboard-project-details">
                 <div className="flex items-center justify-between gap-2">
 
                   <div className="flex min-w-0 items-center gap-1.5">
-                    <p className="truncate text-[12px] font-medium text-slate-700">
+                    <p className="truncate text-[11px] leading-4 font-medium text-slate-700"
+                      title={project.name}>
                       {project.name}
                     </p>
 
@@ -72,7 +85,7 @@ export function ProjectProgress() {
                     </span>
                   </div>
 
-                  <span className="shrink-0 text-[12px] font-semibold text-slate-500">
+                  <span className="shrink-0 text-[11px] font-semibold text-slate-500">
                     {progress}%
                   </span>
                 </div>
@@ -95,12 +108,12 @@ export function ProjectProgress() {
                   />
                 </div>
 
-                <div className="mt-1 flex items-center justify-between">
-                  <p className="truncate text-[10px] text-slate-400">
+                <div className="mt-1 flex min-w-0 items-center justify-between gap-2">
+                  <p className="min-w-0 truncate text-[10px] leading-3 text-slate-500">
                     {project.manager_name}
                   </p>
 
-                  <p className="shrink-0 text-[10px] text-slate-400">
+                  <p className="shrink-0 text-[10px] leading-3 text-slate-500">
                     {project.completedTasksCount}/
                     {project.tasksCount} tasks
                   </p>
@@ -108,7 +121,6 @@ export function ProjectProgress() {
               </div>
             )
           })}
-        </div>
       </div>
     </div>
   )

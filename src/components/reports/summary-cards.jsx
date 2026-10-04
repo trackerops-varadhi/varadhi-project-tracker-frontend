@@ -1,5 +1,7 @@
 'use client'
 
+import { StatCard } from '@/components/shared/stat-card'
+
 import { useState, useEffect } from 'react'
 
 import { dashboardApi } from '@/lib/api/dashboard.api'
@@ -11,51 +13,8 @@ import {
   AlertCircle
 } from 'lucide-react'
 
-function SummaryCard({
-  label,
-  value,
-  sub,
-  color,
-  loading,
-  icon: Icon
-}) {
-  return (
-    <div className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-all">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-medium text-muted-foreground">
-            {label}
-          </p>
-
-          {loading ? (
-            <div className="h-8 w-16 bg-slate-100 rounded animate-pulse mt-2" />
-          ) : (
-            <h3 className={`text-3xl font-bold mt-1 ${color}`}>
-              {value}
-            </h3>
-          )}
-
-          <p className="text-xs text-green-600 font-medium mt-2">
-            {sub}
-          </p>
-        </div>
-
-        <div className="w-12 h-12 rounded-xl bg-background flex items-center justify-center">
-          {Icon && (
-  <Icon className={`w-6 h-6 ${color}`} />
-)}
-        </div>
-      </div>
-
-      <div className="mt-4 h-10 flex items-end gap-1">
-        <div className="h-3 bg-violet-300 rounded flex-1"></div>
-        <div className="h-4 bg-violet-400 rounded flex-1"></div>
-        <div className="h-6 bg-violet-500 rounded flex-1"></div>
-        <div className="h-5 bg-violet-400 rounded flex-1"></div>
-        <div className="h-8 bg-primary rounded flex-1"></div>
-      </div>
-    </div>
-  )
+function SummaryCard({ label, value, sub, loading, icon }) {
+  return <StatCard title={label} value={value} subtitle={sub} loading={loading} icon={icon} />
 }
 
 export function SummaryCards() {
@@ -92,28 +51,28 @@ export function SummaryCards() {
         label="Tasks Completed"
         value={completed}
         sub={`of ${total} total`}
-        color="text-green-600"
+        icon={CheckCircle2}
         loading={loading}
       />
       <SummaryCard
         label="Completion Rate"
         value={`${completionRate}%`}
         sub="Across all tasks"
-        color="text-primary"
+        icon={ClipboardList}
         loading={loading}
       />
       <SummaryCard
         label="Avg per Member"
         value={avgPerMember}
         sub="Tasks per active member"
-        color="text-blue-600"
+        icon={Clock3}
         loading={loading}
       />
       <SummaryCard
         label="Overdue Tasks"
         value={s.overdueTasks ?? 0}
         sub="Need attention"
-        color="text-red-500"
+        icon={AlertCircle}
         loading={loading}
       />
     </div>

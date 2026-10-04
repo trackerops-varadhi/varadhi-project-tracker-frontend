@@ -15,7 +15,7 @@ export function ProjectCard({ project, onUpdated }) {
   )
 
   return (
-    <div className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-all hover:-translate-y-0.5">
+    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
 
       {/* Header */}
       <div className="flex items-start justify-between mb-3">

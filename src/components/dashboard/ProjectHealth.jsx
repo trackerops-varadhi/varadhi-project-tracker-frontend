@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
+import { ViewAllLink } from './view-all-link'
 
 import {
   RadialBarChart,
@@ -77,9 +78,12 @@ export function ProjectHealth() {
     <Card className="project-health-card flex h-full min-h-0 min-w-0 flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
 
       {/* TITLE */}
-      <h3 className="shrink-0 truncate text-[13px] font-semibold text-slate-800 sm:text-sm">
+      <div className="flex shrink-0 items-center justify-between gap-2">
+      <h3 className="min-w-0 truncate text-[13px] font-semibold text-slate-800 sm:text-sm">
         Project Health Overview
       </h3>
+      <ViewAllLink href="/projects" label="projects" />
+      </div>
 
       {/* LOADING */}
       {loading && (
@@ -105,7 +109,7 @@ export function ProjectHealth() {
       {/* MAIN CONTENT — donut on top, legend below in two columns, matching
           the reference's vertical layout rather than a side-by-side split. */}
       {!loading && !error && (
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col items-center gap-3">
+        <div className="project-health-body flex min-h-0 min-w-0 flex-1 flex-col items-center gap-3">
 
           {/* DONUT — the wrapper takes the leftover height (flex-1, no
               fixed px) and centers a capped-size square inside it, so it
@@ -113,8 +117,8 @@ export function ProjectHealth() {
               hardcoded size that only looks right at one card height. The
               230px ceiling is a sanity cap for very tall cards, not the
               normal size — on a typical row it still shrinks to fit. */}
-          <div className="flex min-h-0 w-full flex-1 items-center justify-center py-1">
-            <div className="aspect-square h-full max-h-[230px] w-auto max-w-full">
+          <div className="project-health-chart flex min-h-0 w-full flex-1 items-center justify-center py-1">
+            <div className="project-health-ring aspect-square h-full max-h-[230px] w-auto max-w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <RadialBarChart
                   data={chartData}
@@ -162,7 +166,7 @@ export function ProjectHealth() {
 
           {/* LEGEND — one row per project, name on the left and that same
               project's status on the right, as in the reference. */}
-          <div className="flex w-full shrink-0 flex-col gap-1.5">
+          <div className="project-health-legend flex w-full shrink-0 flex-col gap-1.5">
             {projects.map((project) => {
               const style = HEALTH_STYLES[project.health] ?? HEALTH_STYLES.on_track
 

@@ -9,11 +9,11 @@ import { formatRelativeTime } from '@/utils'
 function Shell({ children }) {
   return (
     <Card layout="custom" className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-3">
-      <div className="mb-3 flex shrink-0 items-center gap-2">
+      <div className="mb-2 flex shrink-0 items-center gap-2">
         <Mail className="h-4 w-4 text-amber-600" />
         <h3 className="text-xs font-semibold leading-4 text-foreground">Pending Invites</h3>
       </div>
-      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-1">
+      <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto pr-0.5">
         {children}
       </div>
     </Card>
@@ -46,7 +46,7 @@ export function PendingInvitesCard() {
   if (isLoading) {
     return (
       <Shell>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {[0, 1].map((i) => (
             <div key={i} className="h-12 animate-pulse rounded-lg bg-slate-100" />
           ))}
@@ -58,7 +58,7 @@ export function PendingInvitesCard() {
   if (error) {
     return (
       <Shell>
-        <p className="text-sm text-muted-foreground">{error}</p>
+        <p className="text-[11px] leading-4 text-muted-foreground">{error}</p>
       </Shell>
     )
   }
@@ -66,27 +66,27 @@ export function PendingInvitesCard() {
   if (invites.length === 0) {
     return (
       <Shell>
-        <p className="py-4 text-sm text-muted-foreground">No pending invites.</p>
+        <p className="py-4 text-[11px] leading-4 text-muted-foreground">No pending invites.</p>
       </Shell>
     )
   }
 
   return (
     <Shell>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {invites.map((invite) => (
           <div
             key={invite.id}
-            className="space-y-1.5 rounded-lg border border-border p-2"
+            className="min-w-0 space-y-1 rounded-lg border border-slate-100 bg-slate-50/50 px-2 py-1.5"
           >
             <div className="min-w-0">
-              <p className="truncate text-[11px] font-medium leading-4 text-foreground">
+              <p title={invite.name || invite.email} className="truncate text-[11px] font-medium leading-4 text-foreground">
                 {invite.name || invite.email}
               </p>
               <p title={invite.email} className="truncate text-[10px] leading-4 text-muted-foreground">{invite.email}</p>
             </div>
 
-            <span className="block text-[10px] leading-4 text-slate-400">
+            <span className="block text-[10px] leading-3 text-slate-400">
               {formatRelativeTime(invite.created_at ?? invite.createdAt)}
             </span>
           </div>

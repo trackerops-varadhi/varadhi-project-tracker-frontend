@@ -9,7 +9,7 @@ function Shell({ children }) {
     <div className="bg-card rounded-xl border border-border p-5 h-full">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="font-semibold text-foreground">Upcoming Deadlines</h3>
-        <Link href="/tasks" className="text-xs text-primary hover:underline">
+        <Link href="/tasks/upcoming-deadlines" className="text-xs text-primary hover:underline">
           View All
         </Link>
       </div>

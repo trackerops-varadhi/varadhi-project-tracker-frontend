@@ -46,7 +46,7 @@ export default function UsersPage() {
         }
         .users-columns { height: clamp(500px, 68dvh, 680px); }
         .users-left { grid-template-rows: 0.9fr 1.1fr; }
-        .users-right { grid-template-rows: 1fr 0.8fr 1.4fr; }
+        .users-right { grid-template-rows: minmax(148px,0.85fr) minmax(100px,0.55fr) minmax(0,1.8fr); }
         .users-left > div, .users-right > div {
           min-width: 0;
           min-height: 0;
@@ -55,7 +55,7 @@ export default function UsersPage() {
           scrollbar-width: thin;
         }
         .users-right > div { padding: 12px; overflow: hidden; }
-        .users-right > div > div:first-child { margin-bottom: 12px; }
+        .users-right > div > div:first-child { margin-bottom: 8px; }
         .users-directory { height: 100%; }
         @container (max-width: 850px) {
           .users-columns { height: auto; }

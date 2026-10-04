@@ -8,7 +8,7 @@ import {
 import { KanbanCard } from './kanban-card'
 import { cn } from '@/utils'
 
-export function KanbanColumn({ column, tasks }) {
+export function KanbanColumn({ column, tasks, canDragTask }) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   })
@@ -45,7 +45,7 @@ export function KanbanColumn({ column, tasks }) {
           strategy={verticalListSortingStrategy}
         >
           {tasks.map((task) => (
-            <KanbanCard key={task.id} task={task} />
+            <KanbanCard key={task.id} task={task} disabled={!canDragTask?.(task)} />
           ))}
         </SortableContext>
 

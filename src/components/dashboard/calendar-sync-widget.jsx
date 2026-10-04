@@ -5,14 +5,14 @@ import Link from 'next/link'
 import {
   CalendarSync,
   CircleCheck,
-  ChevronRight,
 } from 'lucide-react'
 import { addDays, format, isSameDay, isToday, startOfWeek } from 'date-fns'
 
 import { calendarApi } from '@/lib/api/calendar.api'
 import { formatRelativeTime } from '@/utils'
+import { ScrollPreview } from './scroll-preview'
 
-const MAX_ROWS = 5
+const MAX_ROWS = 20
 const WEEK_DAYS = Array.from({ length: 7 }, (_, i) =>
   addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), i)
 )
@@ -23,9 +23,6 @@ export function CalendarSyncWidget() {
   const [error, setError] = useState(false)
 
   const load = useCallback(async () => {
-    setIsLoading(true)
-    setError(false)
-
     try {
       const result = await calendarApi.getUpcomingEvents({
         limit: MAX_ROWS,
@@ -41,8 +38,13 @@ export function CalendarSyncWidget() {
   }, [])
 
   useEffect(() => {
-    load()
-  }, [load])
+    let cancelled = false
+    calendarApi.getUpcomingEvents({ limit: MAX_ROWS, days: 14 })
+      .then(result => { if (!cancelled) setData(result) })
+      .catch(() => { if (!cancelled) setError(true) })
+      .finally(() => { if (!cancelled) setIsLoading(false) })
+    return () => { cancelled = true }
+  }, [])
 
   const events = data?.events || []
   const connected = Boolean(data?.connected)
@@ -63,7 +65,7 @@ export function CalendarSyncWidget() {
       ========================================== */}
       <div
         className="
-          flex h-[44px] shrink-0
+          flex h-[38px] shrink-0
           items-center justify-between
           border-b border-slate-100
           px-4
@@ -85,11 +87,11 @@ export function CalendarSyncWidget() {
             <h3
               className="
                 truncate
-                text-[13px]
+                text-[12px]
                 font-semibold
                 leading-none
                 text-slate-700
-                sm:text-sm
+
               "
             >
               Calendar Sync
@@ -101,7 +103,7 @@ export function CalendarSyncWidget() {
                   mt-0.5 truncate
                   text-[10px]
                   leading-none
-                  text-slate-400
+                  text-slate-500
                 "
               >
                 Last synced {formatRelativeTime(data.lastSyncedAt)}
@@ -110,21 +112,6 @@ export function CalendarSyncWidget() {
           </div>
         </div>
 
-        <Link
-          href="/calendar"
-          className="
-            flex shrink-0
-            items-center gap-0.5
-            text-[11px]
-            font-medium
-            text-primary
-            hover:text-primary-hover
-          "
-        >
-          {connected ? 'Manage' : 'Connect'}
-
-          <ChevronRight className="h-2.5 w-2.5" />
-        </Link>
       </div>
 
       {/* =========================================
@@ -162,7 +149,11 @@ export function CalendarSyncWidget() {
 
             <button
               type="button"
-              onClick={load}
+              onClick={() => {
+                setIsLoading(true)
+                setError(false)
+                load()
+              }}
               className="
                 font-medium
                 underline
@@ -181,7 +172,7 @@ export function CalendarSyncWidget() {
 
         <div
           className="
-            flex min-h-0 flex-1
+            calendar-empty-state flex min-h-0 flex-1
             flex-col
             items-center justify-center
             px-3
@@ -200,11 +191,11 @@ export function CalendarSyncWidget() {
             <CalendarSync className="h-3.5 w-3.5 text-violet-500" />
           </div>
 
-          <p className="text-[12px] font-medium text-slate-600">
+          <p className="text-[11px] font-medium text-slate-600">
             No calendar connected
           </p>
 
-          <p className="mt-0.5 text-[10px] text-slate-400">
+          <p className="mt-0.5 text-[10px] text-slate-500">
             Connect Google or Outlook
           </p>
 
@@ -241,11 +232,11 @@ export function CalendarSyncWidget() {
         >
           <CircleCheck className="mb-1.5 h-5 w-5 text-emerald-500" />
 
-          <p className="text-[12px] font-medium text-slate-600">
+          <p className="text-[11px] font-medium text-slate-600">
             Everything is up to date
           </p>
 
-          <p className="mt-0.5 text-[10px] text-slate-400">
+          <p className="mt-0.5 text-[10px] text-slate-500">
             Nothing due in the next two weeks.
           </p>
         </div>
@@ -260,7 +251,7 @@ export function CalendarSyncWidget() {
             {WEEK_DAYS.map((day) => (
               <span
                 key={`dow-${day.toISOString()}`}
-                className="text-center text-[10px] font-medium text-slate-400"
+                className="text-center text-[10px] font-medium text-slate-500"
               >
                 {format(day, 'EEEEE')}
               </span>
@@ -295,8 +286,8 @@ export function CalendarSyncWidget() {
               EVENT LIST — condensed "date: title"
               pairs, two columns. Only this scrolls.
           ====================================== */}
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-            <div className="grid grid-cols-1 gap-x-3 gap-y-1.5 sm:grid-cols-2">
+          <div className="min-h-0 flex-1 overflow-hidden">
+            <ScrollPreview rowHeight={40} label="calendar events" columns={2} fill>
               {events.slice(0, MAX_ROWS).map((event) => (
                 <Link
                   key={event.sourceId}
@@ -310,7 +301,7 @@ export function CalendarSyncWidget() {
                   {event.title}
                 </Link>
               ))}
-            </div>
+            </ScrollPreview>
           </div>
         </div>
       )}

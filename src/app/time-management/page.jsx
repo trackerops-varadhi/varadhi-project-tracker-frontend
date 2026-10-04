@@ -1,5 +1,7 @@
 'use client'
 
+import { StatCard as StatCard } from '@/components/shared/stat-card'
+
 import { Table } from '@/components/ui/table'
 
 import { useEffect, useState } from 'react'
@@ -562,149 +564,11 @@ export default function TimeManagementPage() {
 
       =========================================== */}
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-
-
-
-        {/* TODAY */}
-
-        <div className="rounded-xl border bg-white p-5 shadow-sm">
-
-          <div className="flex items-center justify-between">
-
-            <div>
-
-              <p className="text-sm text-slate-500">
-
-                Total Worked Today
-
-              </p>
-
-              <h2 className="mt-2 text-3xl font-bold text-slate-800">
-
-                {formatHours(
-
-                  getTodayHours()
-
-                )}
-
-              </h2>
-
-              <p className="mt-1 text-xs text-slate-400">
-
-                Hours : Minutes
-
-              </p>
-
-            </div>
-
-            <Clock3
-
-              className="text-blue-600"
-
-              size={30}
-
-            />
-
-          </div>
-
-        </div>
-
-
-
-        {/* WEEK */}
-
-        <div className="rounded-xl border bg-white p-5 shadow-sm">
-
-          <div className="flex items-center justify-between">
-
-            <div>
-
-              <p className="text-sm text-slate-500">
-
-                Total Weekly Time
-
-              </p>
-
-              <h2 className="mt-2 text-3xl font-bold text-slate-800">
-
-                {formatHours(
-
-                  getWeeklyHours()
-
-                )}
-
-              </h2>
-
-              <p className="mt-1 text-xs text-slate-400">
-
-                Monday - Sunday
-
-              </p>
-
-            </div>
-
-            <CalendarDays
-
-              className="text-primary"
-
-              size={30}
-
-            />
-
-          </div>
-
-        </div>
-
-
-
-        {/* MONTH */}
-
-        <div className="rounded-xl border bg-white p-5 shadow-sm">
-
-          <div className="flex items-center justify-between">
-
-            <div>
-
-              <p className="text-sm text-slate-500">
-
-                Total Monthly Time
-
-              </p>
-
-              <h2 className="mt-2 text-3xl font-bold text-slate-800">
-
-                {formatHours(
-
-                  getMonthlyHours()
-
-                )}
-
-              </h2>
-
-              <p className="mt-1 text-xs text-slate-400">
-
-                Current Month
-
-              </p>
-
-            </div>
-
-            <Timer
-
-              className="text-green-600"
-
-              size={30}
-
-            />
-
-          </div>
-
-        </div>
-
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <StatCard title="Total Worked Today" value={formatHours(getTodayHours())} subtitle="Hours : Minutes" icon={Clock3} />
+        <StatCard title="Total Weekly Time" value={formatHours(getWeeklyHours())} subtitle="Monday - Sunday" icon={CalendarDays} />
+        <StatCard title="Total Monthly Time" value={formatHours(getMonthlyHours())} subtitle="Current Month" icon={Timer} />
       </div>
-
-
 
       {/* ==========================================
 

@@ -1,6 +1,7 @@
 'use client';
+import Link from 'next/link';
 import { Table } from '@/components/ui/table'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Search, Calendar, AlertTriangle, MoreHorizontal, Eye, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TaskTabs } from './task-tabs';
@@ -202,7 +203,7 @@ export function TasksList() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [priorityFilter, setPriorityFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState(searchParams.get('priority') || 'all');
   const [scope, setScope] = useState('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -214,15 +215,22 @@ export function TasksList() {
         ======================================================= */
 
   useEffect(() => {
-    setSearch(searchParams.get('search') || '');
-    setCurrentPage(1);
+    const timer = setTimeout(() => {
+      setSearch(searchParams.get('search') || '');
+      const priority = searchParams.get('priority');
+      setPriorityFilter(['critical', 'high', 'medium', 'low'].includes(priority) ? priority : 'all');
+      setCurrentPage(1);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [searchParams]);
 
   /* =======================================================
            FETCH TASKS
         ======================================================= */
 
-  async function fetchTasks() {
+  const requestVersion = useRef(0);
+  const fetchTasks = useCallback(async () => {
+    const version = ++requestVersion.current;
     setIsLoading(true);
     setError(null);
 
@@ -246,6 +254,7 @@ export function TasksList() {
       }
 
       const response = await tasksApi.getAll(filters, currentPage, TASKS_PER_PAGE);
+      if (version !== requestVersion.current) return;
       let list = [];
 
       if (Array.isArray(response)) {
@@ -267,15 +276,16 @@ export function TasksList() {
       const calculatedPages = Math.ceil(total / TASKS_PER_PAGE);
       setTotalPages(Math.max(1, Number(pagesFromApi ?? calculatedPages) || 1));
     } catch (err) {
+      if (version !== requestVersion.current) return;
       console.error('Failed to fetch tasks:', err);
       setError('Failed to load tasks.');
       setTasks([]);
       setTotalTasks(0);
       setTotalPages(1);
     } finally {
-      setIsLoading(false);
+      if (version === requestVersion.current) setIsLoading(false);
     }
-  }
+  }, [currentPage, search, statusFilter, priorityFilter, scope, user]);
 
   /* =======================================================
            REFRESH
@@ -284,10 +294,8 @@ export function TasksList() {
   useEffect(() => {
     const timer = setTimeout(fetchTasks, 300);
 
-    return () => clearTimeout(timer);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, search, statusFilter, priorityFilter, scope, user?.id]);
+    return () => { clearTimeout(timer); requestVersion.current += 1; };
+  }, [fetchTasks]);
 
   /* =======================================================
            PAGINATION VALUES
@@ -354,7 +362,7 @@ export function TasksList() {
       <div
         className='task-table-card overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm'>
         <div
-          className='min-h-0 min-w-0 flex-1 overflow-x-auto'
+          className='min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto'
           tabIndex={0}
           role='region'
           aria-label='Tasks table'>
@@ -362,11 +370,27 @@ export function TasksList() {
             <colgroup>
               <col
                 style={{
-                  width: '21%'
+                  width: '25%'
                 }} />
               <col
                 style={{
-                  width: '14%'
+                  width: '13%'
+                }} />
+              <col
+                style={{
+                  width: '8%'
+                }} />
+              <col
+                style={{
+                  width: '9%'
+                }} />
+              <col
+                style={{
+                  width: '13%'
+                }} />
+              <col
+                style={{
+                  width: '17%'
                 }} />
               <col
                 style={{
@@ -374,23 +398,7 @@ export function TasksList() {
                 }} />
               <col
                 style={{
-                  width: '10%'
-                }} />
-              <col
-                style={{
-                  width: '11%'
-                }} />
-              <col
-                style={{
-                  width: '20%'
-                }} />
-              <col
-                style={{
-                  width: '10%'
-                }} />
-              <col
-                style={{
-                  width: '4%'
+                  width: '5%'
                 }} />
             </colgroup>
             <thead className='sticky top-0 z-10 bg-slate-50'>
@@ -416,11 +424,12 @@ export function TasksList() {
                 return (
                   <tr key={task.id} className='transition-colors hover:bg-slate-50'>
                     <td className='min-w-0 px-2 py-1'>
-                      <p
+                      <Link
+                        href={`/tasks/${task.id}`}
                         title={task.title}
-                        className='min-w-0 truncate whitespace-nowrap text-xs font-semibold leading-5 text-slate-800'>
+                        className='block min-w-0 truncate text-xs font-semibold leading-5 text-slate-800 hover:text-primary hover:underline'>
                         {task.title}
-                      </p>
+                      </Link>
                     </td>
                     <td className='min-w-0 px-2 py-1'>
                       <span className='block min-w-0 truncate whitespace-nowrap text-xs leading-5 text-slate-500'>
@@ -448,7 +457,7 @@ export function TasksList() {
                           className={cn(`flex h-5 w-5 min-h-5 min-w-5 shrink-0 aspect-square items-center justify-center overflow-hidden rounded-full text-xs font-semibold leading-none text-white`, getAvatarColor(task.assignee.name))}>
                           {getInitials(task.assignee.name)}
                         </div>
-                        <span className='min-w-0 flex-1 whitespace-normal break-words text-xs font-medium leading-5 text-slate-600'>
+                        <span className='min-w-0 flex-1 truncate text-xs font-medium leading-5 text-slate-600'>
                           {task.assignee.name}
                         </span>
                       </div>) : (<span className='block min-w-0 truncate whitespace-nowrap text-xs leading-5 text-slate-400'>Unassigned</span>)}

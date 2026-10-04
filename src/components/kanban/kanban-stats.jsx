@@ -1,5 +1,7 @@
 'use client'
 
+import { StatCard } from '@/components/shared/stat-card'
+
 import { useEffect, useState } from 'react'
 import {
   ClipboardList,
@@ -103,84 +105,7 @@ return (
       lg:gap-3
     "
   >
-    {cards.map((card) => {
-      const Icon = card.icon
-
-      return (
-        <div
-          key={card.title}
-          className="
-            min-w-0
-            rounded-xl
-            border
-            border-border
-            bg-card
-            p-3
-            lg:p-4
-          "
-        >
-          <div
-            className={`
-              mb-2
-              flex
-              h-7
-              w-7
-              items-center
-              justify-center
-              rounded-lg
-              lg:h-8
-              lg:w-8
-              ${card.iconBg}
-            `}
-          >
-            <Icon
-              className={`
-                h-3.5
-                w-3.5
-                lg:h-4
-                lg:w-4
-                ${card.iconColor}
-              `}
-            />
-          </div>
-
-          <h3
-            className="
-              truncate
-              text-xl
-              font-bold
-              text-foreground
-              lg:text-2xl
-            "
-          >
-            {card.value}
-          </h3>
-
-          <p
-            className="
-              truncate
-              text-xs
-              text-muted-foreground
-              lg:text-sm
-            "
-          >
-            {card.title}
-          </p>
-
-          <p
-            className="
-              mt-0.5
-              truncate
-              text-[10px]
-              text-slate-400
-              lg:text-xs
-            "
-          >
-            {card.change}
-          </p>
-        </div>
-      )
-    })}
+    {cards.map(card => <StatCard key={card.title} title={card.title} value={card.value} subtitle={card.change} icon={card.icon} />)}
   </div>
 )
 }

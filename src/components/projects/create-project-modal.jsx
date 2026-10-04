@@ -1,10 +1,8 @@
 'use client'
 
-import { KeyboardModal } from '@/components/ui/dialog'
+import { CreateModal } from '@/components/shared/create-modal'
 
 import { useState } from 'react'
-import { X, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { projectsApi } from '@/lib/api/projects.api'
@@ -87,41 +85,16 @@ export function CreateProjectModal({ onClose, onSuccess }) {
   }
 
   return (
-    // Backdrop
-    <KeyboardModal title={"Create Project"} onClose={onClose}
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      {/* <div className="bg-card rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto"> */}
-      <div className="bg-card rounded-2xl w-full max-w-4xl shadow-xl max-h-[calc(100vh-2rem)] overflow-y-auto">
-
-        {/* Modal Header */}
-        {/* <div className="flex items-center justify-between px-6 py-4 border-b border-border"> */}
-        <div className="flex items-center justify-between px-7 py-4 border-b border-border">
-          <h2 className="text-base font-semibold text-foreground">
-            Create New Project
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-muted-foreground p-1 rounded-lg hover:bg-background"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Modal Body */}
-        {/* <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4"> */}
-        <form onSubmit={handleSubmit} className="px-7 py-5 space-y-3.5">
-
+    <CreateModal title="Create New Project" onClose={onClose} onSubmit={handleSubmit} isSubmitting={isLoading} submitLabel="Create Project">
           {/* General Error */}
           {errors.general && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
+            <div className="col-span-6 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
               {errors.general}
             </div>
           )}
 
           {/* Project Name */}
-          <div className="space-y-1.5">
+          <div className="col-span-6 space-y-1.5">
             <Label htmlFor="name">Project Name *</Label>
             <Input
               id="name"
@@ -137,7 +110,7 @@ export function CreateProjectModal({ onClose, onSuccess }) {
           </div>
 
           {/* Description */}
-          <div className="space-y-1.5">
+          <div className="col-span-6 space-y-1.5">
             <Label htmlFor="description">Description</Label>
             <textarea
               id="description"
@@ -152,7 +125,7 @@ export function CreateProjectModal({ onClose, onSuccess }) {
           </div>
 
 {/* Dates + Project Manager */}
-<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+<div className="col-span-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
 
   {/* Start Date */}
   <div className="space-y-1.5">
@@ -223,12 +196,12 @@ export function CreateProjectModal({ onClose, onSuccess }) {
 
 </div>
 
-<p className="text-xs text-slate-400 -mt-1">
+<p className="col-span-6 -mt-2 text-xs text-slate-400">
   The manager receives overdue alerts, escalations and milestone updates.
 </p>
 
           {/* Team members — each person selected is notified they were added. */}
-          <div className="space-y-1.5">
+          <div className="col-span-6 space-y-1.5">
             <Label>Team Members</Label>
             {usersLoading ? (
               <p className="text-xs text-slate-400">Loading users...</p>
@@ -242,7 +215,7 @@ export function CreateProjectModal({ onClose, onSuccess }) {
             ) : selectableMembers.length === 0 ? (
               <p className="text-xs text-slate-400">No other active users yet.</p>
             ) : (
-              <div className="border border-slate-200 rounded-lg overflow-hidden">
+              <div className="max-h-48 overflow-y-auto rounded-lg border border-slate-200">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {selectableMembers.map((u) => (
                   <label
@@ -278,30 +251,6 @@ export function CreateProjectModal({ onClose, onSuccess }) {
             </p>
           </div>
 
-          {/* Footer Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="bg-primary hover:bg-primary-hover"
-              disabled={isLoading}
-            >
-              {isLoading
-                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creating...</>
-                : 'Create Project'
-              }
-            </Button>
-          </div>
-
-        </form>
-      </div>
-    </KeyboardModal>
+    </CreateModal>
   )
 }

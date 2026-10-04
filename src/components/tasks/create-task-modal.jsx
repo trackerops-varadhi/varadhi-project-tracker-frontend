@@ -1,18 +1,14 @@
 'use client'
 
-import { KeyboardModal } from '@/components/ui/dialog'
+import { CreateModal } from '@/components/shared/create-modal'
 
 import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { useHasMounted } from '@/hooks/use-has-mounted'
-import { X, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { tasksApi } from '@/lib/api/tasks.api'
 import { projectsApi } from '@/lib/api/projects.api'
 import { usersApi } from '@/lib/api/users.api'
-``
 
 
 
@@ -76,8 +72,8 @@ export function CreateTaskModal({ onClose, onSuccess }) {
   }
 
   useEffect(() => {
-    loadProjects()
-    loadUsers()
+    const timer = setTimeout(() => { loadProjects(); loadUsers() }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   function handleChange(e) {
@@ -122,79 +118,10 @@ export function CreateTaskModal({ onClose, onSuccess }) {
 
 if (!mounted) return null
 
-// Render outside the scaled task layout so the backdrop covers the viewport.
-return createPortal(
-  <KeyboardModal title={"Create Task"} onClose={onClose}
-    className="
-      fixed inset-0 z-50
-      flex items-center justify-center
-      bg-black/50
-      px-6 py-4
-    "
-    onClick={(e) => {
-      if (e.target === e.currentTarget) {
-        onClose()
-      }
-    }}
-  >
-    {/* =====================================================
-        MODAL
-        WIDE HORIZONTALLY
-        HEIGHT IS NOT FORCED
-    ====================================================== */}
-    <div
-      className="
-        w-[92vw]
-        max-w-[1400px]
-        min-w-0
-        max-h-[calc(100vh-32px)]
-        overflow-hidden
-        rounded-2xl
-        bg-card
-        shadow-xl
-      "
-    >
-      {/* ===================================================
-          HEADER
-      ==================================================== */}
-      <div
-        className="
-          sticky top-0 z-10
-          flex items-center justify-between
-          border-b border-border
-          bg-card
-          px-6 py-4
-          rounded-t-2xl
-        "
-      >
-        <h2 className="text-lg font-semibold text-foreground">
-          Create New Task
-        </h2>
-
-        <button
-          type="button"
-          onClick={onClose}
-          className="
-            rounded-lg p-1
-            text-slate-400
-            transition
-            hover:bg-background
-            hover:text-muted-foreground
-          "
-        >
-          <X className="h-4 w-4" />
-        </button>
-      </div>
-
-      {/* ===================================================
-          BODY
-      ==================================================== */}
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-3 px-7 py-4"
-      >
+return (
+  <CreateModal title="Create New Task" onClose={onClose} onSubmit={handleSubmit} isSubmitting={isLoading} submitLabel="Create Task">
         {errors.general && (
-          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="col-span-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
             {errors.general}
           </div>
         )}
@@ -202,7 +129,7 @@ return createPortal(
         {/* =================================================
             TITLE
         ================================================== */}
-        <div className="space-y-1.5">
+        <div className="col-span-6 space-y-1.5">
           <Label htmlFor="title">
             Task Title
           </Label>
@@ -227,9 +154,9 @@ return createPortal(
             DESCRIPTION + USER STORY
             Two columns because modal is now horizontal
         ================================================== */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="contents">
           {/* DESCRIPTION */}
-          <div className="space-y-1.5">
+          <div className="col-span-3 space-y-1.5 md:col-span-2">
             <Label htmlFor="description">
               Description
             </Label>
@@ -257,7 +184,7 @@ return createPortal(
           </div>
 
           {/* USER STORY */}
-          <div className="space-y-1.5">
+          <div className="col-span-3 space-y-1.5 md:col-span-2">
             <Label htmlFor="userStory">
               User Story
             </Label>
@@ -286,7 +213,7 @@ return createPortal(
         {/* =================================================
             ACCEPTANCE CRITERIA
         ================================================== */}
-        <div className="space-y-1.5">
+        <div className="col-span-6 space-y-1.5 md:col-span-2">
           <Label htmlFor="acceptanceCriteria">
             Acceptance Criteria
           </Label>
@@ -314,7 +241,7 @@ return createPortal(
         {/* =================================================
             PROJECT
         ================================================== */}
-        <div className="space-y-1.5">
+        <div className="col-span-2 space-y-1.5">
           <Label htmlFor="projectId">
             Project *
           </Label>
@@ -381,10 +308,10 @@ return createPortal(
         {/* =================================================
             ASSIGNEE + DUE DATE
         ================================================== */}
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="contents">
 
           {/* ASSIGNEE */}
-          <div className="space-y-1.5">
+          <div className="col-span-2 space-y-1.5">
             <Label htmlFor="assigneeId">
               Assignee
             </Label>
@@ -433,7 +360,7 @@ return createPortal(
           </div>
 
           {/* DUE DATE */}
-          <div className="space-y-1.5">
+          <div className="col-span-2 space-y-1.5">
             <Label htmlFor="dueDate">
               Due Date
             </Label>
@@ -452,10 +379,10 @@ return createPortal(
         {/* =================================================
             TYPE + PRIORITY + STATUS
         ================================================== */}
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="contents">
 
           {/* TYPE */}
-          <div className="space-y-1.5">
+          <div className="col-span-2 space-y-1.5">
             <Label htmlFor="type">
               Type
             </Label>
@@ -487,7 +414,7 @@ return createPortal(
           </div>
 
           {/* PRIORITY */}
-          <div className="space-y-1.5">
+          <div className="col-span-2 space-y-1.5">
             <Label htmlFor="priority">
               Priority
             </Label>
@@ -518,7 +445,7 @@ return createPortal(
           </div>
 
           {/* STATUS */}
-          <div className="space-y-1.5">
+          <div className="col-span-2 space-y-1.5">
             <Label htmlFor="status">
               Status
             </Label>
@@ -549,47 +476,6 @@ return createPortal(
           </div>
         </div>
 
-        {/* =================================================
-            FOOTER
-        ================================================== */}
-        <div
-          className="
-            flex items-center justify-end
-            gap-3
-            border-t border-border
-            pt-3
-          "
-        >
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            disabled={isLoading}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="
-              bg-primary
-              hover:bg-primary-hover
-            "
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              'Create Task'
-            )}
-          </Button>
-        </div>
-      </form>
-    </div>
-  </KeyboardModal>,
-  document.body
+  </CreateModal>
 )
 }

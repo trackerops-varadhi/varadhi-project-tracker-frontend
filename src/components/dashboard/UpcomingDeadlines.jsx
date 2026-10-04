@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
+import { ViewAllLink } from './view-all-link'
 
 import {
   useUpcomingDeadlines,
@@ -18,7 +19,7 @@ const RANGES = [
 
 export function UpcomingDeadlines() {
   const [days, setDays] = useState(30)
-  const { tasks, isLoading, error } = useUpcomingDeadlines({ limit: 5, days })
+  const { tasks, isLoading, error } = useUpcomingDeadlines({ limit: 50, days })
 
   return (
     <Card
@@ -53,6 +54,8 @@ export function UpcomingDeadlines() {
           Upcoming Deadlines
         </h3>
 
+        <div className="flex shrink-0 items-center gap-2">
+        <ViewAllLink href="/tasks/upcoming-deadlines" label="upcoming deadlines" />
         <div
           role="group"
           aria-label="Deadline range"
@@ -77,12 +80,13 @@ export function UpcomingDeadlines() {
             </button>
           ))}
         </div>
+        </div>
       </div>
 
       {/* LOADING */}
       {isLoading && (
         <div className="min-h-0 min-w-0 flex-1 overflow-hidden pt-1">
-          {[0, 1, 2, 3].map((i) => (
+          {[0, 1, 2, 3, 4].map((i) => (
             <div
               key={i}
               className="
@@ -127,7 +131,11 @@ export function UpcomingDeadlines() {
       {/* MAIN CONTENT */}
       {!isLoading && !error && tasks.length > 0 && (
         <div
+          role="region"
+          aria-label="Upcoming deadline details"
+          tabIndex={0}
           className="
+            deadline-list
             mt-1
             min-h-0
             min-w-0
@@ -144,6 +152,7 @@ export function UpcomingDeadlines() {
                 key={task.id}
                 href={`/tasks/${task.id}`}
                 className="
+                  deadline-row
                   flex
                   min-w-0
                   items-center
@@ -156,6 +165,7 @@ export function UpcomingDeadlines() {
                 {/* DUE DATE */}
                 <div
                   className={`
+                    deadline-due
                     w-[64px]
                     shrink-0
                     truncate
@@ -216,6 +226,7 @@ export function UpcomingDeadlines() {
                 {/* PRIORITY */}
                 <span
                   className={`
+                    deadline-priority
                     shrink-0
                     whitespace-nowrap
                     rounded-full

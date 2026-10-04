@@ -1,5 +1,7 @@
 'use client'
 
+import { StatCard as StatCard } from '@/components/shared/stat-card'
+
 import { useState, useEffect, use } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -327,23 +329,7 @@ export default function ProjectDetailPage({ params }) {
     ].map((stat) => {
       const Icon = stat.icon
       return (
-        <div
-          key={stat.label}
-          className="bg-card rounded-xl border border-border p-3 shadow-xs flex items-center space-x-3 flex-1"
-        >
-          <div className={cn(
-            'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
-            stat.color
-          )}>
-            <Icon className="w-4 h-4" />
-          </div>
-          <div>
-            <p className="text-lg font-semibold text-foreground leading-none mb-0.5">
-              {stat.value}
-            </p>
-            <p className="text-[11px] text-muted-foreground">{stat.label}</p>
-          </div>
-        </div>
+        <StatCard key={stat.label} title={stat.label} value={stat.value} icon={Icon} />
       )
     })}
   </div>

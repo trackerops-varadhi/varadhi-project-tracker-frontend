@@ -7,6 +7,7 @@ import { isValid, parseISO } from 'date-fns'
 // It does NOT mutate the value — the UI guards (formatDate, etc.) handle rendering safely.
 function normalizeUser(user) {
   if (!user) return user
+  user = { ...user, createdAt: user.createdAt ?? user.created_at, tasksCount: user.tasksCount ?? user.tasks_count }
   if (
     process.env.NODE_ENV !== 'production' &&
     user.createdAt != null &&
@@ -53,6 +54,11 @@ export const usersApi = {
   // Deactivate user (Admin only)
   deactivate: async (id) => {
     const { data } = await apiClient.patch(`/users/${id}/deactivate`)
+    return data.data
+  },
+
+  deleteEmployee: async (id) => {
+    const { data } = await apiClient.delete(`/users/${id}`)
     return data.data
   },
 

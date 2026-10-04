@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/layout/app-shell'
+import { TaskRouteShell } from '@/components/tasks/task-route-shell'
 
 export default function TasksLayout({ children }) {
-  return <AppShell fixedDesktop>{children}</AppShell>
+  return <TaskRouteShell>{children}</TaskRouteShell>
 }

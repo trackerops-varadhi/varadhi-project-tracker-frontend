@@ -1,5 +1,7 @@
 'use client'
 
+import { StatCard } from '@/components/shared/stat-card'
+
 import { useEffect, useState } from 'react'
 import {
   FolderKanban,
@@ -65,23 +67,7 @@ export function StatsCards() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-      {cards.map((item) => {
-        const Icon = item.icon
-        return (
-          <div
-            key={item.title}
-            className="bg-card border rounded-2xl p-5 shadow-sm"
-          >
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">{item.title}</p>
-                <h2 className="mt-2 text-3xl font-bold">{item.value}</h2>
-              </div>
-              <Icon className="h-10 w-10 text-primary" />
-            </div>
-          </div>
-        )
-      })}
+      {cards.map(item => <StatCard key={item.title} title={item.title} value={item.value} icon={item.icon} />)}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -29,6 +29,16 @@ export function KanbanBoard() {
   // const [activeTask, setActiveTask] = useState(null)
 
   // ---- NEW real API state ----
+  const dragSnapshot = useRef(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const { user } = useAuthStore()
+  function canDragTask(task) {
+    return !isSaving && (user?.role === "admin" || user?.role === "manager" || (user?.id && task.assignee?.id === user.id))
+  }
+  function rollbackDrag() {
+    if (dragSnapshot.current) setTasks(dragSnapshot.current)
+    setActiveTask(null)
+  }
   const [tasks, setTasks] = useState([])
   const [activeTask, setActiveTask] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -89,13 +99,15 @@ export function KanbanBoard() {
 
   function handleDragStart(event) {
     const task = tasks.find((t) => t.id === event.active.id)
-    setActiveTask(task || null)
+    if (!task || !canDragTask(task)) return
+    dragSnapshot.current = tasks
+    setActiveTask(task)
   }
 
 
   function handleDragOver(event) {
     const { active, over } = event
-    if (!over) return
+    if (!over || !activeTask) return
 
     const activeId = active.id
     const overId = over.id
@@ -165,9 +177,10 @@ export function KanbanBoard() {
     // Snapshot the task's true pre-drag status before clearing it — tasks
     // state itself may have already been optimistically mutated mid-drag by
     // handleDragOver, so it can't be trusted as "the original" by this point.
-    const originalStatus = activeTask?.status
+    if (!activeTask) return
+    const originalStatus = activeTask.status
     setActiveTask(null)
-    if (!over) return
+    if (!over) { rollbackDrag(); return }
 
     const isOverColumn = KANBAN_COLUMNS.some((col) => col.id === over.id)
     const newStatus = isOverColumn
@@ -178,21 +191,23 @@ export function KanbanBoard() {
     // reordered within it) — skip the API call so it can't spuriously
     // re-fire a status-change notification (e.g. "Review Requested") for
     // something that didn't actually happen.
-    if (!newStatus || newStatus === originalStatus) return
+    if (!newStatus || newStatus === originalStatus) { rollbackDrag(); return }
 
     // Offline: queue the change instead of losing it (AC-15). The card keeps
     // its new position, the mutation goes to the IndexedDB outbox, and the sync
     // engine replays it on reconnect. baseUpdatedAt is captured now so the
     // server can detect if someone else moves the task meanwhile.
     if (useConnectivityStore.getState().isOffline) {
+      setIsSaving(true)
       const moved = tasks.find((t) => t.id === active.id)
-      const queued = await enqueue({
+      let queued = false
+      try { queued = await enqueue({
         userId: useAuthStore.getState().user?.id,
         operation: OPERATIONS.TASK_STATUS,
         entityId: active.id,
         payload: { status: newStatus },
         baseUpdatedAt: moved?.updatedAt || null,
-      })
+      }) } catch { queued = false }
 
       if (queued) {
         // Keep the optimistic move — it is now backed by a durable record.
@@ -207,12 +222,14 @@ export function KanbanBoard() {
         setSaveError(
           "You're offline and this browser can't save changes for later. Reconnect and try again."
         )
-        fetchTasks()
+        rollbackDrag()
       }
+      setIsSaving(false)
       return
     }
 
     setSaveError(null)
+    setIsSaving(true)
 
     // Optimistic update — update UI immediately
     setTasks((prev) =>
@@ -228,8 +245,10 @@ export function KanbanBoard() {
       // Send the version we last saw so a simultaneous edit by someone else
       // is detected rather than silently overwritten (AC-15 requirement 5).
       const moved = tasks.find((t) => t.id === active.id)
-      await tasksApi.updateStatus(active.id, newStatus, moved?.updatedAt || null)
+      const saved = await tasksApi.updateStatus(active.id, newStatus, moved?.updatedAt || null)
+      if (saved?.id) setTasks((prev) => prev.map((task) => task.id === saved.id ? saved : task))
     } catch (err) {
+      rollbackDrag()
       // The refetch below silently reverts the card, so without a message the
       // move just undoes itself. Distinguish a dropped connection from a real
       // rejection (403 on someone else's task, 409, 500) — the user can act on
@@ -242,7 +261,8 @@ export function KanbanBoard() {
     } finally {
       // Reconcile with the backend either way — confirms the optimistic
       // update on success, and corrects the board if the call failed.
-      fetchTasks()
+      await fetchTasks()
+      setIsSaving(false)
     }
   }
 
@@ -258,6 +278,7 @@ export function KanbanBoard() {
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
+      onDragCancel={rollbackDrag}
     >
       {/* Why the last drag didn't stick. Dismissible, and cleared automatically
           by the next successful move. The global offline banner explains the
@@ -287,8 +308,8 @@ export function KanbanBoard() {
           role="status"
           className="mb-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
         >
-          Couldn&apos;t load the latest board. Showing what was last saved on
-          this device.
+          Couldn&apos;t load the latest board. {tasks.length > 0 ? "Showing the previously loaded tasks." : "Please retry to load tasks."}
+          <button type="button" onClick={fetchTasks} className="ml-2 font-semibold underline">Retry</button>
         </div>
       )}
 
@@ -303,6 +324,7 @@ export function KanbanBoard() {
               key={column.id}
               column={column}
               tasks={getTasksByStatus(column.id)}
+              canDragTask={canDragTask}
             />
           ))}
         </div>

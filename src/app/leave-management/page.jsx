@@ -1,5 +1,7 @@
 'use client'
 
+import { StatCard as DashboardStatCard } from '@/components/shared/stat-card'
+
 import { useEffect, useMemo, useState } from 'react'
 
 import {
@@ -1715,45 +1717,8 @@ const isEmployee =
    STAT CARD
 ===================================================== */
 
-function StatCard({
-  title,
-  value,
-  subtitle,
-  icon,
-  bg,
-  color,
-}) {
-  return (
-    <div className="rounded-xl border bg-white p-4 shadow-sm">
-
-      <div className="flex items-center justify-between gap-3">
-
-        <div>
-
-          <p className="text-xs text-slate-500">
-            {title}
-          </p>
-
-          <p className="mt-1 text-2xl font-bold text-slate-900">
-            {value}
-          </p>
-
-          <p className="mt-1 text-[11px] text-slate-400">
-            {subtitle}
-          </p>
-
-        </div>
-
-        <div
-          className={`rounded-xl p-3 ${bg} ${color}`}
-        >
-          {icon}
-        </div>
-
-      </div>
-
-    </div>
-  )
+function StatCard({ title, value, subtitle, icon }) {
+  return <DashboardStatCard title={title} value={value} subtitle={subtitle} iconElement={icon} />
 }
 
 /* =====================================================

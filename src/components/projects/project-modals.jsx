@@ -1,6 +1,7 @@
 "use client";
 
 import { KeyboardModal } from '@/components/ui/dialog'
+import { StatCard } from '@/components/shared/stat-card'
 
 import { useState, useMemo } from "react";
 import {
@@ -317,21 +318,10 @@ export function AnalyticsModal({ open, onClose, projects = [] }) {
       subtitle="Overview of your project progress"
     >
       {/* Main Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-xl border border-violet-100 bg-violet-50 p-4">
-          <p className="text-sm font-medium text-slate-500">Total Projects</p>
-          <h2 className="text-2xl font-bold text-primary mt-1">{total}</h2>
-        </div>
-
-        <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
-          <p className="text-sm font-medium text-slate-500">Completed</p>
-          <h2 className="text-2xl font-bold text-emerald-600 mt-1">{completed}</h2>
-        </div>
-
-        <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
-          <p className="text-sm font-medium text-slate-500">Completion Rate</p>
-          <h2 className="text-2xl font-bold text-blue-600 mt-1">{completion}%</h2>
-        </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <StatCard title="Total Projects" value={total} />
+        <StatCard title="Completed" value={completed} />
+        <StatCard title="Completion Rate" value={`${completion}%`} />
       </div>
 
       {/* Progress */}

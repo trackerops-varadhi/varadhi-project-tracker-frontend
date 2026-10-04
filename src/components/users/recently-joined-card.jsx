@@ -9,11 +9,11 @@ import { getInitials, getAvatarColor, formatRelativeTime, cn } from '@/utils'
 function Shell({ children }) {
   return (
     <Card layout="custom" className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-3">
-      <div className="mb-3 flex shrink-0 items-center gap-2">
+      <div className="mb-2 flex shrink-0 items-center gap-2">
         <UserPlus className="h-4 w-4 text-primary" />
         <h3 className="text-xs font-semibold leading-4 text-foreground">Recently Joined</h3>
       </div>
-      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-1">
+      <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto pr-0.5">
         {children}
       </div>
     </Card>
@@ -44,7 +44,7 @@ export function RecentlyJoinedCard() {
   if (isLoading) {
     return (
       <Shell>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {[0, 1, 2].map((i) => (
             <div key={i} className="flex animate-pulse items-center gap-3">
               <div className="h-8 w-8 rounded-full bg-slate-100" />
@@ -74,12 +74,12 @@ export function RecentlyJoinedCard() {
 
   return (
     <Shell>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {members.map((member) => (
-          <div key={member.id} className="flex items-start gap-2">
+          <div key={member.id} className="flex items-center gap-2">
             <div
               className={cn(
-                'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white',
+                'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white',
                 getAvatarColor(member.name || '?')
               )}
             >
@@ -94,7 +94,7 @@ export function RecentlyJoinedCard() {
                 {member.role}
               </p>
               <p className="mt-1 text-[10px] leading-4 text-slate-400">
-                {formatRelativeTime(member.createdAt)}
+                {formatRelativeTime(member.createdAt ?? member.created_at)}
               </p>
             </div>
           </div>

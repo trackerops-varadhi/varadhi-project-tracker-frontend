@@ -39,7 +39,6 @@ function Shell({ children }) {
       className='priority-breakdown flex min-w-0 flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm'>
       <div className='flex shrink-0 flex-wrap items-center justify-between gap-2'>
         <h3 className='min-w-0 text-xs font-semibold text-slate-800'>Priority Breakdown</h3>
-        <Link href='/tasks' className='shrink-0 whitespace-nowrap text-[11px] font-medium text-primary hover:underline'>View Details</Link>
       </div>
       <div className='min-w-0'>
         {children}

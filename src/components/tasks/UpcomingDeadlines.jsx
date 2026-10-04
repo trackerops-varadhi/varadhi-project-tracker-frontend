@@ -9,9 +9,13 @@ function Shell({ children }) {
       className='flex h-full min-h-0 min-w-0 flex-col gap-2 overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm'>
       <div className='mb-1 flex shrink-0 flex-wrap items-center justify-between gap-2'>
         <h3 className='min-w-0 text-xs font-semibold text-slate-800'>Upcoming Deadlines</h3>
-        <Link href='/tasks' className='shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline'>View All</Link>
+        <Link href="/tasks/upcoming-deadlines" className="shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline">View All</Link>
       </div>
-      <div className='deadline-content min-h-0 min-w-0 flex-1 overflow-y-auto'>
+      <div
+        role='region'
+        aria-label='Upcoming deadlines list'
+        tabIndex={0}
+        className='deadline-content min-h-0 min-w-0 overflow-x-hidden overflow-y-auto overscroll-contain rounded-lg focus-visible:outline-2 focus-visible:outline-primary'>
         {children}
       </div>
     </Card>
@@ -19,7 +23,7 @@ function Shell({ children }) {
 }
 
 export function UpcomingDeadlines() {
-  const { tasks, isLoading, error } = useUpcomingDeadlines({ limit: 4, days: 30 })
+  const { tasks, isLoading, error } = useUpcomingDeadlines({ limit: 50, days: 30 })
 
   /* =====================================================
            LOADING
@@ -79,7 +83,7 @@ export function UpcomingDeadlines() {
           key={task.id}
           href={`/tasks/${task.id}`}
           className='deadline-item min-w-0 rounded-lg transition-colors'>
-          <div className='flex min-w-0 items-center justify-between gap-1.5'>
+          <div className='grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2'>
             <p title={task.title} className='min-w-0 flex-1 truncate text-xs font-semibold leading-tight text-slate-800'>
               {task.title}
             </p>
@@ -88,12 +92,12 @@ export function UpcomingDeadlines() {
               {task.priority}
             </span>
           </div>
-          <div className='mt-1 flex min-w-0 items-center justify-between gap-1.5'>
+          <div className='mt-1 grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-2'>
             <span className='min-w-0 flex-1 truncate text-xs leading-tight text-slate-400'>
               {task.projectName ?? 'No project'}
             </span>
             <span
-              className={`shrink-0 whitespace-nowrap text-xs leading-tight ${task.isOverdue ? 'font-medium text-red-600' : 'text-slate-500'}`}>
+              className={`min-w-0 break-words text-right text-[11px] leading-4 ${task.isOverdue ? 'font-medium text-red-600' : 'text-slate-500'}`}>
               {formatDueLabel(task.daysLeft, task.dueDate)}
             </span>
           </div>

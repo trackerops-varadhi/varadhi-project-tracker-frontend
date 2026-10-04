@@ -56,6 +56,7 @@ export default function TaskDetailsPage() {
   const [editing, setEditing] = useState(searchParams.get('edit') === 'true')
   const [form, setForm] = useState(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
   // Reassignment dropdown data. GET /users is admin/manager-only on the
@@ -117,7 +118,8 @@ export default function TaskDetailsPage() {
   }, [id])
 
   useEffect(() => {
-    fetchTask()
+    const timer = setTimeout(fetchTask, 0)
+    return () => clearTimeout(timer)
   }, [fetchTask])
 
   function handleFormChange(e) {
@@ -149,7 +151,7 @@ export default function TaskDetailsPage() {
   //     setTask(data ?? { ...task, ...form })
   //     setEditing(false)
   //   } catch (err) {
-  //     window.alert('Failed to save changes. Please try again.')
+  //     setSaveError(err.response?.data?.message || 'Failed to save changes. Please retry.')
   //   } finally {
   //     setIsSaving(false)
   //   }
@@ -165,6 +167,8 @@ export default function TaskDetailsPage() {
 //   acceptanceCriteria: form.acceptanceCriteria?.trim() || null,
 
 async function handleSave() {
+  if (!form.title.trim()) { setSaveError("Task title is required."); return }
+  setSaveError(null)
   setIsSaving(true)
   try {
     // A status change is sent through PATCH /tasks/:id/status — the same
@@ -196,19 +200,20 @@ async function handleSave() {
         acceptanceCriteria: form.acceptanceCriteria?.trim() || null,
         assigneeId:         form.assigneeId?.trim()          || null,
       }
-      const res = await tasksApi.update(id, payload)
+      const res = await tasksApi.update(id, payload, task.updatedAt)
       latest = (res?.data ?? res) || latest
+      setTask(latest)
     }
 
     if (statusChanged) {
-      const res = await tasksApi.updateStatus(id, form.status)
+      const res = await tasksApi.updateStatus(id, form.status, latest.updatedAt)
       latest = (res?.data ?? res) || latest
     }
 
     setTask(latest ?? { ...task, ...form })
     setEditing(false)
   } catch (err) {
-    window.alert('Failed to save changes. Please try again.')
+    setSaveError(err.response?.data?.message || 'Failed to save changes. Please retry.')
   } finally {
     setIsSaving(false)
   }
@@ -263,6 +268,7 @@ async function handleSave() {
 
   return (
     <div className="space-y-6">
+      {saveError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{saveError}</p>}
 
       {/* Back link */}
       <Link

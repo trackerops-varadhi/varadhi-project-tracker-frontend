@@ -13,12 +13,16 @@ const taskPageStyles = `
 .tasks-content { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; align-items:start; }
 .tasks-list, .tasks-insights { min-width:0; }
 .tasks-list .task-table-card { display:flex; flex-direction:column; }
-.tasks-list .task-table-card table { min-width:760px; }
-.tasks-list th, .tasks-list td { padding-top:10px; padding-bottom:10px; }
+.tasks-list .task-table-card table { min-width:0; width:100%; table-layout:fixed; }
+.tasks-list th, .tasks-list td { padding:8px 4px; }
+.tasks-list .task-table-card > div:first-child { overflow-x:hidden; overflow-y:auto; }
+.tasks-list [data-slot="badge"] { white-space:normal; overflow-wrap:anywhere; text-align:center; }
+@media(max-width:639px) { .tasks-list th, .tasks-list td { padding-left:2px; padding-right:2px; font-size:10px; overflow-wrap:anywhere; } .tasks-list td:nth-child(6) .rounded-full { display:none; } }
 .tasks-list .task-pagination { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding:12px; border-top:1px solid #e2e8f0; }
 .tasks-insights { display:grid; gap:16px; align-content:start; }
-.tasks-insights .deadline-items { display:grid; gap:8px; }
-.tasks-insights .deadline-item { padding:10px; border:1px solid #ede9fe; border-left:3px solid #a78bfa; border-radius:8px; background:#faf9ff; }
+.tasks-insights .deadline-content { --deadline-row-height:64px; max-height:208px; min-height:0; scrollbar-gutter:stable; }
+.tasks-insights .deadline-items { display:grid; grid-auto-rows:minmax(var(--deadline-row-height),auto); gap:8px; }
+.tasks-insights .deadline-item { display:flex; flex-direction:column; justify-content:center; min-height:0; padding:10px; border:1px solid #ede9fe; border-left:3px solid #a78bfa; border-radius:8px; background:#faf9ff; }
 @media(min-width:640px) {
  .tasks-stats .task-summary-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
  .tasks-insights { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -31,17 +35,18 @@ const taskPageStyles = `
 @media(min-width:1024px) {
  .tasks-page { flex:1; height:100%; min-height:0; grid-template-rows:auto 100px minmax(0,1fr); gap:10px; }
  .tasks-stats .task-summary-grid { height:100%; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
- .tasks-stats .task-summary-grid > div { padding:8px 12px; }
+
  .tasks-content { min-height:0; grid-template-columns:minmax(0,1fr) clamp(210px,24%,280px); gap:10px; align-items:stretch; }
  .tasks-list { min-height:0; height:100%; }
  .tasks-list .task-table-card { flex:1; min-height:0; }
- .tasks-list .task-table-card > div:first-child { overflow:auto; }
+ .tasks-list .task-table-card > div:first-child { overflow-x:hidden; overflow-y:auto; }
  .tasks-list .task-table-card table { min-width:0; }
  .tasks-list th, .tasks-list td { padding-top:4px; padding-bottom:4px; font-size:11px; }
  .tasks-list .task-pagination { flex-shrink:0; padding:8px 12px; }
- .tasks-insights { min-height:0; height:100%; grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); gap:10px; }
+ .tasks-insights { min-height:0; height:100%; grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto; gap:10px; overflow-y:auto; }
  .tasks-insights > * { min-height:0; }
  .tasks-insights .deadline-item { padding:6px 8px; }
+ .tasks-insights .deadline-content { --deadline-row-height:56px; }
 }
 
 `

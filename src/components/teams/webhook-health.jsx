@@ -1,5 +1,7 @@
 "use client";
 
+import { StatCard } from "@/components/shared/stat-card";
+
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -131,11 +133,6 @@ export default function WebhookHealth({ webhookId }) {
   );
 }
 
-function Stat({ label, value, className = "" }) {
-  return (
-    <div>
-      <p className={`text-lg font-semibold ${className}`}>{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
-    </div>
-  );
+function Stat({ label, value }) {
+  return <StatCard title={label} value={value} />;
 }

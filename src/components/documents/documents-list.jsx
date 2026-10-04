@@ -1,5 +1,7 @@
 'use client'
 
+import { StatCard } from '@/components/shared/stat-card'
+
 import { Table } from '@/components/ui/table'
 import { useState, useEffect } from 'react'
 import {
@@ -381,15 +383,7 @@ export function DocumentsList() {
         ].map((stat) => {
           const Icon = stat.icon
           return (
-            <div key={stat.label} className="p-4 bg-white rounded-xl border border-slate-200 flex items-center space-x-3 shadow-xs">
-              <div className={cn('p-3 rounded-xl shrink-0', stat.color)}>
-                <Icon className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xl font-bold text-slate-800 truncate">{stat.value}</p>
-                <p className="text-xs text-slate-400">{stat.label}</p>
-              </div>
-            </div>
+            <StatCard key={stat.label} title={stat.label} value={stat.value} icon={Icon} />
           )
         })}
       </div>

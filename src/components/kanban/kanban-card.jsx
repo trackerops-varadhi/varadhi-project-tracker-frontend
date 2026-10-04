@@ -6,7 +6,7 @@ import { formatDate, isOverdue, getInitials, getAvatarColor, cn } from '@/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-export function KanbanCard({ task }) {
+export function KanbanCard({ task, disabled = false }) {
   const {
     attributes,
     listeners,
@@ -14,7 +14,7 @@ export function KanbanCard({ task }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: task.id })
+  } = useSortable({ id: task.id, disabled })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -33,7 +33,8 @@ export function KanbanCard({ task }) {
       {...attributes}
       {...listeners}
 className={cn(
-  'cursor-grab active:cursor-grabbing min-w-0 break-words bg-card rounded-2xl border-2 p-4 shadow-sm hover:shadow-md transition-all',
+  disabled ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
+  'min-w-0 break-words bg-card rounded-2xl border-2 p-4 shadow-sm hover:shadow-md transition-all',
 
   task.status === 'todo'
     ? 'border-slate-300'

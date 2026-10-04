@@ -1,7 +1,10 @@
 'use client'
 
+import { StatCard } from '@/components/shared/stat-card'
+
 import { Table } from '@/components/ui/table'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useHasMounted } from '@/hooks/use-has-mounted'
 import { useSearchParams } from 'next/navigation'
 
 import {
@@ -14,8 +17,11 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
+  Trash2,
 } from 'lucide-react'
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { InviteUserModal } from './invite-user-modal'
 
@@ -78,9 +84,10 @@ export function UsersList({ leftColumn, rightColumn }) {
 
   const [search, setSearch] = useState('')
 
-  const [roleFilter, setRoleFilter] = useState(
-    searchParams.get('role') || 'all'
-  )
+  const queryRole = searchParams.get('role') || 'all'
+  const [roleSelection, setRoleSelection] = useState(null)
+  const roleFilter = roleSelection?.queryRole === queryRole ? roleSelection.value : queryRole
+  const setRoleFilter = (value) => setRoleSelection({ queryRole, value })
 
   const statusFilter =
     searchParams.get('status') || ''
@@ -88,8 +95,10 @@ export function UsersList({ leftColumn, rightColumn }) {
   const [showInviteModal, setShowInviteModal] =
     useState(false)
 
-  const [mounted, setMounted] =
-    useState(false)
+  const mounted = useHasMounted()
+  const [loadError, setLoadError] = useState(null)
+  const [actionError, setActionError] = useState(null)
+  const [sidebarVersion, setSidebarVersion] = useState(0)
 
   const [users, setUsers] =
     useState([])
@@ -107,16 +116,13 @@ export function UsersList({ leftColumn, rightColumn }) {
      MOUNT
   ======================================================= */
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   /* =======================================================
      FETCH USERS
   ======================================================= */
 
-  async function fetchUsers() {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true)
+    setLoadError(null)
 
     try {
       const data =
@@ -127,18 +133,19 @@ export function UsersList({ leftColumn, rightColumn }) {
           ? data
           : []
       )
-    } catch {
-      setUsers([])
+    } catch (err) {
+      setLoadError(err.response?.data?.message || 'Unable to load team members. Please retry.')
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     if (mounted) {
-      fetchUsers()
+      const timer = setTimeout(fetchUsers, 0)
+      return () => clearTimeout(timer)
     }
-  }, [mounted])
+  }, [mounted, fetchUsers])
 
   /* =======================================================
      ADMIN CHECK
@@ -240,6 +247,24 @@ export function UsersList({ leftColumn, rightColumn }) {
     }
   }
 
+  async function handleDeleteEmployee(member) {
+    if (!isAdmin || member.role !== 'employee' || member.id === currentUser?.id) return
+    setOpenMenuId(null)
+    if (!window.confirm(`Permanently delete ${member.name || member.email}? Their account, comments and account-related records will be removed. Tasks and projects will remain. This cannot be undone.`)) return
+    setActioningId(member.id)
+    setActionError(null)
+    try {
+      await usersApi.deleteEmployee(member.id)
+      setUsers(previous => previous.filter(user => user.id !== member.id))
+      await fetchUsers()
+      setSidebarVersion(value => value + 1)
+    } catch (error) {
+      setActionError(error.response?.data?.message || 'Unable to delete the employee. Please retry.')
+    } finally {
+      setActioningId(null)
+    }
+  }
+
   /* =======================================================
      UI
   ======================================================= */
@@ -273,11 +298,13 @@ export function UsersList({ leftColumn, rightColumn }) {
         {[
           {
             label: 'Total Members',
+            icon: User,
             value: users.length,
             color: 'text-foreground',
           },
           {
             label: 'Active',
+            icon: CheckCircle2,
             value:
               users.filter(
                 (u) =>
@@ -287,6 +314,7 @@ export function UsersList({ leftColumn, rightColumn }) {
           },
           {
             label: 'Managers',
+            icon: Shield,
             value:
               users.filter(
                 (u) =>
@@ -296,6 +324,7 @@ export function UsersList({ leftColumn, rightColumn }) {
           },
           {
             label: 'Pending Invites',
+            icon: UserPlus,
             value:
               users.filter(
                 (u) =>
@@ -304,51 +333,18 @@ export function UsersList({ leftColumn, rightColumn }) {
             color: 'text-amber-600',
           },
         ].map((stat) => (
-          <div
-            key={stat.label}
-            className="
-              min-w-0
-              rounded-xl
-              border
-              border-slate-100
-              bg-card
-              px-4
-              py-3
-              shadow-sm
-              transition
-              hover:shadow-md
-            "
-          >
-            <p
-              className={cn(
-                `
-                  text-[18px]
-                  font-semibold
-                  leading-none
-                `,
-                stat.color
-              )}
-            >
-              {stat.value}
-            </p>
-
-            <p
-              className="
-                mt-1
-                truncate
-                text-[10px]
-                text-slate-400
-              "
-            >
-              {stat.label}
-            </p>
-          </div>
+          <StatCard key={stat.label} title={stat.label} value={isLoading || loadError ? '?' : stat.value} icon={stat.icon} />
         ))}
       </div>
 
       <div className="users-columns">
-        <aside className="users-left">{leftColumn}</aside>
+        <aside key={`left-${sidebarVersion}`} className="users-left">{leftColumn}</aside>
         <div className="users-directory flex min-h-0 min-w-0 flex-col rounded-xl border border-border bg-card p-3">
+          {actionError && <p role="alert" className="mb-2 rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-700">{actionError}</p>}
+      {loadError && <div role="alert" className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-red-50 p-2 text-xs text-red-700">
+        <span>{loadError}</span>
+        <button type="button" onClick={fetchUsers} disabled={isLoading} className="shrink-0 font-semibold underline">Retry</button>
+      </div>}
       {/* ===================================================
           COMPACT TOOLBAR
       ==================================================== */}
@@ -413,73 +409,17 @@ export function UsersList({ leftColumn, rightColumn }) {
         </div>
 
         {/* =================================================
-            ALL ROLES SCROLL
+            ROLE FILTER
         ================================================== */}
 
-        <div
-          className="
-            role-scroll
-            h-[32px]
-            w-[105px]
-            shrink-0
-            overflow-y-scroll
-            overflow-x-hidden
-            rounded-lg
-            border
-            border-slate-200
-            bg-white
-            p-[3px]
-          "
-        >
-          {[
-            {
-              value: 'all',
-              label: 'All Roles',
-            },
-            {
-              value: 'admin',
-              label: 'Admin',
-            },
-            {
-              value: 'manager',
-              label: 'Manager',
-            },
-            {
-              value: 'employee',
-              label: 'Employee',
-            },
-          ].map((role) => (
-            <button
-              key={role.value}
-              type="button"
-              onClick={() =>
-                setRoleFilter(
-                  role.value
-                )
-              }
-              className={`
-                block
-                h-[24px]
-                w-[88px]
-                shrink-0
-                rounded-md
-                px-2
-                text-left
-                text-[10px]
-                font-semibold
-                leading-[24px]
-
-                ${
-                  roleFilter === role.value
-                    ? 'bg-primary text-white'
-                    : 'bg-white text-slate-700 hover:bg-slate-100'
-                }
-              `}
-            >
-              {role.label}
-            </button>
-          ))}
-        </div>
+        <Select value={roleFilter} onValueChange={setRoleFilter}>
+          <SelectTrigger aria-label="Filter by role" size="sm" className="h-8 w-[112px] shrink-0 border-slate-200 bg-white text-[11px] font-medium">
+            <SelectValue placeholder="All Roles" />
+          </SelectTrigger>
+          <SelectContent align="end">
+            {['all', 'admin', 'manager', 'employee'].map(role => <SelectItem key={role} value={role} className="text-xs">{role === 'all' ? 'All Roles' : USER_ROLE_LABELS[role]}</SelectItem>)}
+          </SelectContent>
+        </Select>
 
         {/* INVITE */}
 
@@ -576,6 +516,7 @@ export function UsersList({ leftColumn, rightColumn }) {
             {/* BODY */}
 
             <tbody className="divide-y divide-slate-100">
+              {isLoading && <tr><td colSpan={8} className="p-6 text-center text-sm text-slate-500" role="status">Loading users...</td></tr>}
               {filtered.map((member) => {
                 const RoleIcon =
                   ROLE_ICONS[
@@ -774,162 +715,18 @@ export function UsersList({ leftColumn, rightColumn }) {
 
                     {isAdmin && (
                       <td className="px-3 py-1 text-center">
-                        <div className="relative inline-block">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setOpenMenuId(
-                                openMenuId ===
-                                  member.id
-                                  ? null
-                                  : member.id
-                              )
-                            }
-                            disabled={
-                              isCurrentUser ||
-                              isActioning
-                            }
-                            className="
-                              rounded-md
-                              p-1
-                              text-slate-400
-                              transition
-                              hover:bg-slate-100
-                              hover:text-muted-foreground
-                              disabled:cursor-not-allowed
-                              disabled:opacity-30
-                            "
-                          >
-                            <MoreHorizontal className="h-3.5 w-3.5" />
-                          </button>
-
-                          {/* DROPDOWN */}
-
-                          {openMenuId ===
-                            member.id && (
-                            <div
-                              className="
-                                absolute
-                                right-0
-                                top-7
-                                z-20
-                                w-40
-                                rounded-lg
-                                border
-                                border-border
-                                bg-card
-                                py-1
-                                text-left
-                                shadow-lg
-                              "
-                            >
-                              <p
-                                className="
-                                  px-3
-                                  py-1
-                                  text-[9px]
-                                  font-medium
-                                  text-slate-400
-                                "
-                              >
-                                Change Role
-                              </p>
-
-                              {[
-                                'employee',
-                                'manager',
-                                'admin',
-                              ].map(
-                                (role) => (
-                                  <button
-                                    key={role}
-                                    type="button"
-                                    onClick={() =>
-                                      handleRoleChange(
-                                        member.id,
-                                        role
-                                      )
-                                    }
-                                    disabled={
-                                      isActioning
-                                    }
-                                    className={cn(
-                                      `
-                                        flex
-                                        w-full
-                                        items-center
-                                        gap-1.5
-                                        px-3
-                                        py-1.5
-                                        text-[10px]
-                                        hover:bg-background
-                                        disabled:opacity-50
-                                      `,
-                                      member.role ===
-                                        role
-                                        ? 'font-medium text-primary'
-                                        : 'text-foreground'
-                                    )}
-                                  >
-                                    {member.role ===
-                                      role && (
-                                      <CheckCircle2 className="h-3 w-3" />
-                                    )}
-
-                                    <span
-                                      className={
-                                        member.role !==
-                                        role
-                                          ? 'ml-[18px]'
-                                          : ''
-                                      }
-                                    >
-                                      {
-                                        USER_ROLE_LABELS[
-                                          role
-                                        ]
-                                      }
-                                    </span>
-                                  </button>
-                                )
-                              )}
-
-                              <div className="my-1 border-t border-slate-100" />
-
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleDeactivate(
-                                    member.id
-                                  )
-                                }
-                                disabled={
-                                  isActioning
-                                }
-                                className={cn(
-                                  `
-                                    w-full
-                                    px-3
-                                    py-1.5
-                                    text-left
-                                    text-[10px]
-                                    hover:bg-background
-                                    disabled:opacity-50
-                                  `,
-                                  member.status ===
-                                    'active'
-                                    ? 'text-red-500'
-                                    : 'text-green-600'
-                                )}
-                              >
-                                {member.status ===
-                                'active'
-                                  ? 'Deactivate User'
-                                  : 'Activate User'}
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                        <DropdownMenu open={openMenuId === member.id} onOpenChange={open => setOpenMenuId(open ? member.id : null)}>
+                          <DropdownMenuTrigger asChild>
+                            <button type="button" aria-label={`Actions for ${member.name || member.email}`} disabled={isCurrentUser || isActioning} className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-30"><MoreHorizontal className="h-3.5 w-3.5" /></button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-44">
+                            <DropdownMenuLabel className="text-[11px] text-slate-500">Change Role</DropdownMenuLabel>
+                            {['employee', 'manager', 'admin'].map(role => <DropdownMenuItem key={role} disabled={isActioning || member.role === role} onSelect={() => handleRoleChange(member.id, role)} className="text-xs">{USER_ROLE_LABELS[role]}{member.role === role && <CheckCircle2 className="ml-auto h-3 w-3 text-primary" />}</DropdownMenuItem>)}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem disabled={isActioning} onSelect={() => handleDeactivate(member.id)} className={`text-xs ${member.status === 'active' ? 'text-red-600' : 'text-green-600'}`}>{member.status === 'active' ? 'Deactivate User' : 'Activate User'}</DropdownMenuItem>
+                            {member.role === 'employee' && <><DropdownMenuSeparator /><DropdownMenuItem disabled={isActioning} onSelect={() => handleDeleteEmployee(member)} className="text-xs text-red-600"><Trash2 className="h-3.5 w-3.5" />Delete Employee</DropdownMenuItem></>}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     )}
                   </tr>
@@ -942,7 +739,7 @@ export function UsersList({ leftColumn, rightColumn }) {
               EMPTY STATE
           ================================================== */}
 
-          {!isLoading &&
+          {!isLoading && !loadError &&
             filtered.length === 0 && (
               <div className="py-8 text-center">
                 <div
@@ -974,7 +771,7 @@ export function UsersList({ leftColumn, rightColumn }) {
       </div>
 
         </div>
-        <aside className="users-right">{rightColumn}</aside>
+        <aside key={`right-${sidebarVersion}`} className="users-right">{rightColumn}</aside>
       </div>
 
       {/* ===================================================
@@ -993,18 +790,6 @@ export function UsersList({ leftColumn, rightColumn }) {
         />
       )}
 
-      {/* ===================================================
-          OUTSIDE MENU CLOSE
-      ==================================================== */}
-
-      {openMenuId && (
-        <div
-          className="fixed inset-0 z-10"
-          onClick={() =>
-            setOpenMenuId(null)
-          }
-        />
-      )}
     </div>
   )
 }
