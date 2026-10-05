@@ -11,48 +11,54 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 
-const MOCK_ACTIONS = [
-  {
-    id: 'attendance',
-    title: 'Attendance',
-    summary: '112 present ? 3 late',
-    details: [
-      ['Present today', '112 employees'],
-      ['Late arrivals', '3 employees'],
-      ['Attendance rate', '87.5%'],
-    ],
-  },
-  {
-    id: 'leave',
-    title: 'Leave Management',
-    summary: '9 employees on leave',
-    details: [
-      ['Planned leave', '3 employees'],
-      ['Unplanned leave', '6 employees'],
-      ['Pending requests', '3 requests'],
-    ],
-  },
-  {
-    id: 'resumes',
-    title: 'Resume Folder',
-    summary: '36 candidate resumes',
-    details: [
-      ['Resume records', '36'],
-      ['Access', 'Admin / HR workspace preview'],
-      ['Files', 'Sample counts only; no files uploaded'],
-    ],
-  },
-  {
-    id: 'interviews',
-    title: 'Interviews',
-    summary: '5 scheduled today',
-    details: [
-      ['Scheduled today', '5 interviews'],
-      ['Selected candidates', '4'],
-      ['Candidates on hold', '3'],
-    ],
-  },
-]
+// Built from the /api/people/dashboard payload. Resumes have no backend yet
+// (Phase 2 of the People plan), so that tile says so rather than show numbers.
+function buildActions(d) {
+  if (!d) return []
+  const { attendance, leave, recruitment, employees } = d
+  const p = recruitment.pipeline
+  return [
+    {
+      id: 'attendance',
+      title: 'Attendance',
+      summary: `${attendance.presentToday} present today`,
+      details: [
+        ['Present today', `${attendance.presentToday} of ${employees.total} employees`],
+        ['Attendance rate', `${attendance.attendancePercent}%`],
+        ['Source', 'Time logs / check-ins for today'],
+      ],
+    },
+    {
+      id: 'leave',
+      title: 'Leave Management',
+      summary: `${leave.onLeaveToday} employee${leave.onLeaveToday === 1 ? '' : 's'} on leave`,
+      details: [
+        ['Planned leave', `${leave.planned} employees`],
+        ['Unplanned leave', `${leave.unplanned} employees`],
+        ['Pending requests', `${leave.pending} requests`],
+      ],
+    },
+    {
+      id: 'resumes',
+      title: 'Resume Folder',
+      summary: 'Coming soon',
+      details: [
+        ['Status', 'Resume uploads are planned for the next HR phase'],
+      ],
+    },
+    {
+      id: 'interviews',
+      title: 'Interviews',
+      summary: `${recruitment.interviewsToday} today`,
+      details: [
+        ['Interviews today', `${recruitment.interviewsToday}`],
+        ['Selected candidates', `${p.selected}`],
+        ['Candidates on hold', `${p.hold}`],
+        ['Not selected', `${p.rejected}`],
+      ],
+    },
+  ]
+}
 
 const ACTION_ICONS = {
   attendance: CalendarCheck,
@@ -61,8 +67,10 @@ const ACTION_ICONS = {
   interviews: MessagesSquare,
 }
 
-// Local previews only. No navigation, uploads or API requests.
-export function HRQuickActions({ actions = MOCK_ACTIONS }) {
+// `dashboard` is the payload HrDashboard loaded; null while loading.
+export function HRQuickActions({ dashboard = null }) {
+  const actions = buildActions(dashboard)
+
   return (
     <Card asChild layout="custom">
     <section
@@ -95,7 +103,7 @@ export function HRQuickActions({ actions = MOCK_ACTIONS }) {
               <DialogContent className="max-h-[85dvh] overflow-y-auto rounded-2xl sm:max-w-lg">
                 <DialogHeader>
                   <DialogTitle>{action.title}</DialogTitle>
-                  <DialogDescription>{action.summary} ? Mock data preview</DialogDescription>
+                  <DialogDescription>{action.summary}</DialogDescription>
                 </DialogHeader>
                 <dl className="divide-y divide-slate-100">
                   {(action.details ?? []).map(([label, value]) => (
@@ -112,7 +120,7 @@ export function HRQuickActions({ actions = MOCK_ACTIONS }) {
       </div>
 
       {actions.length === 0 && (
-        <p className="py-4 text-xs text-slate-500">No quick actions available.</p>
+        <p className="py-4 text-xs text-slate-500">{dashboard ? 'No quick actions available.' : 'Loading…'}</p>
       )}
     </section>
     </Card>

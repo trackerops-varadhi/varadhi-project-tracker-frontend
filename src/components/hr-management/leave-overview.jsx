@@ -1,7 +1,9 @@
 import { Card } from '@/components/ui/card'
 import { CalendarDays } from 'lucide-react'
 
-export default function LeaveOverview({ planned = 3, unplanned = 6, pending = 3 }) {
+// Today's approved leave from the workforce module. Planned = applied for
+// before the leave began; raised on the day or later = unplanned.
+export default function LeaveOverview({ planned = 0, unplanned = 0, pending = 0 }) {
   const total = planned + unplanned
   const categories = [
     { label: 'Planned', count: planned, color: 'bg-violet-500' },
