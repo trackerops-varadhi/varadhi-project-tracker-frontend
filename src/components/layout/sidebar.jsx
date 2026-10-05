@@ -24,6 +24,7 @@ import {
   CalendarDays,
   Clock3,
   CalendarCheck2,
+  Bug,
 } from 'lucide-react'
 
 import { useState } from 'react'
@@ -54,6 +55,8 @@ const ICON_MAP = {
   MessageSquare,
   CalendarDays,
   Clock3,
+  // Module 8: Bugs Finder.
+  Bug,
 }
 
 export function Sidebar({

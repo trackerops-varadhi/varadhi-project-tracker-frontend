@@ -5,6 +5,7 @@ import {
   AtSign,
   Award,
   Bell,
+  Bug,
   Calendar,
   CalendarSync,
   CheckCircle2,
@@ -17,6 +18,7 @@ import {
   FolderOpen,
   MessageSquare,
   Pencil,
+  RotateCcw,
   ShieldAlert,
   Trash2,
   UserMinus,
@@ -89,6 +91,19 @@ const TYPE_META = {
   calendar_sync_failed:       { icon: CalendarSync,  label: 'Calendar', className: 'bg-amber-50 text-amber-600' },
   calendar_conflict_detected: { icon: ArrowRightLeft, label: 'Calendar', className: 'bg-amber-50 text-amber-600' },
   teams_webhook_disabled:     { icon: MessageSquare, label: 'Teams',    className: 'bg-amber-50 text-amber-600' },
+
+  // ── Bugs Finder (Module 8) ─────────────────────────────────────
+  // The two SLA types are red: a missed or nearly-missed commitment is a real
+  // failure, unlike the amber integration warnings above.
+  bug_assigned:          { icon: Bug,            label: 'Bug',          className: 'bg-red-50 text-red-600' },
+  bug_reassigned:        { icon: ArrowRightLeft, label: 'Bug',          className: 'bg-red-50 text-red-600' },
+  bug_status_changed:    { icon: CircleDot,      label: 'Bug status',   className: 'bg-blue-50 text-blue-600' },
+  bug_comment:           { icon: MessageSquare,  label: 'Bug comment',  className: 'bg-slate-100 text-slate-600' },
+  bug_reopened:          { icon: RotateCcw,      label: 'Reopened',     className: 'bg-red-50 text-red-600' },
+  bug_closed:            { icon: CheckCircle2,   label: 'Bug closed',   className: 'bg-emerald-50 text-emerald-600' },
+  bug_sla_at_risk:       { icon: Clock,          label: 'SLA at risk',  className: 'bg-amber-50 text-amber-600' },
+  bug_sla_breached:      { icon: ShieldAlert,    label: 'SLA breached', className: 'bg-red-50 text-red-600' },
+  bug_critical_reported: { icon: AlertOctagon,   label: 'Critical bug', className: 'bg-red-50 text-red-600' },
 }
 
 const FALLBACK = { icon: Bell, label: 'Notification', className: 'bg-slate-100 text-slate-600' }

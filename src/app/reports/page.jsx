@@ -10,6 +10,7 @@ import { TaskCompletionChart } from '@/components/reports/task-completion-chart'
 import { ResourceUtilizationCard } from '@/components/reports/resource-utilization-card'
 import { RiskAnalysisCard } from '@/components/reports/risk-analysis-card'
 import { BusinessIntelligenceCard } from '@/components/reports/business-intelligence-card'
+import { DefectMetricsCard } from '@/components/reports/defect-metrics-card'
 export const metadata = {
   title: 'Reports',
 }
@@ -50,6 +51,12 @@ export default function ReportsPage() {
 
 <div className="grid gap-5">
   <BusinessIntelligenceCard />
+</div>
+
+{/* Module 8: Bugs Finder quality metrics — SLA compliance, resolution and
+    response times, reopen rate, and defect breakdowns. */}
+<div className="grid gap-5">
+  <DefectMetricsCard />
 </div>
 
 

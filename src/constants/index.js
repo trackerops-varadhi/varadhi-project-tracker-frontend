@@ -83,6 +83,11 @@ export const NAV_ITEMS = [
   { label: 'Projects',   href: '/projects',   icon: 'FolderOpen',      roles: ['admin', 'manager', 'employee'] },
   { label: 'Tasks',      href: '/tasks',       icon: 'ListChecks',      roles: ['admin', 'manager', 'employee'] },
   { label: 'Kanban',     href: '/kanban',      icon: 'LayoutKanban',    roles: ['admin', 'manager', 'employee'] },
+  // Module 8: Bugs Finder. Every role — an employee who finds a defect needs to
+  // be able to report it, and a developer needs to work the bugs assigned to
+  // them. Row-level scoping (employees see only bugs they reported or own) is
+  // enforced by the backend, not by hiding the nav entry.
+  { label: 'Bugs',       href: '/bugs',        icon: 'Bug',             roles: ['admin', 'manager', 'employee'] },
   // Module 4. Every role: a calendar connection is personal, so an employee
   // syncing their own deadlines needs this as much as a manager does.
   { label: 'Calendar',   href: '/calendar',    icon: 'CalendarSync',    roles: ['admin', 'manager', 'employee'] },

@@ -2,7 +2,7 @@
 
 import { StatCard as StatCard } from '@/components/shared/stat-card'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, use, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -16,6 +16,7 @@ import { useAuthStore } from '@/store/auth.store'
 import { EditProjectModal } from '@/components/projects/edit-project-modal'
 import { AddProjectMember } from '@/components/projects/add-project-member'
 import { StatusBadge, PriorityBadge, TypeBadge } from '@/components/tasks/task-badge'
+import { BugsList } from '@/components/bugs/bugs-list'
 import {
   PROJECT_STATUS_COLORS, PROJECT_STATUS_LABELS,
   TASK_STATUS_LABELS
@@ -70,6 +71,9 @@ export default function ProjectDetailPage({ params }) {
     searchParams.get('edit') === 'true'
   )
   const [activeTab, setActiveTab] = useState('overview')
+  // Reported by the embedded BugsList once it has a server count. Null until
+  // then, so the tab shows no badge rather than a misleading 0.
+  const [bugCount, setBugCount] = useState(null)
 
   const isAdmin = user?.role === 'admin'
   const isManager = user?.role === 'manager'
@@ -339,7 +343,7 @@ export default function ProjectDetailPage({ params }) {
 
     {/* Tabs Header */}
     <div className="flex gap-1 border-b border-border bg-card px-4 pt-2 rounded-xl border">
-      {['overview', 'tasks', 'members'].map((tab) => (
+      {['overview', 'tasks', 'bugs', 'members'].map((tab) => (
         <button
           key={tab}
           onClick={() => setActiveTab(tab)}
@@ -354,6 +358,11 @@ export default function ProjectDetailPage({ params }) {
           {tab === 'tasks' && (
             <span className="ml-1.5 text-xs bg-slate-100 text-muted-foreground px-1.5 py-0.5 rounded-full">
               {tasks.length}
+            </span>
+          )}
+          {tab === 'bugs' && bugCount !== null && (
+            <span className="ml-1.5 text-xs bg-slate-100 text-muted-foreground px-1.5 py-0.5 rounded-full">
+              {bugCount}
             </span>
           )}
           {tab === 'members' && (
@@ -535,6 +544,16 @@ export default function ProjectDetailPage({ params }) {
           </div>
         )}
       </div>
+    )}
+
+    {/* ── Tab: Bugs (Module 8) ── */}
+    {/* Mounted only while the tab is open so the project page does not fetch
+        bugs nobody asked for. BugsList pins itself to this project and pages
+        server-side, exactly as it does on /bugs. */}
+    {activeTab === 'bugs' && (
+      <Suspense fallback={null}>
+        <BugsList projectId={id} embedded onCountChange={setBugCount} />
+      </Suspense>
     )}
 
     {/* ── Tab: Members ── */}
