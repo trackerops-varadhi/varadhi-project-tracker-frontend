@@ -18,6 +18,7 @@ import {
   Clock,
   XCircle,
   Trash2,
+  Contact,
 } from 'lucide-react'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -48,6 +49,7 @@ const ROLE_ICONS = {
   admin: ShieldCheck,
   manager: Shield,
   employee: User,
+  hr: Contact,
 }
 
 /* =========================================================
@@ -417,7 +419,7 @@ export function UsersList({ leftColumn, rightColumn }) {
             <SelectValue placeholder="All Roles" />
           </SelectTrigger>
           <SelectContent align="end">
-            {['all', 'admin', 'manager', 'employee'].map(role => <SelectItem key={role} value={role} className="text-xs">{role === 'all' ? 'All Roles' : USER_ROLE_LABELS[role]}</SelectItem>)}
+            {['all', 'admin', 'manager', 'hr', 'employee'].map(role => <SelectItem key={role} value={role} className="text-xs">{role === 'all' ? 'All Roles' : USER_ROLE_LABELS[role]}</SelectItem>)}
           </SelectContent>
         </Select>
 
@@ -721,7 +723,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-44">
                             <DropdownMenuLabel className="text-[11px] text-slate-500">Change Role</DropdownMenuLabel>
-                            {['employee', 'manager', 'admin'].map(role => <DropdownMenuItem key={role} disabled={isActioning || member.role === role} onSelect={() => handleRoleChange(member.id, role)} className="text-xs">{USER_ROLE_LABELS[role]}{member.role === role && <CheckCircle2 className="ml-auto h-3 w-3 text-primary" />}</DropdownMenuItem>)}
+                            {['employee', 'hr', 'manager', 'admin'].map(role => <DropdownMenuItem key={role} disabled={isActioning || member.role === role} onSelect={() => handleRoleChange(member.id, role)} className="text-xs">{USER_ROLE_LABELS[role]}{member.role === role && <CheckCircle2 className="ml-auto h-3 w-3 text-primary" />}</DropdownMenuItem>)}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem disabled={isActioning} onSelect={() => handleDeactivate(member.id)} className={`text-xs ${member.status === 'active' ? 'text-red-600' : 'text-green-600'}`}>{member.status === 'active' ? 'Deactivate User' : 'Activate User'}</DropdownMenuItem>
                             {member.role === 'employee' && <><DropdownMenuSeparator /><DropdownMenuItem disabled={isActioning} onSelect={() => handleDeleteEmployee(member)} className="text-xs text-red-600"><Trash2 className="h-3.5 w-3.5" />Delete Employee</DropdownMenuItem></>}

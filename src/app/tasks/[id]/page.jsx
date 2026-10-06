@@ -16,8 +16,7 @@ import { tasksApi } from '@/lib/api/tasks.api'
 import { usersApi } from '@/lib/api/users.api'
 import {
   TASK_STATUS_COLORS, TASK_STATUS_LABELS,
-  TASK_PRIORITY_COLORS, TASK_PRIORITY_LABELS,
-} from '@/constants'
+  TASK_PRIORITY_COLORS, TASK_PRIORITY_LABELS, isElevatedRole } from '@/constants'
 import { TaskComments } from '@/components/tasks/task-comments'
 import { formatDate, getInitials, getAvatarColor, cn } from '@/utils'
 
@@ -47,7 +46,8 @@ export default function TaskDetailsPage() {
 
   const canManageTask =
   user?.role === 'admin' || user?.role === 'manager'
-  const isEmployee = user?.role?.toLowerCase() === 'employee'
+  // Allow-list (Module 9), matching the backend's isRestricted.
+  const isEmployee = !isElevatedRole(user?.role)
 
   const [task, setTask] = useState(null)
   const [isLoading, setIsLoading] = useState(true)

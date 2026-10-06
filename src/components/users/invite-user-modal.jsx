@@ -136,6 +136,7 @@ export function InviteUserModal({ onClose, onSuccess }) {
             >
               <option value="employee">Employee</option>
               <option value="manager">Manager</option>
+              <option value="hr">HR</option>
               <option value="admin">Admin</option>
             </select>
           </div>
@@ -153,6 +154,10 @@ export function InviteUserModal({ onClose, onSuccess }) {
               {
                 role: 'Manager',
                 desc: 'Create projects, assign tasks, manage team members',
+              },
+              {
+                role: 'HR',
+                desc: 'Employee records, attrition, recruitment; sees all leave and time',
               },
               {
                 role: 'Admin',

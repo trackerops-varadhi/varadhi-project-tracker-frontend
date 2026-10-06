@@ -1,5 +1,6 @@
 'use client'
 
+import { isElevatedRole } from '@/constants'
 import { StatCard } from '@/components/shared/stat-card'
 
 import { Table } from '@/components/ui/table'
@@ -32,7 +33,8 @@ import { foldersApi } from '@/lib/api/folders.api'
 
 export function DocumentsList() {
   const { user } = useAuthStore()
-  const isEmployee = user?.role?.toLowerCase() === 'employee'
+  // Allow-list (Module 9): hr may not move/delete documents.
+  const isEmployee = !isElevatedRole(user?.role)
   const canManage = !isEmployee
 
   const [search, setSearch] = useState('')

@@ -4,7 +4,8 @@ import { StatCard as StatCard } from '@/components/shared/stat-card'
 
 import { Table } from '@/components/ui/table'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import {
 
@@ -21,8 +22,42 @@ import {
 } from 'lucide-react'
 
 import { timeManagementApi } from '@/lib/api/time-management.api'
+import { useAuthStore } from '@/store/auth.store'
+import { businessToday } from '@/lib/business-date'
+import { WorkStatusPanel } from '@/components/time/work-status-panel'
+import { TeamWorkStatus } from '@/components/time/team-work-status'
+import { AttendanceRegister } from '@/components/time/attendance-register'
 
+// Module 9, Phase 3 tabs. Team views are admin/manager/hr — the backend
+// enforces the same list.
+const TABS = [
+  { key: 'time', label: 'My Time', roles: null },
+  { key: 'work-status', label: 'Work Status', roles: null },
+  { key: 'team-status', label: 'Team Status', roles: ['admin', 'manager', 'hr'] },
+  { key: 'attendance', label: 'Attendance', roles: ['admin', 'manager', 'hr'] },
+]
+
+// useSearchParams needs a Suspense boundary or the production build fails.
 export default function TimeManagementPage() {
+  return (
+    <Suspense fallback={null}>
+      <TimeManagementContent />
+    </Suspense>
+  )
+}
+
+function TimeManagementContent() {
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const role = useAuthStore((st) => st.user?.role)
+  const visibleTabs = TABS.filter((t) => !t.roles || t.roles.includes(role))
+  const requestedTab = searchParams.get('tab')
+  const tab = visibleTabs.some((t) => t.key === requestedTab) ? requestedTab : 'time'
+  const selectTab = (key) => router.replace(key === 'time' ? '/time-management' : `/time-management?tab=${key}`)
+
+  // Office vs work-from-home for today's check-in (Module 9 attendance status).
+  const [workMode, setWorkMode] = useState('present')
 
   const [loading, setLoading] = useState(true)
 
@@ -180,10 +215,11 @@ export default function TimeManagementPage() {
 
   try {
 
-    const date = new Date().toISOString().split('T')[0]
+    const date = businessToday()
     await timeManagementApi.checkIn({
       date,
-      checkIn: now.toISOString()
+      checkIn: now.toISOString(),
+      attendanceStatus: workMode,
     })
     await loadData()
 
@@ -223,7 +259,7 @@ export default function TimeManagementPage() {
 
   try {
 
-    const date = new Date().toISOString().split('T')[0]
+    const date = businessToday()
     await timeManagementApi.checkOut({
       date,
       checkOut: now.toISOString()
@@ -556,6 +592,29 @@ export default function TimeManagementPage() {
 
       </div>
 
+      <div role="tablist" aria-label="Time management sections" className="flex flex-wrap gap-2">
+        {visibleTabs.map((t) => (
+          <button
+            key={t.key}
+            role="tab"
+            type="button"
+            aria-selected={tab === t.key}
+            onClick={() => selectTab(t.key)}
+            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+              tab === t.key ? 'border-primary bg-primary text-white' : 'bg-white text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'work-status' && <WorkStatusPanel />}
+      {tab === 'team-status' && <TeamWorkStatus />}
+      {tab === 'attendance' && <AttendanceRegister />}
+
+      {tab === 'time' && (<>
+
 
 
       {/* ==========================================
@@ -635,6 +694,22 @@ export default function TimeManagementPage() {
             {/* LOGIN */}
 
             <div className="text-center">
+
+              <div className="mb-2 flex justify-center gap-1 text-xs" role="radiogroup" aria-label="Working from">
+                {[['present', 'Office'], ['wfh', 'WFH']].map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={workMode === value}
+                    disabled={!!checkIn}
+                    onClick={() => setWorkMode(value)}
+                    className={`rounded-full border px-3 py-1 ${workMode === value ? 'border-primary bg-primary/10 text-primary' : 'text-slate-500'}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
 
               <button
 
@@ -983,6 +1058,8 @@ export default function TimeManagementPage() {
         )}
 
       </div>
+
+      </>)}
 
     </div>
 

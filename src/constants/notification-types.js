@@ -5,10 +5,12 @@ import {
   AtSign,
   Award,
   Bell,
+  Briefcase,
   Bug,
   Calendar,
   CalendarSync,
   CheckCircle2,
+  ClipboardList,
   CircleDot,
   Clock,
   Eye,
@@ -22,6 +24,8 @@ import {
   ShieldAlert,
   Trash2,
   UserMinus,
+  UserCheck,
+  UserX,
   UserPlus,
   Users,
   XCircle,
@@ -104,6 +108,15 @@ const TYPE_META = {
   bug_sla_at_risk:       { icon: Clock,          label: 'SLA at risk',  className: 'bg-amber-50 text-amber-600' },
   bug_sla_breached:      { icon: ShieldAlert,    label: 'SLA breached', className: 'bg-red-50 text-red-600' },
   bug_critical_reported: { icon: AlertOctagon,   label: 'Critical bug', className: 'bg-red-50 text-red-600' },
+
+  // ── People & Workforce (Module 9) ──────────────────────────────
+  resignation_recorded:        { icon: UserX,         label: 'Exit',          className: 'bg-rose-50 text-rose-600' },
+  employee_profile_incomplete: { icon: UserCheck,     label: 'Profile',       className: 'bg-slate-100 text-slate-600' },
+  interview_scheduled:         { icon: Briefcase,     label: 'Interview',     className: 'bg-violet-50 text-violet-600' },
+  interview_feedback_pending:  { icon: Briefcase,     label: 'Interview',     className: 'bg-amber-50 text-amber-600' },
+  candidate_status_changed:    { icon: Users,         label: 'Candidate',     className: 'bg-indigo-50 text-indigo-600' },
+  work_status_missing:         { icon: ClipboardList, label: 'Work status',   className: 'bg-amber-50 text-amber-600' },
+  leave_late_notice:           { icon: Calendar,      label: 'Leave notice',  className: 'bg-amber-50 text-amber-600' },
 }
 
 const FALLBACK = { icon: Bell, label: 'Notification', className: 'bg-slate-100 text-slate-600' }

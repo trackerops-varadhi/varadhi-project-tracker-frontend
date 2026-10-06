@@ -65,21 +65,31 @@ export const USER_ROLE_LABELS = {
   admin: 'Admin',
   manager: 'Manager',
   employee: 'Employee',
+  hr: 'HR',
 }
 
 export const USER_ROLE_COLORS = {
   admin: 'bg-violet-100 text-violet-700',
   manager: 'bg-blue-100 text-blue-700',
   employee: 'bg-slate-100 text-foreground',
+  hr: 'bg-pink-100 text-pink-700',
 }
+
+// Module 9. Roles that see everyone's leave and time; approving leave stays
+// admin/manager. Presentation only — the backend's allow-lists decide.
+export const ELEVATED_ROLES = ['admin', 'manager']
+export const isElevatedRole = (role) => ELEVATED_ROLES.includes(String(role || '').toLowerCase())
 
 // ─── Navigation ────────────────────────────────────────────────────────────────
 export const NAV_ITEMS = [
-  { label: 'Dashboard',  href: '/dashboard',  icon: 'LayoutDashboard', roles: ['admin', 'manager', 'employee'] },
+  // 'hr' (Module 9) keeps Dashboard, Notifications, Leave, Time, Settings and
+  // the People pages; Users and Reports stay hidden from it
+  // (docs/Module-9-People-Plan.md §5.3). Nav visibility is UX, never a control.
+  { label: 'Dashboard',  href: '/dashboard',  icon: 'LayoutDashboard', roles: ['admin', 'manager', 'employee', 'hr'] },
   // hidden: reachable only via the bell dropdown's "View all notifications" —
   // kept in NAV_ITEMS (not deleted) so Topbar's title lookup still resolves
   // 'Notifications' when this route is open; sidebar filters `hidden` out.
-  { label: 'Notifications', href: '/notifications', icon: 'Bell',      roles: ['admin', 'manager', 'employee'], hidden: true },
+  { label: 'Notifications', href: '/notifications', icon: 'Bell',      roles: ['admin', 'manager', 'employee', 'hr'], hidden: true },
   { label: 'Projects',   href: '/projects',   icon: 'FolderOpen',      roles: ['admin', 'manager', 'employee'] },
   { label: 'Tasks',      href: '/tasks',       icon: 'ListChecks',      roles: ['admin', 'manager', 'employee'] },
   { label: 'Kanban',     href: '/kanban',      icon: 'LayoutKanban',    roles: ['admin', 'manager', 'employee'] },
@@ -92,18 +102,25 @@ export const NAV_ITEMS = [
   // syncing their own deadlines needs this as much as a manager does.
   { label: 'Calendar',   href: '/calendar',    icon: 'CalendarSync',    roles: ['admin', 'manager', 'employee'] },
   { label: 'Documents',  href: '/documents',   icon: 'Files',           roles: ['admin', 'manager', 'employee'] },
-  // Module 9 (People). Admin/manager only, matching restrictTo on /api/people —
-  // exit reasons and interview outcomes are HR records, not team information.
-  { label: 'HR Management', href: '/hr-management', icon: 'Users', roles: ['admin', 'manager'] },
-  { label: 'Leave',      href: '/leave-management', icon: 'CalendarDays', roles: ['admin', 'manager', 'employee'] },
-  { label: 'Time',       href: '/time-management', icon: 'Clock3', roles: ['admin', 'manager', 'employee'] },
+  // Module 9 (People). The HR hub: dashboard figures for admin/manager/hr.
+  { label: 'HR Management', href: '/hr-management', icon: 'Users', roles: ['admin', 'manager', 'hr'] },
+  // Employee master + attrition (PII) — admin/hr, matching /api/people writes.
+  { label: 'People',     href: '/people',      icon: 'Contact',         roles: ['admin', 'hr'] },
+  { label: 'Recruitment', href: '/recruitment', icon: 'UserSearch',     roles: ['admin', 'hr'] },
+  // Team list — every role, PII-free. /directory, not /team: /teams is the
+  // Microsoft Teams webhook screen.
+  { label: 'Team Directory', href: '/directory', icon: 'Network',       roles: ['admin', 'manager', 'employee', 'hr'] },
+  // Any role can be an interviewer; reachable from notifications and the hub.
+  { label: 'My Interviews', href: '/my-interviews', icon: 'MessagesSquare', roles: ['admin', 'manager', 'employee', 'hr'], hidden: true },
+  { label: 'Leave',      href: '/leave-management', icon: 'CalendarDays', roles: ['admin', 'manager', 'employee', 'hr'] },
+  { label: 'Time',       href: '/time-management', icon: 'Clock3', roles: ['admin', 'manager', 'employee', 'hr'] },
   { label: 'Reports',    href: '/reports',     icon: 'BarChart3',       roles: ['admin', 'manager'] },
   // Module 5. Admin/manager only, matching the backend's restrictTo on
   // /api/teams — a webhook posts a whole project's activity to a channel, so
   // configuring one is an administrative act, not a personal preference.
   { label: 'Teams',      href: '/teams',       icon: 'MessageSquare',   roles: ['admin', 'manager'] },
   { label: 'Users',      href: '/users',       icon: 'Users',           roles: ['admin'] },
-  { label: 'Settings',   href: '/settings',    icon: 'Settings',        roles: ['admin', 'manager', 'employee'] },
+  { label: 'Settings',   href: '/settings',    icon: 'Settings',        roles: ['admin', 'manager', 'employee', 'hr'] },
 ]
 
 // ─── Kanban Columns ────────────────────────────────────────────────────────────

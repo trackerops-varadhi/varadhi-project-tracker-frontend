@@ -17,7 +17,7 @@ import { HrModules } from './hr-modules'
 
 // Matches the backend's restrictTo('admin','manager') on /api/people. The
 // backend is the real boundary; this only avoids rendering a page of 403s.
-const HR_ROLES = ['admin', 'manager']
+const HR_ROLES = ['admin', 'manager', 'hr']
 
 const errorMessage = (err, fallback) => err?.response?.data?.message || fallback
 
@@ -51,15 +51,18 @@ export function HrDashboard() {
 
   // Retry button, and the workspace modals after a save. Returns the promise so
   // a modal can wait for fresh figures before it re-enables its form.
-  const load = useCallback(
-    () => Promise.all([peopleApi.getDashboard(), peopleApi.getEmployees()]).then(apply, fail),
-    [apply, fail]
-  )
+  // The overview shows the most recent joiners; the full list is /people.
+  const fetchAll = () => Promise.all([
+    peopleApi.getDashboard(),
+    peopleApi.getEmployees({ status: 'all', sort: 'joined', order: 'desc', limit: 8 }).then((d) => d.items),
+  ])
+
+  const load = useCallback(() => fetchAll().then(apply, fail), [apply, fail])
 
   useEffect(() => {
     if (!canView) return undefined
     let active = true
-    Promise.all([peopleApi.getDashboard(), peopleApi.getEmployees()]).then(
+    fetchAll().then(
       (result) => { if (active) apply(result) },
       (err) => { if (active) fail(err) }
     )
@@ -72,7 +75,7 @@ export function HrDashboard() {
     return (
       <div className="flex flex-col items-center gap-2 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
         <ShieldAlert aria-hidden="true" className="h-6 w-6 text-slate-400" />
-        <p className="text-sm font-semibold text-slate-800">HR Management is available to admins and managers.</p>
+        <p className="text-sm font-semibold text-slate-800">HR Management is available to admins, managers and HR.</p>
       </div>
     )
   }
@@ -112,7 +115,7 @@ export function HrDashboard() {
       <HRStats stats={stats} loading={loading} />
 
       <div className="grid min-w-0 grid-cols-1 items-stretch gap-3 md:grid-cols-2">
-        <EmployeeOverview employees={employees} loading={loading} />
+        <EmployeeOverview employees={employees} loading={loading} canOpenProfile={['admin', 'hr'].includes(user?.role)} />
         <HRQuickActions dashboard={dashboard} />
       </div>
 
@@ -130,7 +133,7 @@ export function HrDashboard() {
         <RecruitmentPipeline stages={stages} />
       </div>
 
-      <HrModules employees={employees} onChanged={load} />
+      <HrModules role={user?.role} />
     </>
   )
 }

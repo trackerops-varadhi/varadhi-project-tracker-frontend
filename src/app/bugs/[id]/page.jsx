@@ -1,5 +1,6 @@
 'use client'
 
+import { isElevatedRole } from '@/constants'
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -66,7 +67,9 @@ export default function BugDetailPage() {
   const searchParams = useSearchParams()
   const { user } = useAuthStore()
 
-  const isEmployee = String(user?.role || '').toLowerCase() === 'employee'
+  // Allow-list (Module 9): any role other than admin/manager — hr included —
+  // gets the restricted view, matching the backend's isRestricted.
+  const isEmployee = !isElevatedRole(user?.role)
   const canManage = ['admin', 'manager'].includes(user?.role)
   const canDelete = user?.role === 'admin'
 

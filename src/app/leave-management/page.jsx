@@ -25,6 +25,8 @@ import {
 } from 'lucide-react'
 
 import { leaveManagementApi } from '@/lib/api/leave-management.api'
+import { LeavePolicyPanel } from '@/components/leave/leave-policy-panel'
+import { LEAVE_PLANNING_TYPES } from '@/constants/people'
 import { useAuthStore } from '@/store/auth.store'
 
 // The `type` values the backend stores in leave_requests.type. The column is
@@ -65,11 +67,17 @@ const normalizeStatus = (status) => {
   const normalized = status.toString().toLowerCase()
   if (normalized === 'approved') return 'Approved'
   if (normalized === 'rejected') return 'Rejected'
+  if (normalized === 'cancelled') return 'Cancelled'
   return 'Pending'
 }
 
 const mapLeaveRequest = (row) => ({
   id: row.id,
+  userId: row.userId,
+  // Module 9: planned vs unplanned, and planned-but-short-notice.
+  planningType: row.planningType || null,
+  isLateNotice: Boolean(row.isLateNotice),
+  approverName: row.approver?.name ?? null,
   employee: row.userName || 'Unknown',
   role: row.role || 'Team Member',
   leaveType: row.type ? row.type.replace(/_/g, ' ') : 'Leave',
@@ -123,9 +131,12 @@ export default function ManagerLeavePage() {
     fromDate: '',
     toDate: '',
     dayType: 'full_day',
+    planningType: '',
     reason: '',
   })
   const [applyErrors, setApplyErrors] = useState({})
+  // Bumped after any change so the balance/calendar panel refetches.
+  const [policyRefresh, setPolicyRefresh] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { user } = useAuthStore()
@@ -169,6 +180,7 @@ const isEmployee =
       fromDate: '',
       toDate: '',
       dayType: 'full_day',
+      planningType: '',
       reason: '',
     })
     setApplyErrors({})
@@ -262,6 +274,9 @@ const isEmployee =
         type: applyForm.leaveType,
         reason: applyForm.reason.trim(),
         dayType: applyForm.dayType,
+        // Omitted when untouched: the server picks planned for a future
+        // start and always forces unplanned for today or earlier.
+        ...(applyForm.planningType ? { planningType: applyForm.planningType } : {}),
       })
 
       // Close first so the list isn't re-rendering behind an open dialog,
@@ -269,6 +284,7 @@ const isEmployee =
       // every derived count (Team On Leave, monthly summary, type summary)
       // consistent with what the server actually stored.
       setShowApplyModal(false)
+      setPolicyRefresh((n) => n + 1)
       await loadRequests()
     } catch (error) {
       console.error('Failed to create leave request:', error)
@@ -279,6 +295,18 @@ const isEmployee =
       })
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  // Module 9: the owner withdraws a still-pending request.
+  const cancelRequest = async (request) => {
+    if (!window.confirm(`Cancel your ${request.leaveType} leave from ${request.fromDate}?`)) return
+    try {
+      await leaveManagementApi.cancel(request.id)
+      setPolicyRefresh((n) => n + 1)
+      await loadRequests()
+    } catch (error) {
+      window.alert(error?.response?.data?.message || 'Could not cancel the leave request.')
     }
   }
 
@@ -508,6 +536,8 @@ const isEmployee =
         return 'border-red-200 bg-red-50 text-red-700'
       case 'Pending':
         return 'border-yellow-200 bg-yellow-50 text-yellow-700'
+      case 'Cancelled':
+        return 'border-slate-200 bg-slate-100 text-slate-500 line-through'
       default:
         return 'border-slate-200 bg-slate-50 text-slate-600'
     }
@@ -620,6 +650,9 @@ const isEmployee =
           </div>
 
         </div>
+
+        {/* Module 9: own balance, who is away, and (admin/hr) entitlements. */}
+        <LeavePolicyPanel role={userRole} refreshKey={policyRefresh} />
 
         {/* =================================================
             STATISTICS
@@ -1021,6 +1054,19 @@ const isEmployee =
 
                       <td className="px-4 py-3 text-xs text-slate-500">
                         {request.dayType}
+                        {request.planningType && (
+                          <span
+                            className={`mt-1 block w-fit rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                              request.planningType === 'planned'
+                                ? 'bg-violet-50 text-violet-700'
+                                : 'bg-amber-50 text-amber-700'
+                            }`}
+                            title={request.isLateNotice ? 'Planned with less than 7 days notice' : undefined}
+                          >
+                            {request.planningType === 'planned' ? 'Planned' : 'Unplanned'}
+                            {request.isLateNotice ? ' · short notice' : ''}
+                          </span>
+                        )}
                       </td>
 
                       {/* REASON */}
@@ -1109,6 +1155,19 @@ const isEmployee =
                               <X size={15} />
                             </button>
 
+                          )}
+
+                          {/* CANCEL — the requester, while still pending */}
+
+                          {request.status === 'Pending' && request.userId === user?.id && (
+                            <button
+                              onClick={() => cancelRequest(request)}
+                              title="Cancel my request"
+                              aria-label="Cancel my leave request"
+                              className="rounded-lg border border-slate-200 px-2 py-1.5 text-[11px] font-medium text-slate-600 transition hover:bg-slate-100"
+                            >
+                              Cancel
+                            </button>
                           )}
 
                           {/* MORE INFORMATION */}
@@ -1601,6 +1660,35 @@ const isEmployee =
                   Half Day applies to a single date.
                 </p>
               )}
+            </div>
+
+            {/* Planned / unplanned (Module 9) */}
+            <div>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                Planned or Unplanned
+              </span>
+              <div className="flex gap-3">
+                {LEAVE_PLANNING_TYPES.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => updateApplyField('planningType', applyForm.planningType === option.value ? '' : option.value)}
+                    disabled={isSubmitting}
+                    title={option.hint}
+                    className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
+                      applyForm.planningType === option.value
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'bg-white text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1 text-xs text-slate-400">
+                Leave it unselected to decide automatically. Leave starting today counts as unplanned;
+                planned leave needs 7 days&apos; notice or your manager is alerted.
+              </p>
             </div>
 
             {/* Reason */}

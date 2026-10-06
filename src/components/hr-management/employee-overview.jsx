@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Table } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
@@ -18,6 +19,7 @@ function toProfile(employee) {
 
   return {
     id: employee.id,
+    userId: employee.userId,
     name: employee.name ?? 'Unknown user',
     role: employee.designation,
     product: employee.product ?? '—',
@@ -44,7 +46,9 @@ function EmployeeStatus({ status }) {
 }
 
 // `employees` is the /api/people/employees list, loaded by HrDashboard.
-export function EmployeeOverview({ employees = [], loading = false }) {
+// admin/hr open the full record page; managers (no PII access) get the
+// summary dialog.
+export function EmployeeOverview({ employees = [], loading = false, canOpenProfile = false }) {
   const rows = employees.map(toProfile)
 
   return (
@@ -71,12 +75,16 @@ export function EmployeeOverview({ employees = [], loading = false }) {
                 <td className="px-2 py-1">{employee.product}</td>
                 <td className="px-2 py-1"><EmployeeStatus status={employee.status} /></td>
                 <td className="py-1 pl-2 text-right">
+                  {canOpenProfile ? (
+                    <Link href={`/people/${employee.userId}`} aria-label={`View ${employee.name}'s profile`} className="rounded text-xs font-semibold text-primary hover:text-violet-800">View</Link>
+                  ) : (
                   <Dialog>
                     <DialogTrigger asChild>
                       <button type="button" aria-label={`View ${employee.name}'s profile`} className="rounded text-xs font-semibold text-primary hover:text-violet-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">View</button>
                     </DialogTrigger>
                     <EmployeeProfile employee={employee} />
                   </Dialog>
+                  )}
                 </td>
               </tr>
             ))}
@@ -86,7 +94,7 @@ export function EmployeeOverview({ employees = [], loading = false }) {
             {!loading && rows.length === 0 && (
               <tr>
                 <td colSpan={5} className="py-6 text-center text-slate-500">
-                  No employees yet. Add them from HR Workspaces → Employee Details.
+                  No employees yet. Add them from People → Employee Directory.
                 </td>
               </tr>
             )}

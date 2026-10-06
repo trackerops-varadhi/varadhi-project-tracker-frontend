@@ -41,9 +41,10 @@ function buildActions(d) {
     {
       id: 'resumes',
       title: 'Resume Folder',
-      summary: 'Coming soon',
+      summary: 'Private resume vault',
       details: [
-        ['Status', 'Resume uploads are planned for the next HR phase'],
+        ['Where', 'Recruitment → Resume Folder'],
+        ['Access', 'Admin / HR only; links expire after a minute'],
       ],
     },
     {

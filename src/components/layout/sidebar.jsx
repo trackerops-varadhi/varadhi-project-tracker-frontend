@@ -25,6 +25,10 @@ import {
   Clock3,
   CalendarCheck2,
   Bug,
+  Contact,
+  Network,
+  UserSearch,
+  MessagesSquare,
 } from 'lucide-react'
 
 import { useState } from 'react'
@@ -57,6 +61,11 @@ const ICON_MAP = {
   Clock3,
   // Module 8: Bugs Finder.
   Bug,
+  // Module 9: People.
+  Contact,
+  Network,
+  UserSearch,
+  MessagesSquare,
 }
 
 export function Sidebar({
