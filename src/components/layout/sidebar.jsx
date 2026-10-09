@@ -176,7 +176,9 @@ export function Sidebar({
         </div>
 
         {!collapsed && (
-          <div>
+          /* min-w-0 so the wordmark ellipsises if the row is ever cramped,
+             rather than overflowing and pushing the collapse button out. */
+          <div className="min-w-0">
             <p className="text-base font-semibold leading-tight text-slate-800">
               Varadhi
             </p>

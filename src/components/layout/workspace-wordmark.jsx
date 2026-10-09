@@ -10,9 +10,13 @@
  * has settled, so it reads as the app introducing itself rather than as a
  * label that loaded wrong and corrected itself.
  *
- * Both lines are stacked in one 1rem-tall box (`text-xs` line height), so the
- * logo block never reflows mid-animation. The outgoing line is aria-hidden as
- * it leaves, so a screen reader is told the workspace once, not both names.
+ * Both lines occupy the same single grid cell, so the box is as wide and as
+ * tall as the longer of the two and the logo block cannot reflow mid-swap.
+ * Stacking them with `position: absolute` instead looks identical until you
+ * measure it: absolute children contribute no width, the box collapses to
+ * whatever its sibling ("Varadhi") happens to be, and both lines truncate to
+ * "Project ..." / "Admin ...". The outgoing line is aria-hidden as it leaves,
+ * so a screen reader is told the workspace once, not both names.
  *
  * A role with no workspace name keeps "Project Tracker" and never animates:
  * there is nothing to swap to, so the product name is the final state rather
@@ -27,11 +31,12 @@ import { cn } from '@/utils'
 const PRODUCT_NAME = 'Project Tracker'
 const SWAP_DELAY_MS = 3000
 
-// Same transition on both lines, so they cross over together instead of one
-// arriving before the other has left. motion-reduce drops the movement for
-// anyone who has asked the OS for less animation; the text still swaps.
+// Same cell, so they sit on top of each other; same transition, so they cross
+// over together instead of one arriving before the other has left.
+// motion-reduce drops the movement for anyone who has asked the OS for less
+// animation; the text still swaps.
 const LINE =
-  'absolute inset-x-0 top-0 block truncate transition-all duration-500 ease-out motion-reduce:transition-none'
+  'col-start-1 row-start-1 block truncate transition-all duration-500 ease-out motion-reduce:transition-none'
 
 export function WorkspaceWordmark({ role, className }) {
   const workspace = WORKSPACE_LABELS[String(role || '').toLowerCase()]
@@ -50,7 +55,7 @@ export function WorkspaceWordmark({ role, className }) {
   }, [workspace])
 
   return (
-    <span className={cn('relative block h-4 overflow-hidden', className)}>
+    <span className={cn('grid grid-cols-1 overflow-hidden', className)}>
       <span
         aria-hidden={showWorkspace ? 'true' : undefined}
         className={cn(LINE, showWorkspace ? '-translate-y-2 opacity-0' : 'translate-y-0 opacity-100')}
