@@ -180,7 +180,7 @@ export function BugFilters({
           ))}
         </select>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <label htmlFor="bug-date-from" className="text-xs text-muted-foreground">
             Reported
           </label>

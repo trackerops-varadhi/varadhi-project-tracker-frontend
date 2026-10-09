@@ -31,9 +31,9 @@ export function StatusBadge({ status }) {
           rounded-md
           px-1.5
           py-[1px]
-          text-[7px]
+          text-[10px]
           font-medium
-          leading-[9px]
+          leading-[13px]
         `,
         TASK_STATUS_COLORS[status]
       )}
@@ -64,9 +64,9 @@ export function PriorityBadge({ priority }) {
           rounded-md
           px-1.5
           py-[1px]
-          text-[7px]
+          text-[10px]
           font-medium
-          leading-[9px]
+          leading-[13px]
         `,
         TASK_PRIORITY_COLORS[priority]
       )}
@@ -97,9 +97,9 @@ export function TypeBadge({ type }) {
           rounded-md
           px-1.5
           py-[1px]
-          text-[7px]
+          text-[10px]
           font-medium
-          leading-[9px]
+          leading-[13px]
         `,
         TASK_TYPE_COLORS[type]
       )}

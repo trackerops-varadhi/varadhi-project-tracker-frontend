@@ -32,7 +32,7 @@ export function ProjectHealthRing({ total, overdue, loading = false, error = fal
       </svg>
       <div aria-hidden="true" className="absolute inset-0 flex flex-col items-center justify-center text-center">
         <p className="text-lg font-bold leading-5 tabular-nums text-slate-900">{ready ? `${percent}%` : '—'}</p>
-        <p className="mt-0.5 text-[9px] leading-3 text-slate-500">{ready ? 'On time' : error ? 'Unavailable' : 'Loading'}</p>
+        <p className="mt-0.5 text-[10px] leading-3 text-slate-500">{ready ? 'On time' : error ? 'Unavailable' : 'Loading'}</p>
       </div>
     </div>
   )

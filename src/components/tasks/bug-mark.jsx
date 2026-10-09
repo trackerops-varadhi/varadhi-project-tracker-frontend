@@ -25,7 +25,7 @@ export function BugMark({ bug, className }) {
     >
       <Bug aria-hidden="true" className="h-3 w-3 shrink-0" />
       <span className="truncate">{bug.key}</span>
-      <span className={cn('rounded px-1 text-[9px] capitalize', SEVERITY_CLASS[bug.severity])}>{bug.severity}</span>
+      <span className={cn('rounded px-1 text-[10px] capitalize', SEVERITY_CLASS[bug.severity])}>{bug.severity}</span>
     </span>
   )
 }

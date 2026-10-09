@@ -99,7 +99,7 @@ export function BugActivity({ activity = [], participants = [] }) {
                     {entry.actor ? (
                       <span className="inline-flex items-center gap-1.5 align-middle">
                         <span className={cn(
-                          'w-4 h-4 rounded-full inline-flex items-center justify-center text-white text-[9px] font-semibold',
+                          'w-4 h-4 rounded-full inline-flex items-center justify-center text-white text-[10px] font-semibold',
                           getAvatarColor(entry.actor.name)
                         )}>
                           {getInitials(entry.actor.name)}

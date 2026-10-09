@@ -12,6 +12,7 @@ import {
   ListChecks
 } from 'lucide-react'
 import { projectsApi } from '@/lib/api/projects.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { useAuthStore } from '@/store/auth.store'
 import { EditProjectModal } from '@/components/projects/edit-project-modal'
 import { AddProjectMember } from '@/components/projects/add-project-member'
@@ -44,7 +45,7 @@ function PageSkeleton() {
         <div className="h-4 w-full bg-slate-100 rounded mb-2" />
         <div className="h-4 w-2/3 bg-slate-100 rounded" />
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[1,2,3].map(i => (
           <div key={i} className="bg-white rounded-xl border border-slate-200 p-4">
             <div className="h-7 w-12 bg-slate-200 rounded mb-2" />
@@ -58,6 +59,7 @@ function PageSkeleton() {
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function ProjectDetailPage({ params }) {
+  const confirm = useConfirm()
   const { id } = use(params)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -116,7 +118,15 @@ export default function ProjectDetailPage({ params }) {
   }, [id])
 
   async function handleArchive() {
-    if (!confirm(`Archive "${project.name}"?`)) return
+    const ok = await confirm({
+      title: 'Archive this project?',
+      message: 'It moves out of the active lists. Its tasks and documents stay, and you can set it back to active later.',
+      subject: project.name,
+      tone: 'warning',
+      confirmLabel: 'Archive',
+      busyLabel: 'Archiving…',
+    })
+    if (!ok) return
     try {
       await projectsApi.archive(id)
       router.push('/projects')
@@ -126,7 +136,12 @@ export default function ProjectDetailPage({ params }) {
   }
 
   async function handleDelete() {
-    if (!confirm(`Permanently delete "${project.name}"? This cannot be undone.`)) return
+    const ok = await confirm({
+      title: 'Permanently delete this project?',
+      message: 'Its tasks, members, comments and documents are deleted with it. This cannot be undone — archive it instead if you only want it out of the way.',
+      subject: project.name,
+    })
+    if (!ok) return
     try {
       await projectsApi.delete(id)
       router.push('/projects')
@@ -577,7 +592,8 @@ export default function ProjectDetailPage({ params }) {
               <p className="text-sm font-medium text-muted-foreground">No members yet</p>
             </div>
           ) : (
-            <table className="w-full">
+            <div className="overflow-x-auto" role="region" aria-label="Project members" tabIndex={0}>
+            <table className="w-full min-w-[560px]">
               <thead>
                 <tr className="border-b border-slate-100 bg-background">
                   <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
@@ -636,7 +652,15 @@ export default function ProjectDetailPage({ params }) {
                           {member.id !== project.manager?.id && (
                             <button
                               onClick={async () => {
-                                if (!confirm(`Remove ${member.name} from this project?`)) return
+                                const ok = await confirm({
+                                  title: 'Remove this member?',
+                                  message: 'They lose access to the project. Tasks already assigned to them stay assigned, and you can add them back.',
+                                  subject: member.name,
+                                  tone: 'warning',
+                                  confirmLabel: 'Remove',
+                                  busyLabel: 'Removing…',
+                                })
+                                if (!ok) return
                                 try {
                                   await projectsApi.removeMember(project.id, member.id)
                                   fetchProject()
@@ -656,6 +680,7 @@ export default function ProjectDetailPage({ params }) {
                 })}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>
