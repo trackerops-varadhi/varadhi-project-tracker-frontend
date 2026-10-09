@@ -40,7 +40,7 @@ import { countForUser, clearForUser } from '@/lib/outbox'
 import { release as releaseReplayLock } from '@/lib/replay-lock'
 import { publishSessionEvent, SESSION_EVENTS } from '@/lib/session-channel'
 import { useOutboxStore } from '@/store/outbox.store'
-import { NAV_ITEMS, WORKSPACE_LABELS } from '@/constants'
+import { NAV_ITEMS, WORKSPACE_LABELS, navLabelFor } from '@/constants'
 import { getInitials, getAvatarColor, cn } from '@/utils'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 
@@ -86,9 +86,11 @@ export function Sidebar({
   const [pendingLogout, setPendingLogout] = useState(null)
   const mounted = useHasMounted()
 
-  const filteredNav = NAV_ITEMS.filter(
-    (item) => !item.hidden && item.roles.includes(user?.role || 'employee')
-  )
+  // Each role's own landing page reads simply "Dashboard" in their sidebar;
+  // only admin, who sees all three workspace homes, keeps the longer names.
+  const filteredNav = NAV_ITEMS
+    .filter((item) => !item.hidden && item.roles.includes(user?.role || 'employee'))
+    .map((item) => ({ ...item, label: navLabelFor(user?.role, item) }))
 
   async function handleLogout() {
     const uid = user?.id

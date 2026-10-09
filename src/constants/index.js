@@ -153,6 +153,21 @@ export const NAV_ITEMS = [
 ]
 
 /**
+ * What a role should SEE this entry called.
+ *
+ * A role's own landing page is just "Dashboard" to them — an HR user has one
+ * dashboard and calling it "HR Dashboard" in their own sidebar only invites
+ * the question of where the other one is. Admin is the exception: they see
+ * every workspace's home at once, so those need telling apart and keep their
+ * full names.
+ */
+export function navLabelFor(role, item) {
+  const r = String(role || '').toLowerCase()
+  if (r !== 'admin' && item?.href === homeFor(r)) return 'Dashboard'
+  return item?.label
+}
+
+/**
  * The nav entry that owns a path (longest matching href), or null for a path
  * no workspace claims (auth pages and the like).
  */

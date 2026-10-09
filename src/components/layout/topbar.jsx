@@ -80,7 +80,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
 import { useState } from 'react'
 import { useAuthStore } from '@/store/auth.store'
-import { NAV_ITEMS } from '@/constants'
+import { NAV_ITEMS, navLabelFor } from '@/constants'
 import { getInitials, getAvatarColor, cn } from '@/utils'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 import { NotificationBell } from './notification-bell'
@@ -109,7 +109,9 @@ export function Topbar({ menuButton }) {
     (item) =>
       pathname === item.href || pathname.startsWith(item.href + '/')
   )
-  const pageTitle = currentNav?.label || 'Dashboard'
+  // Renamed the same way the sidebar renames it, so the two never disagree
+  // about what the page the user is on is called.
+  const pageTitle = navLabelFor(user?.role, currentNav) || 'Dashboard'
 
   // Only trust client-only store values after mount. Before that, the server
   // and the first client render must agree, so we render neutral fallbacks.
