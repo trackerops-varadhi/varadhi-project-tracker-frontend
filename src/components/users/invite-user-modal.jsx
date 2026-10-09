@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { usersApi } from '@/lib/api/users.api'
+import { MODAL_SIZE } from '@/components/shared/modal-size'
 
 export function InviteUserModal({ onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -65,7 +66,7 @@ export function InviteUserModal({ onClose, onSuccess }) {
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-card rounded-2xl w-full max-w-md shadow-xl">
+      <div className={`bg-card rounded-2xl w-full ${MODAL_SIZE.compact} shadow-xl max-h-[90vh] overflow-y-auto`}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">

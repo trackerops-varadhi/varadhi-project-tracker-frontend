@@ -3,11 +3,12 @@
 import { X, Loader2 } from 'lucide-react'
 import { KeyboardModal } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { MODAL_SIZE } from '@/components/shared/modal-size'
 
 export function CreateModal({ title, onClose, onSubmit, isSubmitting, submitLabel, children }) {
   return (
     <KeyboardModal title={title} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={event => { if (event.target === event.currentTarget) onClose() }}>
-      <div className="create-modal-panel flex h-[84dvh] max-h-[min(720px,calc(100dvh-2rem))] w-full max-w-5xl min-w-0 flex-col overflow-hidden rounded-2xl bg-card shadow-xl">
+      <div className={`create-modal-panel flex h-[84dvh] max-h-[min(720px,calc(100dvh-2rem))] w-full ${MODAL_SIZE.composer} min-w-0 flex-col overflow-hidden rounded-2xl bg-card shadow-xl`}>
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">{title}</h2>
           <button type="button" onClick={onClose} aria-label={`Close ${title.toLowerCase()}`} className="rounded-lg p-1 text-slate-400 transition hover:bg-background hover:text-muted-foreground">

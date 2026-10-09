@@ -63,7 +63,6 @@ export function CandidateFormModal({ candidate = null, onClose, onSaved }) {
       subtitle="Candidate details · HR access"
       onClose={onClose}
       busy={saving}
-      size="max-w-2xl"
       footer={(
         <>
           <button type="button" className={secondaryButton} onClick={onClose} disabled={saving}>Cancel</button>

@@ -25,6 +25,8 @@ import {
 } from 'lucide-react'
 
 import { leaveManagementApi } from '@/lib/api/leave-management.api'
+import { MODAL_SIZE } from '@/components/shared/modal-size'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { LeavePolicyPanel } from '@/components/leave/leave-policy-panel'
 import { LEAVE_PLANNING_TYPES } from '@/constants/people'
 import { useAuthStore } from '@/store/auth.store'
@@ -101,6 +103,7 @@ const mapLeaveRequest = (row) => ({
 })
 
 export default function ManagerLeavePage() {
+  const confirm = useConfirm()
   /* =====================================================
      LEAVE REQUEST DATA
   ===================================================== */
@@ -300,7 +303,15 @@ const isEmployee =
 
   // Module 9: the owner withdraws a still-pending request.
   const cancelRequest = async (request) => {
-    if (!window.confirm(`Cancel your ${request.leaveType} leave from ${request.fromDate}?`)) return
+    const ok = await confirm({
+      title: 'Withdraw this leave request?',
+      message: 'Your manager no longer sees it for approval. You can apply again if you need to.',
+      subject: `${request.leaveType} leave from ${request.fromDate}`,
+      tone: 'warning',
+      confirmLabel: 'Withdraw',
+      busyLabel: 'Withdrawing…',
+    })
+    if (!ok) return
     try {
       await leaveManagementApi.cancel(request.id)
       setPolicyRefresh((n) => n + 1)
@@ -1250,7 +1261,7 @@ const isEmployee =
 
               {/* DETAILS */}
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
                 <Detail
                   label="Leave Type"
@@ -1531,6 +1542,7 @@ const isEmployee =
         <Modal
           title="Apply Leave"
           onClose={closeApplyModal}
+          size={MODAL_SIZE.form}
         >
 
           <form onSubmit={submitLeaveRequest} className="space-y-5">
@@ -1817,11 +1829,15 @@ function Modal({
   title,
   children,
   onClose,
+  // Defaults to the read-only panel width these details/reject dialogs have
+  // always had; Apply Leave passes MODAL_SIZE.form so it matches every other
+  // data-entry form in the app.
+  size = 'max-w-lg',
 }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 p-4">
 
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
+      <div className={`max-h-[90vh] w-full ${size} overflow-y-auto rounded-2xl bg-white shadow-2xl`}>
 
         <div className="flex items-center justify-between border-b px-6 py-4">
 

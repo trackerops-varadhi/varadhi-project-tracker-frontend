@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { CalendarRange, Wallet, Settings2, X } from 'lucide-react'
 
 import { leaveManagementApi } from '@/lib/api/leave-management.api'
+import { MODAL_SIZE } from '@/components/shared/modal-size'
 import { usersApi } from '@/lib/api/users.api'
 import { businessToday, addDays, shortDate, weekdayShort } from '@/lib/business-date'
 import { LEAVE_TYPE_LABELS } from '@/constants/people'
@@ -177,13 +178,13 @@ function EntitlementEditor({ onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="entitlement-title">
-      <div className="w-full max-w-md rounded-2xl bg-white p-4 shadow-xl">
+      <div className={`w-full ${MODAL_SIZE.compact} max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-4 shadow-xl`}>
         <div className="mb-3 flex items-center justify-between">
           <h3 id="entitlement-title" className="text-sm font-bold text-slate-900">Leave entitlement</h3>
           <button type="button" onClick={onClose} aria-label="Close" className="rounded-full p-1 hover:bg-slate-100"><X size={16} /></button>
         </div>
-        <form onSubmit={save} className="grid grid-cols-2 gap-2">
-          <select aria-label="Employee" className={`${input} col-span-2`} required value={form.userId}
+        <form onSubmit={save} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <select aria-label="Employee" className={`${input} sm:col-span-2`} required value={form.userId}
             onChange={(e) => setForm({ ...form, userId: e.target.value })}>
             <option value="">Select employee</option>
             {users.map((u) => <option key={u.id} value={u.id}>{u.name} ({u.email})</option>)}
@@ -199,15 +200,15 @@ function EntitlementEditor({ onClose, onSaved }) {
           <input aria-label="Carried forward days" type="number" step="0.5" min="0" placeholder="Carried forward" className={input}
             value={form.carriedForward} onChange={(e) => setForm({ ...form, carriedForward: e.target.value })} />
           {current && (
-            <p className="col-span-2 text-[11px] text-slate-500">
+            <p className="sm:col-span-2 text-[11px] text-slate-500">
               Current: {current.types.length
                 ? current.types.map((t) => `${LEAVE_TYPE_LABELS[t.leaveType] ?? t.leaveType} ${t.remaining}/${t.entitled + t.carriedForward}`).join(' · ')
                 : 'nothing set'}
             </p>
           )}
-          {error && <p role="alert" className="col-span-2 text-xs text-rose-600">{error}</p>}
-          {message && <p className="col-span-2 text-xs text-emerald-600">{message}</p>}
-          <button type="submit" disabled={saving} className="col-span-2 rounded-lg bg-primary py-2 text-xs font-semibold text-white disabled:opacity-60">
+          {error && <p role="alert" className="sm:col-span-2 text-xs text-rose-600">{error}</p>}
+          {message && <p className="sm:col-span-2 text-xs text-emerald-600">{message}</p>}
+          <button type="submit" disabled={saving} className="sm:col-span-2 rounded-lg bg-primary py-2 text-xs font-semibold text-white disabled:opacity-60">
             {saving ? 'Saving…' : 'Save entitlement'}
           </button>
         </form>

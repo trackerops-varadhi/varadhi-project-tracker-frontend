@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { projectsApi } from '@/lib/api/projects.api'
+import { MODAL_SIZE } from '@/components/shared/modal-size'
 import { useUsers, groupUsersForManagerPicker } from '@/hooks/use-users'
 
 export function EditProjectModal({ project, onClose, onSuccess }) {
@@ -62,7 +63,7 @@ export function EditProjectModal({ project, onClose, onSuccess }) {
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-card rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className={`bg-card rounded-2xl w-full ${MODAL_SIZE.form} shadow-xl max-h-[90vh] overflow-y-auto`}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
@@ -171,7 +172,7 @@ export function EditProjectModal({ project, onClose, onSuccess }) {
           </div>
 
           {/* Dates */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="startDate">Start Date</Label>
               <Input

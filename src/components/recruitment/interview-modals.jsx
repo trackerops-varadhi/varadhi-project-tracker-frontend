@@ -49,7 +49,6 @@ export function ScheduleInterviewModal({ candidate, onClose, onSaved }) {
       subtitle="The interviewer is notified and can record the outcome themselves."
       onClose={onClose}
       busy={saving}
-      size="max-w-xl"
       footer={(
         <>
           <button type="button" className={secondaryButton} onClick={onClose} disabled={saving}>Cancel</button>
@@ -118,7 +117,6 @@ export function InterviewOutcomeModal({ interview, onClose, onSaved }) {
       subtitle={`${interview.roleApplied} · ${interview.interviewDate}`}
       onClose={onClose}
       busy={saving}
-      size="max-w-xl"
       footer={(
         <>
           <button type="button" className={secondaryButton} onClick={onClose} disabled={saving}>Cancel</button>

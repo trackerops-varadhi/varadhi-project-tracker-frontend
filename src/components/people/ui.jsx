@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { X } from 'lucide-react'
 
 import { KeyboardModal } from '@/components/ui/dialog'
+import { MODAL_SIZE } from '@/components/shared/modal-size'
 
 export const inputClass = 'w-full rounded-lg border border-slate-200 bg-white p-2 text-xs focus:outline-none focus:ring-2 focus:ring-violet-300 disabled:bg-slate-50'
 
@@ -35,7 +36,7 @@ export function Banner({ error, success }) {
   return null
 }
 
-export function Modal({ title, subtitle, onClose, children, footer, size = 'max-w-3xl', busy = false }) {
+export function Modal({ title, subtitle, onClose, children, footer, size = MODAL_SIZE.form, busy = false }) {
   return (
     <KeyboardModal
       title={title}

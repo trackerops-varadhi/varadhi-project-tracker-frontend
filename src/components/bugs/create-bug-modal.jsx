@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { bugsApi } from '@/lib/api/bugs.api'
+import { MODAL_SIZE } from '@/components/shared/modal-size'
 import { projectsApi } from '@/lib/api/projects.api'
 import { usersApi } from '@/lib/api/users.api'
 import { tasksApi } from '@/lib/api/tasks.api'
@@ -217,7 +218,7 @@ export function CreateBugModal({ onClose, onSuccess, defaultProjectId = '' }) {
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && !isLoading && onClose()}
     >
-      <div className="bg-card rounded-2xl w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className={`bg-card rounded-2xl w-full ${MODAL_SIZE.form} shadow-xl max-h-[90vh] overflow-y-auto`}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card rounded-t-2xl z-10">
@@ -317,7 +318,7 @@ export function CreateBugModal({ onClose, onSuccess, defaultProjectId = '' }) {
           </div>
 
           {/* Severity + Priority */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="severity">Severity *</Label>
               <select
@@ -358,7 +359,7 @@ export function CreateBugModal({ onClose, onSuccess, defaultProjectId = '' }) {
           )}
 
           {/* Environment + Developer */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="environment">Environment</Label>
               <select
