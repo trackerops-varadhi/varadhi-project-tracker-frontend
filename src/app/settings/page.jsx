@@ -48,8 +48,8 @@ export default function SettingsPage() {
         <p className="text-xs text-muted-foreground mb-4">
           These actions are irreversible. Please be careful.
         </p>
-        <div className="flex items-center justify-between py-3 border-t border-slate-100">
-          <div>
+        <div className="flex flex-wrap items-center justify-between gap-3 py-3 border-t border-slate-100">
+          <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">
               Deactivate Account
             </p>
@@ -57,7 +57,7 @@ export default function SettingsPage() {
               Your account will be disabled. Contact admin to reactivate.
             </p>
           </div>
-          <button className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors">
+          <button className="shrink-0 px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors">
             Deactivate
           </button>
         </div>

@@ -152,15 +152,15 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
           <PageHeader>Notifications</PageHeader>
           <p className="text-sm text-slate-500 mt-0.5">
             Everything the tracker has sent you, in one place.
           </p>
         </div>
         {hasUnread && (
-          <Button variant="outline" size="sm" onClick={handleMarkAllAsRead}>
+          <Button variant="outline" size="sm" className="shrink-0" onClick={handleMarkAllAsRead}>
             <Check className="w-3.5 h-3.5" />
             Mark all as read
           </Button>
@@ -292,7 +292,7 @@ export default function NotificationsPage() {
       </div>
 
       {!isLoading && !error && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-slate-400">
             Page {pagination.page} of {pagination.totalPages} · {pagination.total} total
           </p>

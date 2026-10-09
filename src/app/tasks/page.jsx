@@ -17,7 +17,30 @@ const taskPageStyles = `
 .tasks-list th, .tasks-list td { padding:8px 4px; }
 .tasks-list .task-table-card > div:first-child { overflow-x:hidden; overflow-y:auto; }
 .tasks-list [data-slot="badge"] { white-space:normal; overflow-wrap:anywhere; text-align:center; }
-@media(max-width:639px) { .tasks-list th, .tasks-list td { padding-left:2px; padding-right:2px; font-size:10px; overflow-wrap:anywhere; } .tasks-list td:nth-child(6) .rounded-full { display:none; } }
+@media(max-width:639px) {
+ /* Eight columns do not fit a phone. At 360px the content box is ~328px, which
+    left Type and Priority about 28px each - too narrow for the word
+    "Critical" at any size, which is why the cell font had been taken down to
+    10px, below the app's own scale.
+    Project and Type come out instead: the task title names the work, and its
+    project is one tap away on the detail page. Their width goes back to the
+    title and to the columns people scan a phone for - status, assignee, due -
+    and the cells return to 11px, a size the scale actually uses.
+    Hidden through the colgroup as well as the cells, because table-layout is
+    fixed: hiding only the cells would leave their column width behind. */
+ .tasks-list th, .tasks-list td { padding-left:2px; padding-right:2px; font-size:11px; overflow-wrap:anywhere; }
+ .tasks-list td:nth-child(6) .rounded-full { display:none; }
+ .tasks-list .task-table-card th:nth-child(2), .tasks-list .task-table-card td:nth-child(2),
+ .tasks-list .task-table-card th:nth-child(3), .tasks-list .task-table-card td:nth-child(3) { display:none; }
+ .tasks-list .task-table-card col:nth-child(1) { width:34%; }
+ .tasks-list .task-table-card col:nth-child(2) { width:0; }
+ .tasks-list .task-table-card col:nth-child(3) { width:0; }
+ .tasks-list .task-table-card col:nth-child(4) { width:15%; }
+ .tasks-list .task-table-card col:nth-child(5) { width:19%; }
+ .tasks-list .task-table-card col:nth-child(6) { width:17%; }
+ .tasks-list .task-table-card col:nth-child(7) { width:9%; }
+ .tasks-list .task-table-card col:nth-child(8) { width:6%; }
+}
 .tasks-list .task-pagination { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding:12px; border-top:1px solid #e2e8f0; }
 .tasks-insights { display:grid; gap:16px; align-content:start; }
 .tasks-insights .deadline-content { --deadline-row-height:64px; max-height:208px; min-height:0; scrollbar-gutter:stable; }
