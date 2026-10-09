@@ -16,6 +16,19 @@ export function addDays(ymd, n) {
   return d.toISOString().slice(0, 10)
 }
 
+/**
+ * Whole days from `from` to `to`, both 'YYYY-MM-DD'. Positive when `to` is
+ * later. Parsed at UTC midnight so a daylight-saving change cannot turn a
+ * difference of one day into 0.96 and then, floored, into zero.
+ */
+export function daysBetween(from, to) {
+  if (!from || !to) return null
+  const a = new Date(`${from}T00:00:00Z`)
+  const b = new Date(`${to}T00:00:00Z`)
+  if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) return null
+  return Math.round((b - a) / 86400000)
+}
+
 export function weekdayShort(ymd) {
   return new Date(`${ymd}T00:00:00Z`).toLocaleDateString('en-IN', { weekday: 'short', timeZone: 'UTC' })
 }

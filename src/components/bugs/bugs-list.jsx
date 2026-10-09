@@ -225,9 +225,14 @@ export function BugsList({ projectId = null, embedded = false, onCountChange }) 
     // Honour a search term handed over by the topbar, matching how the tasks
     // list picks up ?search=.
     search: searchParams?.get('search') || '',
-    // The QC dashboard deep-links into a filtered list (?status=, ?slaStatus=).
+    // The QC dashboard deep-links into a filtered list. Every filter the
+    // dashboard can link to is read here, and each one also drives its own
+    // select, so the list arrives showing why it is filtered rather than as a
+    // short list with no explanation.
     ...(!embedded && searchParams?.get('status') ? { status: searchParams.get('status') } : {}),
     ...(!embedded && searchParams?.get('slaStatus') ? { slaStatus: searchParams.get('slaStatus') } : {}),
+    ...(!embedded && searchParams?.get('severity') ? { severity: searchParams.get('severity') } : {}),
+    ...(!embedded && searchParams?.get('reporterId') ? { reporterId: searchParams.get('reporterId') } : {}),
     ...(projectId ? { projectId } : {}),
   })
   const [sortBy, setSortBy] = useState('createdAt')
