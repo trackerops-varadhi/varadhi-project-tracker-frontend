@@ -40,9 +40,10 @@ import { countForUser, clearForUser } from '@/lib/outbox'
 import { release as releaseReplayLock } from '@/lib/replay-lock'
 import { publishSessionEvent, SESSION_EVENTS } from '@/lib/session-channel'
 import { useOutboxStore } from '@/store/outbox.store'
-import { NAV_ITEMS, WORKSPACE_LABELS, navLabelFor } from '@/constants'
+import { NAV_ITEMS, navLabelFor } from '@/constants'
 import { getInitials, getAvatarColor, cn } from '@/utils'
 import { useHasMounted } from '@/hooks/use-has-mounted'
+import { WorkspaceWordmark } from './workspace-wordmark'
 
 const ICON_MAP = {
   LayoutDashboard,
@@ -180,9 +181,11 @@ export function Sidebar({
               Varadhi
             </p>
 
-            <p className="text-xs font-medium text-slate-500">
-              {WORKSPACE_LABELS[user?.role] ?? 'Project Tracker 2.0'}
-            </p>
+            {/* "Project Tracker", then this role's workspace. */}
+            <WorkspaceWordmark
+              role={user?.role}
+              className="text-xs font-medium text-slate-500"
+            />
           </div>
         )}
 
