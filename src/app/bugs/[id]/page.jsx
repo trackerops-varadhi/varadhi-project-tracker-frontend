@@ -70,7 +70,7 @@ export default function BugDetailPage() {
   // Allow-list (Module 9): any role other than admin/manager — hr included —
   // gets the restricted view, matching the backend's isRestricted.
   const isEmployee = !isElevatedRole(user?.role)
-  const canManage = ['admin', 'manager'].includes(user?.role)
+  const canManage = ['admin', 'qc'].includes(user?.role)
   const canDelete = user?.role === 'admin'
 
   const [bug, setBug] = useState(null)

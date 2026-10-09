@@ -10,6 +10,8 @@ import {
 import { bugsApi } from '@/lib/api/bugs.api'
 import { BUG_SEVERITY_LABELS } from '@/constants/bugs'
 import { cn } from '@/utils'
+import { useAuthStore } from '@/store/auth.store'
+import { useHasMounted } from '@/hooks/use-has-mounted'
 
 // Same severity palette the Bugs Finder dashboard uses, so a defect chart
 // means the same thing wherever it appears.
@@ -44,7 +46,17 @@ function Stat({ label, value, hint, tone = 'slate', icon: Icon }) {
  * Reads /api/bugs/reports, which is admin/manager-only on the backend — the
  * same audience the Reports route itself is limited to in NAV_ITEMS.
  */
+// Role workspaces: defect metrics are QC's data (admin and qc). The Reports
+// page is shared with managers, who have no Bugs module, so the card hides
+// itself for them instead of rendering a 403.
 export function DefectMetricsCard() {
+  const mounted = useHasMounted()
+  const role = useAuthStore((s) => s.user?.role)
+  if (!mounted || !['admin', 'qc'].includes(role)) return null
+  return <DefectMetricsCardContent />
+}
+
+function DefectMetricsCardContent() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)

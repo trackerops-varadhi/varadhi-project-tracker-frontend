@@ -23,7 +23,7 @@ const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg']
  */
 export function BugAttachments({ bugId, attachments = [], onChanged }) {
   const { user } = useAuthStore()
-  const canModerate = ['admin', 'manager'].includes(user?.role)
+  const canModerate = ['admin', 'qc'].includes(user?.role)
 
   const inputRef = useRef(null)
   const [isUploading, setIsUploading] = useState(false)

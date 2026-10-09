@@ -3,6 +3,7 @@ import { ProfileForm } from '@/components/settings/profile-form'
 import { ChangePasswordForm } from '@/components/settings/change-password-form'
 import NotificationPreferences from "@/components/settings/notification-preferences";
 import PushNotifications from "@/components/settings/push-notifications";
+import { MyProfile } from '@/components/people/my-profile'
 
 export const metadata = {
   title: 'Settings',
@@ -22,6 +23,17 @@ export default function SettingsPage() {
 
       {/* Profile Form */}
       <ProfileForm />
+
+      {/* My HR profile (Module 9) — every role. View the record HR keeps and
+          edit your own two addresses. Lives here because the Team Directory is
+          part of the HR workspace only. */}
+      <section id="hr-profile" className="space-y-3">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">My HR Profile</h2>
+          <p className="text-xs text-muted-foreground">Your employee record. You can update your addresses; HR maintains the rest.</p>
+        </div>
+        <MyProfile />
+      </section>
 
       {/* Change Password */}
       <ChangePasswordForm />

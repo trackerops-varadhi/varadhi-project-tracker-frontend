@@ -9,6 +9,7 @@ import { authApi } from '@/lib/api/auth.api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { homeFor } from '@/constants'
 
 export function AcceptInviteForm() {
   const router = useRouter()
@@ -109,7 +110,7 @@ export function AcceptInviteForm() {
       // session row, which the current middleware refuses outright.
       setAuth(user)
 
-      router.push('/dashboard')
+      router.push(homeFor(user?.role))
       router.refresh()
     } catch (err) {
       setErrors({

@@ -10,6 +10,7 @@ import { InstallPrompt } from '@/components/shared/install-prompt'
 import { OfflineBanner } from '@/components/shared/offline-banner'
 import { SyncStatus } from '@/components/shared/sync-status'
 import { SyncConflicts } from '@/components/shared/sync-conflicts'
+import { WorkspaceGuard } from './workspace-guard'
 import { cn } from '@/utils'
 
 function subscribeToMobile(callback) {
@@ -80,7 +81,7 @@ export function AppShell({ children, fixedDashboard = false, compactMobile = fal
             {/* Renders null unless the browser offers an install and the user
                 hasn't already installed or dismissed it this session. */}
             <InstallPrompt className="mb-5" />
-            {children}
+            <WorkspaceGuard>{children}</WorkspaceGuard>
           </main>
 
         </div>

@@ -18,6 +18,7 @@ import {
   TASK_STATUS_COLORS, TASK_STATUS_LABELS,
   TASK_PRIORITY_COLORS, TASK_PRIORITY_LABELS, isElevatedRole } from '@/constants'
 import { TaskComments } from '@/components/tasks/task-comments'
+import { BugDetailsPanel } from '@/components/tasks/bug-mark'
 import { formatDate, getInitials, getAvatarColor, cn } from '@/utils'
 
 function DetailsSkeleton() {
@@ -313,6 +314,8 @@ async function handleSave() {
       {priority.label}
     </Badge>
   </div>
+  {/* Role workspaces: the bug QC assigned, with everything needed to fix it. */}
+  {task.bug && <div className="mt-3"><BugDetailsPanel bug={task.bug} /></div>}
 </div>
               
             )}

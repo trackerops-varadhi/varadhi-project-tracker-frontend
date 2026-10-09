@@ -343,7 +343,8 @@ export default function ProjectDetailPage({ params }) {
 
     {/* Tabs Header */}
     <div className="flex gap-1 border-b border-border bg-card px-4 pt-2 rounded-xl border">
-      {['overview', 'tasks', 'bugs', 'members'].map((tab) => (
+      {/* Role workspaces: the Bugs tab is QC's (and admin's). */}
+      {['overview', 'tasks', ...(['admin', 'qc'].includes(user?.role) ? ['bugs'] : []), 'members'].map((tab) => (
         <button
           key={tab}
           onClick={() => setActiveTab(tab)}
@@ -550,7 +551,7 @@ export default function ProjectDetailPage({ params }) {
     {/* Mounted only while the tab is open so the project page does not fetch
         bugs nobody asked for. BugsList pins itself to this project and pages
         server-side, exactly as it does on /bugs. */}
-    {activeTab === 'bugs' && (
+    {activeTab === 'bugs' && ['admin', 'qc'].includes(user?.role) && (
       <Suspense fallback={null}>
         <BugsList projectId={id} embedded onCountChange={setBugCount} />
       </Suspense>

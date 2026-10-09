@@ -13,6 +13,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { tasksApi } from '@/lib/api/tasks.api';
 import { formatDate, isOverdue, getInitials, getAvatarColor, cn } from '@/utils';
 import { useHasMounted } from '@/hooks/use-has-mounted';
+import { BugMark } from './bug-mark';
 const TASKS_PER_PAGE = 10;
 
 function TaskFilter({ label, value, onChange, options }) {
@@ -422,14 +423,16 @@ export function TasksList() {
                 const overdue = task.dueDate && task.status !== 'completed' && isOverdue(task.dueDate);
 
                 return (
-                  <tr key={task.id} className='transition-colors hover:bg-slate-50'>
-                    <td className='min-w-0 px-2 py-1'>
+                  <tr key={task.id} className={cn('transition-colors hover:bg-slate-50', task.bug && 'bg-red-50/40')}>
+                    <td className={cn('min-w-0 px-2 py-1', task.bug && 'border-l-2 border-red-400')}>
                       <Link
                         href={`/tasks/${task.id}`}
                         title={task.title}
                         className='block min-w-0 truncate text-xs font-semibold leading-5 text-slate-800 hover:text-primary hover:underline'>
                         {task.title}
                       </Link>
+                      {/* Role workspaces: a bug assigned by QC, in the same list. */}
+                      <BugMark bug={task.bug} className='mt-0.5' />
                     </td>
                     <td className='min-w-0 px-2 py-1'>
                       <span className='block min-w-0 truncate whitespace-nowrap text-xs leading-5 text-slate-500'>

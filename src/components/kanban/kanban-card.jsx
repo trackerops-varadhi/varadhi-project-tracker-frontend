@@ -5,6 +5,7 @@ import { StatusBadge, PriorityBadge, TypeBadge } from '@/components/tasks/task-b
 import { formatDate, isOverdue, getInitials, getAvatarColor, cn } from '@/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { BugMark } from '@/components/tasks/bug-mark'
 
 export function KanbanCard({ task, disabled = false }) {
   const {
@@ -51,10 +52,11 @@ className={cn(
   isDragging && 'opacity-50 shadow-lg scale-105 rotate-1'
 )}
     >
-      {/* Type + Priority */}
+      {/* Type + Priority (and, for a bug from QC, its key and severity) */}
       <div className="flex items-center gap-1.5 mb-2.5 flex-wrap">
         <TypeBadge type={task.type} />
         <PriorityBadge priority={task.priority} />
+        <BugMark bug={task.bug} />
       </div>
 
       {/* Title */}

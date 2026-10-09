@@ -13,6 +13,7 @@ import { wasSignedOutLocally, clearSignedOutFlag } from '@/lib/session-channel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { homeFor } from '@/constants'
 
 export function LoginForm() {
   const router = useRouter()
@@ -87,7 +88,7 @@ export function LoginForm() {
       // Still signed in. Restore the store and hint cookie, then continue to
       // the app instead of showing a password prompt.
       setAuth(user)
-      router.replace('/dashboard')
+      router.replace(homeFor(user?.role))
     })()
 
     return () => {
@@ -128,7 +129,7 @@ export function LoginForm() {
       // probe normally rather than skipping straight to the form.
       clearSignedOutFlag()
 
-      router.push('/dashboard')
+      router.push(homeFor(user?.role))
       router.refresh()
     } catch (err) {
       if (!err.response) {

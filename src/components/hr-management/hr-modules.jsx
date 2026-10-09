@@ -24,8 +24,8 @@ const GROUPS = [
     title: 'People',
     description: 'Employee records and reporting relationships',
     modules: [
-      { title: 'Employee Details', subtitle: 'Admin / HR · full record', icon: Users, href: '/people', roles: ['admin', 'hr', 'manager'] },
-      { title: 'Team Directory', subtitle: 'All roles · work information only', icon: UsersRound, href: '/directory' },
+      { title: 'Employee Details', subtitle: 'Admin / HR · full record', icon: Users, href: '/people', roles: ['admin', 'hr'] },
+      { title: 'Team Directory', subtitle: 'Admin / HR · work information only', icon: UsersRound, href: '/directory', roles: ['admin', 'hr'] },
       { title: 'Attrition Management', subtitle: 'Admin / HR · exit records', icon: UserX, href: '/people?tab=attrition', roles: ['admin', 'hr'] },
     ],
   },

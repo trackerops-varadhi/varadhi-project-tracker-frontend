@@ -210,7 +210,7 @@ export function BugsList({ projectId = null, embedded = false, onCountChange }) 
   const { user } = useAuthStore()
   const mounted = useHasMounted()
 
-  const canManage = mounted && ['admin', 'manager'].includes(user?.role)
+  const canManage = mounted && ['admin', 'qc'].includes(user?.role)
   const canDelete = mounted && user?.role === 'admin'
 
   const [filters, setFilters] = useState({
@@ -218,6 +218,9 @@ export function BugsList({ projectId = null, embedded = false, onCountChange }) 
     // Honour a search term handed over by the topbar, matching how the tasks
     // list picks up ?search=.
     search: searchParams?.get('search') || '',
+    // The QC dashboard deep-links into a filtered list (?status=, ?slaStatus=).
+    ...(!embedded && searchParams?.get('status') ? { status: searchParams.get('status') } : {}),
+    ...(!embedded && searchParams?.get('slaStatus') ? { slaStatus: searchParams.get('slaStatus') } : {}),
     ...(projectId ? { projectId } : {}),
   })
   const [sortBy, setSortBy] = useState('createdAt')
@@ -229,7 +232,8 @@ export function BugsList({ projectId = null, embedded = false, onCountChange }) 
   const [totalPages, setTotalPages] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [showCreate, setShowCreate] = useState(false)
+  // ?new=1 (the QC dashboard's "Report a bug") opens the create dialog.
+  const [showCreate, setShowCreate] = useState(() => !embedded && searchParams?.get('new') === '1')
   const [notice, setNotice] = useState(null)
 
   const [projects, setProjects] = useState([])

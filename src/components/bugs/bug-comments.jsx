@@ -18,7 +18,7 @@ import { formatRelativeTime, formatExactTime, getInitials, getAvatarColor, cn } 
  */
 export function BugComments({ bugId, comments = [], onChanged }) {
   const { user } = useAuthStore()
-  const canModerate = ['admin', 'manager'].includes(user?.role)
+  const canModerate = ['admin', 'qc'].includes(user?.role)
 
   const [content, setContent] = useState('')
   const [isPosting, setIsPosting] = useState(false)

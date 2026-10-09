@@ -34,7 +34,7 @@ export function CreateBugModal({ onClose, onSuccess, defaultProjectId = '' }) {
   // Only admin/manager can open this modal at all (the Report Bug button is
   // gated), so assignment is always available. Kept as a named check rather
   // than hardcoded true so the guard stays visible if that ever changes.
-  const canAssign = ['admin', 'manager'].includes(user?.role)
+  const canAssign = ['admin', 'qc'].includes(user?.role)
 
   const [form, setForm] = useState({
     title: '',

@@ -40,7 +40,7 @@ import { countForUser, clearForUser } from '@/lib/outbox'
 import { release as releaseReplayLock } from '@/lib/replay-lock'
 import { publishSessionEvent, SESSION_EVENTS } from '@/lib/session-channel'
 import { useOutboxStore } from '@/store/outbox.store'
-import { NAV_ITEMS } from '@/constants'
+import { NAV_ITEMS, WORKSPACE_LABELS } from '@/constants'
 import { getInitials, getAvatarColor, cn } from '@/utils'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 
@@ -179,7 +179,7 @@ export function Sidebar({
             </p>
 
             <p className="text-xs font-medium text-slate-500">
-              Project Tracker 2.0
+              {WORKSPACE_LABELS[user?.role] ?? 'Project Tracker 2.0'}
             </p>
           </div>
         )}

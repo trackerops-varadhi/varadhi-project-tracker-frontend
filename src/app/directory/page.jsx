@@ -1,36 +1,21 @@
-'use client'
-
-import { Suspense } from 'react'
-
 import { PageHeader } from '@/components/layout/topbar'
-import { TabBar, useUrlTab } from '@/components/people/ui'
 import { TeamDirectory } from '@/components/people/team-directory'
-import { MyProfile } from '@/components/people/my-profile'
 
-const TABS = [
-  { key: 'team', label: 'Team Directory' },
-  { key: 'me', label: 'My Profile' },
-]
+export const metadata = {
+  title: 'Team Directory',
+}
 
-function DirectoryContent() {
-  const [tab, setTab] = useUrlTab(TABS, '/directory')
+// Part of the HR workspace (and admin's) — WorkspaceGuard and the backend's
+// restrictTo on /api/people/team keep other roles out. Everyone's own HR
+// profile lives under Settings → My HR Profile.
+export default function DirectoryPage() {
   return (
     <div className="space-y-4">
       <div>
         <PageHeader>Team Directory</PageHeader>
         <p className="mt-0.5 text-sm text-slate-500">Who works here, what they do, and who they report to.</p>
       </div>
-      <TabBar tabs={TABS} active={tab} onSelect={setTab} label="Directory sections" />
-      {tab === 'team' ? <TeamDirectory /> : <MyProfile />}
+      <TeamDirectory />
     </div>
-  )
-}
-
-// Every role. useSearchParams needs the Suspense boundary.
-export default function DirectoryPage() {
-  return (
-    <Suspense fallback={null}>
-      <DirectoryContent />
-    </Suspense>
   )
 }

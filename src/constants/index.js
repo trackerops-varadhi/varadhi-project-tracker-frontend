@@ -66,6 +66,7 @@ export const USER_ROLE_LABELS = {
   manager: 'Manager',
   employee: 'Employee',
   hr: 'HR',
+  qc: 'QC',
 }
 
 export const USER_ROLE_COLORS = {
@@ -73,6 +74,7 @@ export const USER_ROLE_COLORS = {
   manager: 'bg-blue-100 text-blue-700',
   employee: 'bg-slate-100 text-foreground',
   hr: 'bg-pink-100 text-pink-700',
+  qc: 'bg-teal-100 text-teal-700',
 }
 
 // Module 9. Roles that see everyone's leave and time; approving leave stays
@@ -81,47 +83,94 @@ export const ELEVATED_ROLES = ['admin', 'manager']
 export const isElevatedRole = (role) => ELEVATED_ROLES.includes(String(role || '').toLowerCase())
 
 // ─── Navigation ────────────────────────────────────────────────────────────────
+// ─── Role workspaces ───────────────────────────────────────────────────────
+// Each role signs in to its own workspace: its own landing page and only its
+// own modules. Admin sees every workspace. These lists are presentation and
+// routing only — the backend's restrictTo / allow-lists are the real boundary.
+//
+//   admin    → everything
+//   hr       → HR Dashboard, HR Management, People, Recruitment, Team
+//              Directory, Leave, Time, Settings (no tracker dashboard)
+//   manager  → tracker modules, minus Team Directory and Bugs
+//   employee → tracker modules, minus Team Directory and Bugs (bugs arrive
+//              as tasks in their task list)
+//   qc       → QC Dashboard, Bugs, Leave, Time, Settings
+
+export const WORKSPACE_LABELS = {
+  admin: 'Admin Workspace',
+  hr: 'HR Workspace',
+  manager: 'Manager Workspace',
+  employee: 'Employee Workspace',
+  qc: 'QC Workspace',
+}
+
+// Where each role lands after signing in.
+export const ROLE_HOME = {
+  admin: '/dashboard',
+  manager: '/dashboard',
+  employee: '/dashboard',
+  hr: '/hr-dashboard',
+  qc: '/qc-dashboard',
+}
+export const homeFor = (role) => ROLE_HOME[String(role || '').toLowerCase()] || '/dashboard'
+
+const ALL = ['admin', 'manager', 'employee', 'hr', 'qc']
+const TRACKER = ['admin', 'manager', 'employee']
+
 export const NAV_ITEMS = [
-  // 'hr' (Module 9) keeps Dashboard, Notifications, Leave, Time, Settings and
-  // the People pages; Users and Reports stay hidden from it
-  // (docs/Module-9-People-Plan.md §5.3). Nav visibility is UX, never a control.
-  { label: 'Dashboard',  href: '/dashboard',  icon: 'LayoutDashboard', roles: ['admin', 'manager', 'employee', 'hr'] },
+  { label: 'Dashboard',    href: '/dashboard',    icon: 'LayoutDashboard', roles: TRACKER },
+  { label: 'HR Dashboard', href: '/hr-dashboard', icon: 'LayoutDashboard', roles: ['admin', 'hr'] },
+  { label: 'QC Dashboard', href: '/qc-dashboard', icon: 'LayoutDashboard', roles: ['admin', 'qc'] },
   // hidden: reachable only via the bell dropdown's "View all notifications" —
   // kept in NAV_ITEMS (not deleted) so Topbar's title lookup still resolves
   // 'Notifications' when this route is open; sidebar filters `hidden` out.
-  { label: 'Notifications', href: '/notifications', icon: 'Bell',      roles: ['admin', 'manager', 'employee', 'hr'], hidden: true },
-  { label: 'Projects',   href: '/projects',   icon: 'FolderOpen',      roles: ['admin', 'manager', 'employee'] },
-  { label: 'Tasks',      href: '/tasks',       icon: 'ListChecks',      roles: ['admin', 'manager', 'employee'] },
-  { label: 'Kanban',     href: '/kanban',      icon: 'LayoutKanban',    roles: ['admin', 'manager', 'employee'] },
-  // Module 8: Bugs Finder. Every role — an employee who finds a defect needs to
-  // be able to report it, and a developer needs to work the bugs assigned to
-  // them. Row-level scoping (employees see only bugs they reported or own) is
-  // enforced by the backend, not by hiding the nav entry.
-  { label: 'Bugs',       href: '/bugs',        icon: 'Bug',             roles: ['admin', 'manager', 'employee'] },
-  // Module 4. Every role: a calendar connection is personal, so an employee
-  // syncing their own deadlines needs this as much as a manager does.
-  { label: 'Calendar',   href: '/calendar',    icon: 'CalendarSync',    roles: ['admin', 'manager', 'employee'] },
-  { label: 'Documents',  href: '/documents',   icon: 'Files',           roles: ['admin', 'manager', 'employee'] },
-  // Module 9 (People). The HR hub: dashboard figures for admin/manager/hr.
+  { label: 'Notifications', href: '/notifications', icon: 'Bell',      roles: ALL, hidden: true },
+  { label: 'Projects',   href: '/projects',   icon: 'FolderOpen',      roles: TRACKER },
+  { label: 'Tasks',      href: '/tasks',       icon: 'ListChecks',      roles: TRACKER },
+  { label: 'Kanban',     href: '/kanban',      icon: 'LayoutKanban',    roles: TRACKER },
+  // Module 8: Bugs Finder — QC's workspace. Developers get their bugs as
+  // tasks (badged "Bug") in the task list instead.
+  { label: 'Bugs',       href: '/bugs',        icon: 'Bug',             roles: ['admin', 'qc'] },
+  // Module 4. A calendar connection is personal to a tracker user.
+  { label: 'Calendar',   href: '/calendar',    icon: 'CalendarSync',    roles: TRACKER },
+  { label: 'Documents',  href: '/documents',   icon: 'Files',           roles: TRACKER },
+  // Module 9 (People).
   { label: 'HR Management', href: '/hr-management', icon: 'Users', roles: ['admin', 'manager', 'hr'] },
-  // Employee master + attrition (PII) — admin/hr, matching /api/people writes.
   { label: 'People',     href: '/people',      icon: 'Contact',         roles: ['admin', 'hr'] },
   { label: 'Recruitment', href: '/recruitment', icon: 'UserSearch',     roles: ['admin', 'hr'] },
-  // Team list — every role, PII-free. /directory, not /team: /teams is the
-  // Microsoft Teams webhook screen.
-  { label: 'Team Directory', href: '/directory', icon: 'Network',       roles: ['admin', 'manager', 'employee', 'hr'] },
+  // /directory, not /team: /teams is the Microsoft Teams webhook screen.
+  { label: 'Team Directory', href: '/directory', icon: 'Network',       roles: ['admin', 'hr'] },
   // Any role can be an interviewer; reachable from notifications and the hub.
-  { label: 'My Interviews', href: '/my-interviews', icon: 'MessagesSquare', roles: ['admin', 'manager', 'employee', 'hr'], hidden: true },
-  { label: 'Leave',      href: '/leave-management', icon: 'CalendarDays', roles: ['admin', 'manager', 'employee', 'hr'] },
-  { label: 'Time',       href: '/time-management', icon: 'Clock3', roles: ['admin', 'manager', 'employee', 'hr'] },
+  { label: 'My Interviews', href: '/my-interviews', icon: 'MessagesSquare', roles: ALL, hidden: true },
+  { label: 'Leave',      href: '/leave-management', icon: 'CalendarDays', roles: ALL },
+  { label: 'Time',       href: '/time-management', icon: 'Clock3', roles: ALL },
   { label: 'Reports',    href: '/reports',     icon: 'BarChart3',       roles: ['admin', 'manager'] },
-  // Module 5. Admin/manager only, matching the backend's restrictTo on
-  // /api/teams — a webhook posts a whole project's activity to a channel, so
-  // configuring one is an administrative act, not a personal preference.
+  // Module 5. A webhook posts a whole project's activity to a channel, so
+  // configuring one is an administrative act.
   { label: 'Teams',      href: '/teams',       icon: 'MessageSquare',   roles: ['admin', 'manager'] },
   { label: 'Users',      href: '/users',       icon: 'Users',           roles: ['admin'] },
-  { label: 'Settings',   href: '/settings',    icon: 'Settings',        roles: ['admin', 'manager', 'employee', 'hr'] },
+  { label: 'Settings',   href: '/settings',    icon: 'Settings',        roles: ALL },
 ]
+
+/**
+ * The nav entry that owns a path (longest matching href), or null for a path
+ * no workspace claims (auth pages and the like).
+ */
+export function navItemForPath(pathname) {
+  let best = null
+  for (const item of NAV_ITEMS) {
+    if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
+      if (!best || item.href.length > best.href.length) best = item
+    }
+  }
+  return best
+}
+
+/** May `role` open `pathname`? Unclaimed paths are left to the page itself. */
+export function canAccessPath(role, pathname) {
+  const item = navItemForPath(pathname)
+  return !item || item.roles.includes(String(role || '').toLowerCase())
+}
 
 // ─── Kanban Columns ────────────────────────────────────────────────────────────
 export const KANBAN_COLUMNS = [

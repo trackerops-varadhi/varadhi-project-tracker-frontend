@@ -9,6 +9,7 @@ import { authApi } from '@/lib/api/auth.api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { homeFor } from '@/constants'
 
 export function RegisterForm() {
   const router = useRouter()
@@ -71,7 +72,7 @@ export function RegisterForm() {
       // credentials are httpOnly cookies already set by the register response.
       setAuth(user)
 
-      router.push('/dashboard')
+      router.push(homeFor(user?.role))
     } catch (err) {
       setErrors({
         general:
