@@ -29,6 +29,7 @@ import { InviteUserModal } from './invite-user-modal'
 
 import { useAuthStore } from '@/store/auth.store'
 import { usersApi } from '@/lib/api/users.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 
 import {
   USER_ROLE_COLORS,
@@ -83,6 +84,7 @@ const STATUS_CONFIG = {
 ========================================================= */
 
 export function UsersList({ leftColumn, rightColumn }) {
+  const confirm = useConfirm()
   const { user: currentUser } = useAuthStore()
   const searchParams = useSearchParams()
 
@@ -254,7 +256,13 @@ export function UsersList({ leftColumn, rightColumn }) {
   async function handleDeleteEmployee(member) {
     if (!isAdmin || member.role !== 'employee' || member.id === currentUser?.id) return
     setOpenMenuId(null)
-    if (!window.confirm(`Permanently delete ${member.name || member.email}? Their account, comments and account-related records will be removed. Tasks and projects will remain. This cannot be undone.`)) return
+    const ok = await confirm({
+      title: 'Permanently delete this employee?',
+      message: 'Their account, sessions and comments are removed. The tasks and projects they worked on stay, and keep their name. This cannot be undone — deactivating them instead keeps the account and blocks sign-in.',
+      subject: member.name || member.email,
+      detail: member.name ? member.email : null,
+    })
+    if (!ok) return
     setActioningId(member.id)
     setActionError(null)
     try {
@@ -574,7 +582,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                               items-center
                               justify-center
                               rounded-full
-                              text-[9px]
+                              text-[10px]
                               font-semibold
                               text-white
                             `,
@@ -624,7 +632,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                             className="
                               mt-0.5
                               truncate
-                              text-[9px]
+                              text-[10px]
                               leading-[11px]
                               text-slate-400
                             "
@@ -649,7 +657,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                               rounded-md
                               px-1.5
                               py-0.5
-                              text-[9px]
+                              text-[10px]
                               font-medium
                             `,
                             USER_ROLE_COLORS[
@@ -679,7 +687,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                               rounded-md
                               px-1.5
                               py-0.5
-                              text-[9px]
+                              text-[10px]
                               font-medium
                             `,
                             statusConfig.color
@@ -705,7 +713,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                       <span
                         className="
                           whitespace-nowrap
-                          text-[9px]
+                          text-[10px]
                           text-muted-foreground
                         "
                       >
@@ -766,7 +774,7 @@ export function UsersList({ leftColumn, rightColumn }) {
                   No members found
                 </p>
 
-                <p className="mt-1 text-[9px] text-slate-400">
+                <p className="mt-1 text-[10px] text-slate-400">
                   Try a different search or filter
                 </p>
               </div>

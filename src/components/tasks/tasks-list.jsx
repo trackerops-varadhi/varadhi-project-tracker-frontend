@@ -11,6 +11,7 @@ import { CreateTaskModal } from './create-task-modal';
 import { StatusBadge, PriorityBadge, TypeBadge } from './task-badge';
 import { useAuthStore } from '@/store/auth.store';
 import { tasksApi } from '@/lib/api/tasks.api';
+import { useConfirm } from '@/components/shared/confirm-dialog';
 import { formatDate, isOverdue, getInitials, getAvatarColor, cn } from '@/utils';
 import { useHasMounted } from '@/hooks/use-has-mounted';
 import { BugMark } from './bug-mark';
@@ -92,6 +93,7 @@ function TaskActionsMenu(
   } = useAuthStore();
 
   const canManageTask = user?.role === 'admin' || user?.role === 'manager';
+  const confirm = useConfirm();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -112,7 +114,13 @@ function TaskActionsMenu(
   }
 
   async function handleDelete() {
-    const confirmed = window.confirm(`Delete "${task.title}"? This can't be undone.`);
+    const confirmed = await confirm({
+      title: 'Delete this task?',
+      message: task.bug
+        ? 'This task is a bug fix. Deleting it unlinks the bug, which stays open in the Bugs module. This cannot be undone.'
+        : 'Its comments and attachments go with it. This cannot be undone.',
+      subject: task.title,
+    });
 
     if (!confirmed) {
       setOpen(false);

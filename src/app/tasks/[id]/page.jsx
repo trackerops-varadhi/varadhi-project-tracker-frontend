@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { tasksApi } from '@/lib/api/tasks.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { usersApi } from '@/lib/api/users.api'
 import {
   TASK_STATUS_COLORS, TASK_STATUS_LABELS,
@@ -40,6 +41,7 @@ function DetailsSkeleton() {
 }
 
 export default function TaskDetailsPage() {
+  const confirm = useConfirm()
   const { id } = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -222,7 +224,14 @@ async function handleSave() {
 
   async function handleDelete() {
     if (!task) return
-    if (!window.confirm(`Delete "${task.title}"? This can't be undone.`)) return
+    const ok = await confirm({
+      title: 'Delete this task?',
+      message: task.bug
+        ? 'This task is a bug fix. Deleting it unlinks the bug, which stays open in the Bugs module. This cannot be undone.'
+        : 'Its comments and attachments go with it. This cannot be undone.',
+      subject: task.title,
+    })
+    if (!ok) return
     setIsDeleting(true)
     try {
       await tasksApi.delete(id)
@@ -527,7 +536,7 @@ async function handleSave() {
 
           {editing ? (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label htmlFor="status">Status</Label>
                   <select

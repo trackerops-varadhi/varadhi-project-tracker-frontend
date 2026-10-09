@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
 
 import { ServiceWorkerRegistrar } from '@/components/shared/service-worker-registrar'
+import { ConfirmProvider } from '@/components/shared/confirm-dialog'
 import { SessionGuard } from '@/components/auth/session-guard'
 
 export function Providers({ children }) {
@@ -30,7 +31,9 @@ export function Providers({ children }) {
           covers the auth routes — a signed-in user landing on /auth/login must
           hydrate too, or they render as signed out for a frame. */}
       <SessionGuard />
-      {children}
+      {/* The app's own confirmation dialog, replacing window.confirm for every
+          destructive action. Mounted here so one dialog serves every route. */}
+      <ConfirmProvider>{children}</ConfirmProvider>
     </QueryClientProvider>
   )
 }

@@ -7,12 +7,14 @@ import {
   Archive, Trash2, Eye
 } from 'lucide-react'
 import { projectsApi } from '@/lib/api/projects.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { useAuthStore } from '@/store/auth.store'
 import { cn } from '@/utils'
 
 export function ProjectCardMenu({ project, onUpdated }) {
   const router = useRouter()
   const { user } = useAuthStore()
+  const confirm = useConfirm()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -22,7 +24,16 @@ export function ProjectCardMenu({ project, onUpdated }) {
   const canDelete = isAdmin
 
   async function handleArchive() {
-    if (!confirm(`Archive "${project.name}"?`)) return
+    // Archiving is reversible, so it is a warning rather than a danger.
+    const ok = await confirm({
+      title: 'Archive this project?',
+      message: 'It moves out of the active lists. Its tasks and documents stay, and you can set it back to active later.',
+      subject: project.name,
+      tone: 'warning',
+      confirmLabel: 'Archive',
+      busyLabel: 'Archiving…',
+    })
+    if (!ok) return
     setIsLoading(true)
     setOpen(false)
     try {
@@ -36,7 +47,12 @@ export function ProjectCardMenu({ project, onUpdated }) {
   }
 
   async function handleDelete() {
-    if (!confirm(`Permanently delete "${project.name}"? This cannot be undone.`)) return
+    const ok = await confirm({
+      title: 'Permanently delete this project?',
+      message: 'Its tasks, members, comments and documents are deleted with it. This cannot be undone — archive it instead if you only want it out of the way.',
+      subject: project.name,
+    })
+    if (!ok) return
     setIsLoading(true)
     setOpen(false)
     try {

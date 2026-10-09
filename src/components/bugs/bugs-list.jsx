@@ -14,6 +14,7 @@ import { CreateBugModal } from './create-bug-modal'
 import { BugStatusBadge, BugSeverityBadge, BugPriorityBadge } from './bug-badge'
 import { SlaIndicator } from './sla-indicator'
 import { bugsApi } from '@/lib/api/bugs.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { projectsApi } from '@/lib/api/projects.api'
 import { usersApi } from '@/lib/api/users.api'
 import { useAuthStore } from '@/store/auth.store'
@@ -48,6 +49,7 @@ const MENU_PADDING = 8
 const MENU_DIVIDER = 9
 
 function BugActionsMenu({ bug, canManage, canDelete, onChanged }) {
+  const confirm = useConfirm()
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -98,7 +100,12 @@ function BugActionsMenu({ bug, canManage, canDelete, onChanged }) {
   }
 
   async function handleDelete() {
-    if (!window.confirm(`Delete ${bug.key} "${bug.title}"? This cannot be undone.`)) {
+    const ok = await confirm({
+      title: 'Delete this bug?',
+      message: 'Its comments, attachments and activity log go with it. This cannot be undone — a bug that turned out not to be one is better marked rejected, which keeps the trail.',
+      subject: `${bug.key} ${bug.title}`,
+    })
+    if (!ok) {
       setOpen(false)
       return
     }

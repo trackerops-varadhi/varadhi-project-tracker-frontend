@@ -6,6 +6,7 @@ import { Loader2, Send, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RelativeTime } from '@/components/shared/relative-time'
 import { tasksApi } from '@/lib/api/tasks.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { projectsApi } from '@/lib/api/projects.api'
 import { getInitials, getAvatarColor, cn } from '@/utils'
 
@@ -52,6 +53,7 @@ function CommentBody({ content, mentionableLocalParts }) {
 }
 
 export function TaskComments({ taskId, projectId, comments = [], currentUserId, onTaskUpdated }) {
+  const confirm = useConfirm()
   const [content, setContent] = useState('')
   const [isPosting, setIsPosting] = useState(false)
   const [deletingId, setDeletingId] = useState(null)
@@ -185,7 +187,11 @@ export function TaskComments({ taskId, projectId, comments = [], currentUserId, 
   }
 
   async function handleDelete(commentId) {
-    if (!window.confirm('Delete this comment?')) return
+    const ok = await confirm({
+      title: 'Delete this comment?',
+      message: 'It is removed from the task for everyone. This cannot be undone.',
+    })
+    if (!ok) return
 
     setDeletingId(commentId)
     setError(null)

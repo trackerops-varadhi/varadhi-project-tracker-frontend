@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, CalendarPlus, Download, FileText, Pencil, Trash2, Upload, UserPlus } from 'lucide-react'
 
 import { peopleApi } from '@/lib/api/people.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { usersApi } from '@/lib/api/users.api'
 import { businessToday } from '@/lib/business-date'
 import {
@@ -60,7 +61,6 @@ function ConvertModal({ candidate, onClose, onDone }) {
       subtitle={`An invite email goes to ${candidate.email}; their HR profile is created now.`}
       onClose={onClose}
       busy={saving}
-      size="max-w-xl"
       footer={(
         <>
           <button type="button" className={secondaryButton} onClick={onClose} disabled={saving}>Cancel</button>
@@ -85,6 +85,7 @@ function ConvertModal({ candidate, onClose, onDone }) {
 }
 
 function CandidateDetail({ candidateId }) {
+  const confirm = useConfirm()
   const router = useRouter()
   const fileInput = useRef(null)
   const [candidate, setCandidate] = useState(null)
@@ -135,7 +136,12 @@ function CandidateDetail({ candidateId }) {
   }
 
   const removeResume = async (r) => {
-    if (!window.confirm(`Delete ${r.fileName}? This cannot be undone.`)) return
+    const ok = await confirm({
+      title: 'Delete this resume?',
+      message: 'It is removed from the private resume vault. This cannot be undone.',
+      subject: r.fileName,
+    })
+    if (!ok) return
     try {
       await peopleApi.deleteResume(candidateId, r.id)
       refresh('Resume deleted.')
@@ -145,7 +151,13 @@ function CandidateDetail({ candidateId }) {
   }
 
   const removeCandidate = async () => {
-    if (!window.confirm(`Delete ${candidate.fullName}, their interview rounds and resumes? This cannot be undone.`)) return
+    const ok = await confirm({
+      title: 'Delete this candidate?',
+      message: 'Their interview rounds, feedback and resumes are deleted with them, and drop out of the hiring reports. This cannot be undone — marking them rejected keeps the record.',
+      subject: candidate.fullName,
+      detail: candidate.appliedFor ? `Applied for ${candidate.appliedFor}` : null,
+    })
+    if (!ok) return
     try {
       await peopleApi.deleteCandidate(candidateId)
       router.push('/recruitment')

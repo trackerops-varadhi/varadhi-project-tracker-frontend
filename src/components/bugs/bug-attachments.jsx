@@ -5,6 +5,7 @@ import { Paperclip, Upload, Loader2, Trash2, Download, FileText, Image as ImageI
 
 import { Button } from '@/components/ui/button'
 import { bugsApi } from '@/lib/api/bugs.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { useAuthStore } from '@/store/auth.store'
 import { MAX_FILE_SIZE } from '@/constants'
 import { formatFileSize, formatRelativeTime, cn } from '@/utils'
@@ -22,6 +23,7 @@ const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg']
  * no second file-storage architecture.
  */
 export function BugAttachments({ bugId, attachments = [], onChanged }) {
+  const confirm = useConfirm()
   const { user } = useAuthStore()
   const canModerate = ['admin', 'qc'].includes(user?.role)
 
@@ -64,7 +66,12 @@ export function BugAttachments({ bugId, attachments = [], onChanged }) {
   }
 
   async function handleDelete(attachment) {
-    if (!window.confirm(`Delete "${attachment.fileName}"?`)) return
+    const ok = await confirm({
+      title: 'Delete this attachment?',
+      message: 'The file is removed from the bug and from Documents. This cannot be undone.',
+      subject: attachment.fileName,
+    })
+    if (!ok) return
     setDeletingId(attachment.id)
     setError(null)
     try {

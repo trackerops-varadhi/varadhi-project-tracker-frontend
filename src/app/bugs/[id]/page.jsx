@@ -18,6 +18,7 @@ import { BugComments } from '@/components/bugs/bug-comments'
 import { BugActivity } from '@/components/bugs/bug-activity'
 import { BugAttachments } from '@/components/bugs/bug-attachments'
 import { bugsApi } from '@/lib/api/bugs.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { usersApi } from '@/lib/api/users.api'
 import { tasksApi } from '@/lib/api/tasks.api'
 import { useAuthStore } from '@/store/auth.store'
@@ -62,6 +63,7 @@ function Row({ label, icon: Icon, children }) {
 }
 
 export default function BugDetailPage() {
+  const confirm = useConfirm()
   const { id } = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -247,7 +249,12 @@ export default function BugDetailPage() {
   }
 
   async function handleDelete() {
-    if (!window.confirm(`Delete ${bug.key} "${bug.title}"? This cannot be undone.`)) return
+    const ok = await confirm({
+      title: 'Delete this bug?',
+      message: 'Its comments, attachments and activity log go with it. This cannot be undone — a bug that turned out not to be one is better marked rejected, which keeps the trail.',
+      subject: `${bug.key} ${bug.title}`,
+    })
+    if (!ok) return
     setIsDeleting(true)
     try {
       await bugsApi.delete(id)

@@ -5,6 +5,7 @@ import { Loader2, MessageSquare, Pencil, Trash2, X, Check } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { bugsApi } from '@/lib/api/bugs.api'
+import { useConfirm } from '@/components/shared/confirm-dialog'
 import { useAuthStore } from '@/store/auth.store'
 import { formatRelativeTime, formatExactTime, getInitials, getAvatarColor, cn } from '@/utils'
 
@@ -17,6 +18,7 @@ import { formatRelativeTime, formatExactTime, getInitials, getAvatarColor, cn } 
  * again on the backend, this only hides controls that would be refused.
  */
 export function BugComments({ bugId, comments = [], onChanged }) {
+  const confirm = useConfirm()
   const { user } = useAuthStore()
   const canModerate = ['admin', 'qc'].includes(user?.role)
 
@@ -62,7 +64,11 @@ export function BugComments({ bugId, comments = [], onChanged }) {
   }
 
   async function handleDelete(commentId) {
-    if (!window.confirm('Delete this comment?')) return
+    const ok = await confirm({
+      title: 'Delete this comment?',
+      message: 'It is removed from the bug for everyone. This cannot be undone.',
+    })
+    if (!ok) return
     setError(null)
     try {
       await bugsApi.deleteComment(bugId, commentId)
