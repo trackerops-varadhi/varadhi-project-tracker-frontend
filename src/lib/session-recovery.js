@@ -52,6 +52,49 @@ const rawRequest = (method, path) =>
   })
 
 /*
+ * EDGE REJECTIONS ARE NOT ANSWERS ABOUT THE SESSION.
+ *
+ * This probe is, by definition, the first request of the morning — the one
+ * that wakes a hibernating Render free instance. Render's router sheds a burst
+ * aimed at a sleeping instance with a bare 429
+ * (`x-render-routing: hibernate-rate-limited`), and a cold or restarting
+ * instance gets a 502/503/504 from the same router. None of those came from
+ * Express, so none of them is evidence about this browser's session — yet
+ * `runProbe` would read them as "not signed in" and show a password prompt to
+ * someone who is perfectly logged in. Worse, the login they then attempt is
+ * part of the same throttled burst, which is exactly how 2026-10-14's lockout
+ * looked from a desk.
+ *
+ * So: distinguish them by body shape (the backend always answers with an
+ * envelope carrying `message`; an edge answers with plain text) and retry.
+ * Safe for every method here, including the refresh POST, because a shed
+ * request was never processed and cannot have rotated a token.
+ */
+const EDGE_RETRY_LIMIT = 3
+const EDGE_STATUSES = [429, 502, 503, 504]
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const isEdgeRejection = (res) =>
+  EDGE_STATUSES.includes(res?.status) &&
+  typeof res?.data?.message !== 'string'
+
+const edgeDelay = (res, attempt) => {
+  const asked = Number(res?.headers?.['retry-after'])
+  if (Number.isFinite(asked) && asked > 0) return Math.min(asked, 10) * 1000
+  return Math.min(1500 * 2 ** attempt, 6000) // 1.5s, 3s, 6s
+}
+
+// rawRequest, but patient with an instance that is still waking.
+const request = async (method, path) => {
+  for (let attempt = 0; ; attempt += 1) {
+    const res = await rawRequest(method, path)
+    if (!isEdgeRejection(res) || attempt >= EDGE_RETRY_LIMIT) return res
+    await sleep(edgeDelay(res, attempt))
+  }
+}
+
+/*
  * Single-flight, for the same reason api-client's refresh is.
  *
  * StrictMode mounts effects twice in development, and a remount (a sibling tab
@@ -87,7 +130,7 @@ export function probeSession() {
 
 async function runProbe() {
   try {
-    let me = await rawRequest('get', '/auth/me')
+    let me = await request('get', '/auth/me')
 
     if (me.status === 200) {
       return me.data?.data || null
@@ -104,7 +147,7 @@ async function runProbe() {
       return null
     }
 
-    const refreshed = await rawRequest('post', '/auth/refresh')
+    const refreshed = await request('post', '/auth/refresh')
     if (refreshed.status !== 200) return null
 
     // The refresh response already carries the user, so prefer it and skip a
@@ -113,7 +156,7 @@ async function runProbe() {
     const userFromRefresh = refreshed.data?.data?.user
     if (userFromRefresh) return userFromRefresh
 
-    me = await rawRequest('get', '/auth/me')
+    me = await request('get', '/auth/me')
     return me.status === 200 ? me.data?.data || null : null
   } catch {
     // Offline, DNS failure, CORS problem. Not evidence of being signed out —

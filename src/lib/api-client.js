@@ -6,6 +6,11 @@ import { publishSessionEvent, SESSION_EVENTS } from '@/lib/session-channel'
 // Imported for its getState() teardown, not as a hook. No cycle: auth.store
 // pulls only auth-hint and utils, neither of which reaches back here.
 import { useAuthStore } from '@/store/auth.store'
+import {
+  isEdgeThrottle,
+  isGatewayError,
+  retryAfterSeconds,
+} from '@/lib/api-error'
 
 /*
  * Relative by default, and that is the important part.
@@ -177,6 +182,88 @@ function refreshSession() {
   return refreshPromise
 }
 
+// ─── Cold-start / edge-throttle retry ─────────────────────────
+
+/*
+ * WHY THIS EXISTS
+ *
+ * The API runs on a Render free instance, which hibernates after ~15 minutes
+ * of inactivity. The first person to open the app in the morning does not send
+ * one request, they send several at once (the session probe, then the login
+ * POST, then the dashboard's queries), and Render's router answers a burst
+ * aimed at a sleeping instance with a bare 429 carrying
+ * `x-render-routing: hibernate-rate-limited`. Nothing of ours runs. On
+ * 2026-10-14 that locked the whole office out of logging in, and because the
+ * body is plain text rather than our envelope the form blamed their passwords.
+ *
+ * Retrying is correct here in a way it would NOT be for our own 429: an edge
+ * throttle means the request was never processed, so replaying it cannot
+ * duplicate anything — not even a login. `isEdgeThrottle` is what draws that
+ * line, and our application limiter (envelope with `code: rate_limited`) is
+ * deliberately left to pass straight through to the caller.
+ *
+ * A gateway error (502/503/504) is retried only for methods that are safe to
+ * replay, because unlike a 429 it cannot prove the request went unprocessed —
+ * the instance may have handled it and died before answering.
+ *
+ * THIS IS A CUSHION, NOT THE FIX. It converts "everyone is locked out" into
+ * "the first request of the morning is slow". The fix for hibernation itself is
+ * to stop the instance hibernating — see backend/.github/workflows/keep-warm.yml
+ * and the paid-instance note in backend/docs/PRODUCTION-DEPLOYMENT.md.
+ */
+const INFRA_RETRY_LIMIT = 3
+
+// Longer than the 10s default: a retry is usually racing a cold start, and a
+// 10s timeout would abort the very request that is waking the container.
+const COLD_START_TIMEOUT = 30000
+
+const REPLAYABLE_METHODS = ['get', 'head', 'options']
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+function infraRetryDelay(error, attempt) {
+  const asked = retryAfterSeconds(error)
+  // Honour Retry-After, but never park a user behind a long one — Render's
+  // hibernate throttle clears in seconds once the container is up.
+  if (asked) return Math.min(asked, 15) * 1000
+  return Math.min(1500 * 2 ** attempt, 8000) // 1.5s, 3s, 6s
+}
+
+/*
+ * A cold start can out-last the 10s client timeout. Axios then aborts with no
+ * response at all, which is byte-for-byte indistinguishable from being offline
+ * — so the request that was busy WAKING the server would raise the offline
+ * banner and fail. One more attempt with a cold-start timeout settles it.
+ *
+ * Replayable methods only: a timeout, unlike a shed 429, cannot prove the
+ * request went unprocessed. The server may have applied it and simply answered
+ * too late, so replaying a POST could duplicate a mutation.
+ */
+const TIMEOUT_RETRY_LIMIT = 1
+
+function isTimeout(error) {
+  if (error?.response) return false
+  return (
+    error?.code === 'ECONNABORTED' ||
+    error?.code === 'ETIMEDOUT' ||
+    /timeout/i.test(error?.message || '')
+  )
+}
+
+function shouldRetryTimeout(error, config) {
+  if (!isTimeout(error)) return false
+  if ((config?._timeoutRetries || 0) >= TIMEOUT_RETRY_LIMIT) return false
+  const method = String(config?.method || 'get').toLowerCase()
+  return REPLAYABLE_METHODS.includes(method)
+}
+
+function shouldRetryInfra(error, config) {
+  if ((config?._infraRetries || 0) >= INFRA_RETRY_LIMIT) return false
+  if (isEdgeThrottle(error)) return true
+  const method = String(config?.method || 'get').toLowerCase()
+  return isGatewayError(error) && REPLAYABLE_METHODS.includes(method)
+}
+
 // ─── Interceptors ───────────────────────────────────────────────────────────
 
 apiClient.interceptors.response.use(
@@ -192,10 +279,26 @@ apiClient.interceptors.response.use(
     const original = error.config
 
     if (!error.response) {
+      // Give a cold start one more chance before calling the network broken.
+      if (shouldRetryTimeout(error, original)) {
+        original._timeoutRetries = (original._timeoutRetries || 0) + 1
+        original.timeout = COLD_START_TIMEOUT
+        return apiClient(original)
+      }
+
       // No response at all — DNS failure, refused connection, timeout, or the
       // device really is offline. The signal navigator.onLine misses.
       useConnectivityStore.getState().reportNetworkError()
       return Promise.reject(error)
+    }
+
+    // Infrastructure said no before the application saw the request. Replay it
+    // rather than surfacing a failure the user cannot act on.
+    if (shouldRetryInfra(error, original)) {
+      original._infraRetries = (original._infraRetries || 0) + 1
+      original.timeout = Math.max(Number(original.timeout) || 0, COLD_START_TIMEOUT)
+      await sleep(infraRetryDelay(error, original._infraRetries - 1))
+      return apiClient(original)
     }
 
     if (status !== 401) return Promise.reject(error)

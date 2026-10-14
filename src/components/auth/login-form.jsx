@@ -9,6 +9,7 @@ import { authApi } from '@/lib/api/auth.api'
 import { clearOfflineCaches } from '@/lib/offline-cache'
 import { purgeLegacyBrowserAuth } from '@/lib/auth-hint'
 import { probeSession } from '@/lib/session-recovery'
+import { describeApiError } from '@/lib/api-error'
 import { wasSignedOutLocally, clearSignedOutFlag } from '@/lib/session-channel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -132,14 +133,18 @@ export function LoginForm() {
       router.push(homeFor(user?.role))
       router.refresh()
     } catch (err) {
-      if (!err.response) {
-        setError("Can't reach the server. Check your connection and try again.")
-      } else {
-        setError(
-          err.response?.data?.message ||
-          'Invalid email or password. Try again.'
-        )
-      }
+      /*
+       * The fallback must never be reached by an infrastructure failure.
+       *
+       * This block used to read `err.response.data.message` and fall back to
+       * the bad-password text whenever it was missing. Render's hibernate
+       * throttle answers with a plain-text 429 ("Too Many Requests") and no
+       * envelope, so on 2026-10-14 every correct credential in the office was
+       * reported as wrong while the request had never reached the password
+       * check at all. describeApiError() keeps that distinction: the fallback
+       * below applies only when the APPLICATION rejected the request.
+       */
+      setError(describeApiError(err, 'Invalid email or password. Try again.'))
     } finally {
       setIsLoading(false)
     }

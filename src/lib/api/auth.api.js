@@ -14,6 +14,15 @@ export const authApi = {
   login: async (credentials) => {
     const { data } = await apiClient.post('/auth/login', credentials, {
       skipAuthRedirect: true,
+      /*
+       * Longer than the client's 10s default, for the same reason the silent
+       * refresh and the session probe already use 30s: on Render's free tier
+       * this is often the request that wakes a cold container. At 10s it aborts
+       * with no response, which the form can only report as "can't reach the
+       * server" — and a POST cannot be retried automatically, because a
+       * timeout cannot prove the login did not already succeed.
+       */
+      timeout: 30000,
     })
     return data.data
   },
