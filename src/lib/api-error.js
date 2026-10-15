@@ -16,18 +16,18 @@
  * edge's body ("Too Many Requests") has no `message`.
  */
 
-const isAppErrorBody = (err) => {
+export const isAppErrorBody = (err) => {
   const data = err?.response?.data
   return Boolean(data) && typeof data === 'object' && typeof data.message === 'string'
 }
 
 // A throttle imposed in FRONT of the application: our own limiter answers with
 // the envelope and its own message, so it is not this.
-const isEdgeThrottle = (err) =>
+export const isEdgeThrottle = (err) =>
   err?.response?.status === 429 && !isAppErrorBody(err)
 
 // The instance is down, restarting, or still cold; the router answers for it.
-const isGatewayError = (err) =>
+export const isGatewayError = (err) =>
   [502, 503, 504].includes(err?.response?.status) && !isAppErrorBody(err)
 
 /**
@@ -53,4 +53,10 @@ export function describeApiError(err, fallback = 'Something went wrong. Please t
   return err.response.status >= 500
     ? 'The server hit an error. Please try again in a moment.'
     : fallback
+}
+
+/** Seconds the edge asked us to wait, if it said. @returns {number|null} */
+export function retryAfterSeconds(err) {
+  const value = Number(err?.response?.headers?.['retry-after'])
+  return Number.isFinite(value) && value > 0 ? value : null
 }

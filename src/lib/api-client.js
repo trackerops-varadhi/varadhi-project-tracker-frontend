@@ -6,6 +6,11 @@ import { publishSessionEvent, SESSION_EVENTS } from '@/lib/session-channel'
 // Imported for its getState() teardown, not as a hook. No cycle: auth.store
 // pulls only auth-hint and utils, neither of which reaches back here.
 import { useAuthStore } from '@/store/auth.store'
+import {
+  isEdgeThrottle,
+  isGatewayError,
+  retryAfterSeconds,
+} from '@/lib/api-error'
 
 /*
  * Relative by default, and that is the important part.
@@ -177,6 +182,82 @@ function refreshSession() {
   return refreshPromise
 }
 
+// ─── Waiting out a cold start ──────────────────────────────────
+
+/*
+ * WHY: a sleeping server must look slow, never broken.
+ *
+ * The API runs on a Render free instance, which spins down after 15 minutes
+ * without traffic and takes about a minute to come back. That by itself was
+ * never a problem -- Render HOLDS a single request until the instance is up and
+ * then serves it, which is why signing in used to be merely slow after a quiet
+ * night.
+ *
+ * What changed is the number of requests. Since the httpOnly-cookie migration
+ * the login page probes the session before the user types anything
+ * (/auth/me, then /auth/refresh, then /auth/me), so a sleeping instance is hit
+ * by a BURST, and Render's router sheds a burst instead of holding it:
+ *
+ *   HTTP/1.1 429 Too Many Requests
+ *   x-render-routing: hibernate-rate-limited
+ *
+ * Nothing of ours runs, so on 2026-10-14 the whole office was told their
+ * correct passwords were wrong. Showing an honest message instead was the first
+ * fix; this is the one that matters, because the user should not be asked to do
+ * anything about a server stretching.
+ *
+ * WHAT: when infrastructure in front of the API turns a request away, wait and
+ * send it again, for as long as a cold start plausibly takes. The spinner keeps
+ * spinning and the sign-in completes.
+ *
+ * WHY RETRYING IS SAFE HERE, including for a POST: an edge rejection means the
+ * request never reached Express, so replaying it cannot apply anything twice.
+ * `isEdgeThrottle`/`isGatewayError` are precisely that test -- they require the
+ * body NOT to be our `{ success, message, data }` envelope. Our own rate
+ * limiter answers WITH the envelope and is deliberately left alone: retrying it
+ * would just burn the next slot.
+ *
+ * A client timeout is different -- it cannot prove the request went
+ * unprocessed, so only replayable methods are retried on one.
+ */
+
+// Long enough for Render's ~1 minute wake-up plus a little slack, and short
+// enough that a genuinely dead backend still reports itself rather than
+// spinning forever.
+const COLD_START_BUDGET_MS = 90000
+
+// Each attempt gets its own generous timeout: the attempt that wakes the
+// container must not be aborted by the 10s default.
+const COLD_START_TIMEOUT = 30000
+
+const REPLAYABLE_METHODS = ['get', 'head', 'options']
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+// 2s, 4s, 8s, then steady 12s. Gentle at first (a shed burst often clears in
+// seconds), then patient without hammering a server that is still booting.
+const backoffMs = (attempt) => Math.min(2000 * 2 ** attempt, 12000)
+
+function retryDelay(error, attempt) {
+  const asked = retryAfterSeconds(error)
+  // Honour Retry-After, capped: Render's hibernate throttle clears as soon as
+  // the container answers, long before a large Retry-After would elapse.
+  if (asked) return Math.min(asked, 15) * 1000
+  return backoffMs(attempt)
+}
+
+function shouldWaitOut(error, config) {
+  if (!config) return false
+  const method = String(config.method || 'get').toLowerCase()
+  const replayable = REPLAYABLE_METHODS.includes(method)
+
+  if (isEdgeThrottle(error) || isGatewayError(error)) return true
+  // No response at all: a cold start outlasting the client timeout looks
+  // exactly like being offline.
+  if (!error.response) return replayable
+  return false
+}
+
 // ─── Interceptors ───────────────────────────────────────────────────────────
 
 apiClient.interceptors.response.use(
@@ -190,6 +271,23 @@ apiClient.interceptors.response.use(
     const status = error.response?.status
     const code = error.response?.data?.code
     const original = error.config
+
+    /*
+     * Wait out a sleeping or restarting server before telling the user
+     * anything. Runs ahead of both the offline banner and the 401 handling,
+     * because neither is true yet: no answer has come back from the API.
+     */
+    if (shouldWaitOut(error, original)) {
+      original._coldStartDeadline =
+        original._coldStartDeadline || Date.now() + COLD_START_BUDGET_MS
+      if (Date.now() < original._coldStartDeadline) {
+        const attempt = original._coldStartRetries || 0
+        original._coldStartRetries = attempt + 1
+        original.timeout = Math.max(Number(original.timeout) || 0, COLD_START_TIMEOUT)
+        await sleep(retryDelay(error, attempt))
+        return apiClient(original)
+      }
+    }
 
     if (!error.response) {
       // No response at all — DNS failure, refused connection, timeout, or the

@@ -13,6 +13,10 @@ export const authApi = {
   // Returns { user }. Cookies arrive in the response headers.
   login: async (credentials) => {
     const { data } = await apiClient.post('/auth/login', credentials, {
+      // 30s, not the client's 10s default: on the free tier this is often the
+      // request that wakes a sleeping container, and a timeout here cannot be
+      // retried automatically (it cannot prove the login did not succeed).
+      timeout: 30000,
       skipAuthRedirect: true,
     })
     return data.data
