@@ -9,6 +9,7 @@ import { authApi } from '@/lib/api/auth.api'
 import { clearOfflineCaches } from '@/lib/offline-cache'
 import { purgeLegacyBrowserAuth } from '@/lib/auth-hint'
 import { probeSession } from '@/lib/session-recovery'
+import { describeApiError } from '@/lib/api-error'
 import { wasSignedOutLocally, clearSignedOutFlag } from '@/lib/session-channel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -132,14 +133,10 @@ export function LoginForm() {
       router.push(homeFor(user?.role))
       router.refresh()
     } catch (err) {
-      if (!err.response) {
-        setError("Can't reach the server. Check your connection and try again.")
-      } else {
-        setError(
-          err.response?.data?.message ||
-          'Invalid email or password. Try again.'
-        )
-      }
+      // The fallback must never be reached by an infrastructure failure — a
+      // hibernating instance answers with a plain-text 429 and no envelope,
+      // which this used to report as a wrong password. See api-error.js.
+      setError(describeApiError(err, 'Invalid email or password. Try again.'))
     } finally {
       setIsLoading(false)
     }
