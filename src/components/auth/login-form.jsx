@@ -29,6 +29,18 @@ export function LoginForm() {
   const [error, setError] = useState('')
 
   /*
+   * A neutral "still going" note, NOT an error.
+   *
+   * api-client.js waits out a sleeping server by retrying, so a sign-in that
+   * meets a cold start succeeds — it just takes up to a minute. Behind a bare
+   * spinner that looks like a hang, and someone who reloads re-sends the burst
+   * that Render's router sheds. Six seconds, because a healthy sign-in is well
+   * under one; anything slower is the server waking up, which is not the user's
+   * problem to solve.
+   */
+  const [slowSignIn, setSlowSignIn] = useState(false)
+
+  /*
    * Silent session recovery — runs before the form is shown.
    *
    * Existing users arrive here for a reason that has nothing to do with being
@@ -113,6 +125,7 @@ export function LoginForm() {
     }
 
     setIsLoading(true)
+    const slowHint = setTimeout(() => setSlowSignIn(true), 6000)
     try {
       const { user } = await authApi.login(formData)
 
@@ -138,6 +151,8 @@ export function LoginForm() {
       // which this used to report as a wrong password. See api-error.js.
       setError(describeApiError(err, 'Invalid email or password. Try again.'))
     } finally {
+      clearTimeout(slowHint)
+      setSlowSignIn(false)
       setIsLoading(false)
     }
   }
@@ -227,6 +242,16 @@ export function LoginForm() {
           : 'Sign in'
         }
       </Button>
+
+      {slowSignIn && (
+        <p
+          className="text-center text-sm text-muted-foreground"
+          role="status"
+          aria-live="polite"
+        >
+          Please wait, this can take up to a minute. Don&apos;t reload the page.
+        </p>
+      )}
 
       <p className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{' '}
