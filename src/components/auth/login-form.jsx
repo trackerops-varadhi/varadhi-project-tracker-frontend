@@ -9,7 +9,6 @@ import { authApi } from '@/lib/api/auth.api'
 import { clearOfflineCaches } from '@/lib/offline-cache'
 import { purgeLegacyBrowserAuth } from '@/lib/auth-hint'
 import { probeSession } from '@/lib/session-recovery'
-import { describeApiError } from '@/lib/api-error'
 import { wasSignedOutLocally, clearSignedOutFlag } from '@/lib/session-channel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,23 +26,6 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-
-  /*
-   * "The server is waking up" — shown only once the wait is long enough to need
-   * explaining.
-   *
-   * Production runs on a Render free instance, which hibernates after ~15
-   * minutes idle. The first sign-in of the day is therefore the request that
-   * wakes the container, and that can take most of a minute. api-client.js
-   * rides it out (retrying an edge 429 and raising the timeout), so it
-   * SUCCEEDS — but silently, behind a spinner that looks identical to a hung
-   * page. Someone who gives up and reloads re-queues the burst that Render's
-   * router sheds, which is how 2026-10-14's lockout kept reproducing itself.
-   *
-   * Six seconds, because a healthy sign-in is well under one and anything
-   * slower is a cold start. Not an error state: nothing has gone wrong.
-   */
-  const [wakingUp, setWakingUp] = useState(false)
 
   /*
    * Silent session recovery — runs before the form is shown.
@@ -114,20 +96,6 @@ export function LoginForm() {
     }
   }, [router, setAuth])
 
-  /*
-   * The probe above is normally the FIRST request of the day, so it is the one
-   * that eats the cold start — session-recovery.js now retries an edge
-   * rejection instead of reading it as "not signed in". That makes
-   * "Checking your session..." the longest wait in the app on a free instance,
-   * and an unexplained 40-second spinner is what makes people reload into the
-   * burst Render sheds. Same six-second threshold as the sign-in button.
-   */
-  useEffect(() => {
-    if (!checking) return
-    const timer = setTimeout(() => setWakingUp(true), 6000)
-    return () => clearTimeout(timer)
-  }, [checking])
-
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value })
     setError('')
@@ -144,7 +112,6 @@ export function LoginForm() {
     }
 
     setIsLoading(true)
-    const wakeHint = setTimeout(() => setWakingUp(true), 6000)
     try {
       const { user } = await authApi.login(formData)
 
@@ -165,21 +132,15 @@ export function LoginForm() {
       router.push(homeFor(user?.role))
       router.refresh()
     } catch (err) {
-      /*
-       * The fallback must never be reached by an infrastructure failure.
-       *
-       * This block used to read `err.response.data.message` and fall back to
-       * the bad-password text whenever it was missing. Render's hibernate
-       * throttle answers with a plain-text 429 ("Too Many Requests") and no
-       * envelope, so on 2026-10-14 every correct credential in the office was
-       * reported as wrong while the request had never reached the password
-       * check at all. describeApiError() keeps that distinction: the fallback
-       * below applies only when the APPLICATION rejected the request.
-       */
-      setError(describeApiError(err, 'Invalid email or password. Try again.'))
+      if (!err.response) {
+        setError("Can't reach the server. Check your connection and try again.")
+      } else {
+        setError(
+          err.response?.data?.message ||
+          'Invalid email or password. Try again.'
+        )
+      }
     } finally {
-      clearTimeout(wakeHint)
-      setWakingUp(false)
       setIsLoading(false)
     }
   }
@@ -196,15 +157,7 @@ export function LoginForm() {
         aria-live="polite"
       >
         <Loader2 className="h-6 w-6 animate-spin text-violet-600" />
-        <p className="text-sm text-muted-foreground">
-          {wakingUp ? 'Waking the server...' : 'Checking your session...'}
-        </p>
-        {wakingUp && (
-          <p className="max-w-xs text-center text-xs text-muted-foreground">
-            It was asleep and is starting up. The first visit of the day can
-            take up to a minute — please don&apos;t reload.
-          </p>
-        )}
+        <p className="text-sm text-muted-foreground">Checking your session...</p>
       </div>
     )
   }
@@ -273,23 +226,10 @@ export function LoginForm() {
         disabled={isLoading}
       >
         {isLoading
-          ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              {wakingUp ? 'Waking the server...' : 'Signing in...'}
-            </>
+          ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Signing in...</>
           : 'Sign in'
         }
       </Button>
-
-      {wakingUp && (
-        <p
-          className="text-center text-sm text-muted-foreground"
-          role="status"
-          aria-live="polite"
-        >
-          The server was asleep and is starting up. This can take up to a
-          minute on the first sign-in of the day — please don&apos;t reload.
-        </p>
-      )}
 
       <p className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{' '}
